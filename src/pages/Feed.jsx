@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Heart,
   MessageCircle,
@@ -8,9 +9,6 @@ import {
   Image as ImageIcon,
   Send,
   X,
-  Link,
-  Copy,
-  Check,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
@@ -335,7 +333,7 @@ const Feed = () => {
                 <div className="card-body p-5">
                   {/* Author Row */}
                   <div className="flex items-center justify-between mb-4">
-                    <Link
+                    <RouterLink
                       to={`/profile/${post.author?._id}`}
                       className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                     >
@@ -372,7 +370,7 @@ const Feed = () => {
                           </span>
                         </div>
                       </div>
-                    </Link>
+                    </RouterLink>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {post.type && post.type !== "general" && (
                         <span className="badge badge-sm badge-soft badge-primary text-xs font-medium px-2.5 py-1">
