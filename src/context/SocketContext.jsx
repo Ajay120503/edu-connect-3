@@ -7,6 +7,10 @@ const SocketContext = createContext(null);
 
 export const useSocket = () => useContext(SocketContext);
 
+const SOCKET_URL = import.meta.env.DEV
+  ? "/"
+  : "https://edu-connect-api.onrender.com";
+
 export const SocketProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const socketRef = useRef(null);
@@ -15,7 +19,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!isAuthenticated || !user?._id) return;
 
-    const socket = io("/", {
+    const socket = io(SOCKET_URL, {
       transports: ["websocket", "polling"],
     });
 

@@ -1,7 +1,3 @@
 {
-  "rewrites": [
-    { "source": "/socket.io/(.*)", "destination": "https://edu-connect-api.onrender.com/socket.io/$1" },
-    { "source": "/api/(.*)", "destination": "https://edu-connect-api.onrender.com/api/$1" },
-    { "source": "/((?!api/|socket.io/).*)", "destination": "/" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
