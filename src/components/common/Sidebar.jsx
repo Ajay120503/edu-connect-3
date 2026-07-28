@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   Home,
   Compass,
@@ -13,7 +13,13 @@ import CreatePostModal from "../post/CreatePostModal";
 
 const Sidebar = () => {
   const { user } = useAuthStore();
+  const location = useLocation();
   const [showCreatePost, setShowCreatePost] = useState(false);
+
+  // Close modal on route change
+  useEffect(() => {
+    setShowCreatePost(false);
+  }, [location.pathname]);
 
   const navItems = [
     { to: "/feed", icon: Home, label: "Feed" },
