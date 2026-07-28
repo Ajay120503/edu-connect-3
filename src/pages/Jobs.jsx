@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Briefcase,
-  MapPin,
-  DollarSign,
-  Clock,
-  Plus,
-  PlusCircle,
-} from "lucide-react";
+import { Briefcase, MapPin, DollarSign, Clock, Plus } from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
-import CreatePostModal from "../components/post/CreatePostModal";
 
 const CAN_POST_JOBS = ["teacher", "professor", "hod", "principal"];
 
@@ -19,7 +11,6 @@ const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
-  const [showCreatePost, setShowCreatePost] = useState(false);
 
   const canPost = user && CAN_POST_JOBS.includes(user.role);
 
@@ -142,21 +133,6 @@ const Jobs = () => {
           ))}
         </div>
       )}
-
-      {/* Floating Create Post Button (mobile) */}
-      <button
-        onClick={() => setShowCreatePost(true)}
-        className="md:hidden fixed bottom-20 right-4 btn btn-primary btn-circle btn-lg shadow-xl shadow-primary/30 z-40"
-        title="Create a post"
-      >
-        <PlusCircle className="w-6 h-6" />
-      </button>
-
-      {/* Create Post Modal */}
-      <CreatePostModal
-        isOpen={showCreatePost}
-        onClose={() => setShowCreatePost(false)}
-      />
     </div>
   );
 };
