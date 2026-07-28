@@ -36,6 +36,7 @@ import Notifications from "./pages/Notifications";
 import SavedPosts from "./pages/SavedPosts";
 import Settings from "./pages/Settings";
 import CreateJob from "./pages/CreateJob";
+import PostDetail from "./pages/PostDetail";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -143,6 +144,7 @@ function App() {
                           />
                           <Route path="/saved" element={<SavedPosts />} />
                           <Route path="/settings" element={<Settings />} />
+                          <Route path="/post/:id" element={<PostDetail />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>

@@ -164,9 +164,7 @@ const Notifications = () => {
                   >
                     {notif.link ? (
                       <Link
-                        to={
-                          notif.link.startsWith("/post") ? `/feed` : notif.link
-                        }
+                        to={notif.link}
                         className="hover:text-primary transition-colors"
                       >
                         {notif.message}
@@ -194,11 +192,6 @@ const Notifications = () => {
                           {notif.sender.name}
                         </Link>
                       </>
-                    )}
-                    {notif.link?.startsWith("/post") && (
-                      <span className="text-[10px] text-base-content/20">
-                        (opens in feed)
-                      </span>
                     )}
                   </div>
                 </div>
