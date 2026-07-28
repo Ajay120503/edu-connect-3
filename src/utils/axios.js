@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const isDev = import.meta.env.DEV;
+
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: isDev ? '/api' : 'https://edu-connect-api.onrender.com/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -31,7 +33,7 @@ API.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          '/api/auth/refresh-token',
+          `${API.defaults.baseURL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
