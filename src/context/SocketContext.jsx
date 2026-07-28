@@ -9,7 +9,7 @@ export const useSocket = () => useContext(SocketContext);
 
 const SOCKET_URL = import.meta.env.DEV
   ? "/"
-  : "https://edu-connect-api.onrender.com";
+  : "https://edu-connect-fwoo.onrender.com";
 
 export const SocketProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState(new Set());

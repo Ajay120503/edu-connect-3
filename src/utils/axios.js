@@ -3,7 +3,7 @@ import axios from 'axios';
 const isDev = import.meta.env.DEV;
 
 const API = axios.create({
-  baseURL: isDev ? '/api' : 'https://edu-connect-api.onrender.com/api',
+  baseURL: isDev ? '/api' : 'https://edu-connect-fwoo.onrender.com/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
