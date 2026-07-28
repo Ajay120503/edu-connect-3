@@ -27,8 +27,10 @@ const Register = () => {
       await register({ name, email, password, role });
       toast.success("Registration successful! Please verify your email.");
       navigate("/feed");
-    } catch {
-      toast.error("Registration failed. Please try again.");
+    } catch (err) {
+      const message =
+        err.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(message);
     }
   };
 
