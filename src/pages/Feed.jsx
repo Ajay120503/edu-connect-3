@@ -334,53 +334,60 @@ const Feed = () => {
               >
                 <div className="card-body p-5">
                   {/* Author Row */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-11 h-11 rounded-full bg-primary/10 overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
-                      {post.author?.profilePic?.url ? (
-                        <img
-                          src={post.author.profilePic.url}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
-                          {post.author?.name?.charAt(0)?.toUpperCase() || "U"}
+                  <div className="flex items-center justify-between mb-4">
+                    <Link
+                      to={`/profile/${post.author?._id}`}
+                      className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+                    >
+                      <div className="w-11 h-11 rounded-full bg-primary/10 overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
+                        {post.author?.profilePic?.url ? (
+                          <img
+                            src={post.author.profilePic.url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
+                            {post.author?.name?.charAt(0)?.toUpperCase() || "U"}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm truncate">
+                          {post.author?.name}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs text-base-content/40">
+                          <span>
+                            {post.author?.role
+                              ? post.author.role.charAt(0).toUpperCase() +
+                                post.author.role.slice(1)
+                              : "User"}
+                          </span>
+                          <span>·</span>
+                          <span>
+                            {new Date(post.createdAt).toLocaleDateString(
+                              "en-US",
+                              { month: "short", day: "numeric" }
+                            )}
+                          </span>
                         </div>
+                      </div>
+                    </Link>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {post.type && post.type !== "general" && (
+                        <span className="badge badge-sm badge-soft badge-primary text-xs font-medium px-2.5 py-1">
+                          {post.type}
+                        </span>
+                      )}
+                      {post.author?._id === user?._id && (
+                        <button
+                          onClick={() => handleDeletePost(post._id)}
+                          className="btn btn-ghost btn-xs text-base-content/30 hover:text-error"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate">
-                        {post.author?.name}
-                      </p>
-                      <div className="flex items-center gap-2 text-xs text-base-content/40">
-                        <span>
-                          {post.author?.role
-                            ? post.author.role.charAt(0).toUpperCase() +
-                              post.author.role.slice(1)
-                            : "User"}
-                        </span>
-                        <span>·</span>
-                        <span>
-                          {new Date(post.createdAt).toLocaleDateString(
-                            "en-US",
-                            { month: "short", day: "numeric" }
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                    {post.type && post.type !== "general" && (
-                      <span className="badge badge-sm badge-soft badge-primary text-xs font-medium px-2.5 py-1">
-                        {post.type}
-                      </span>
-                    )}
-                    {post.author?._id === user?._id && (
-                      <button
-                        onClick={() => handleDeletePost(post._id)}
-                        className="btn btn-ghost btn-xs text-base-content/30 hover:text-error"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
                   </div>
 
                   {/* Text */}
