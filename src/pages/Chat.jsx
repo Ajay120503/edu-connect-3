@@ -86,11 +86,22 @@ const Chat = () => {
     if (!socket?.current) return;
 
     const handleReceiveMessage = (message) => {
+      // Skip messages sent by current user (already added from REST response)
+      const senderId =
+        typeof message.sender === "object"
+          ? message.sender._id
+          : message.sender;
+      if (senderId === user._id) return;
+
       if (
         activeConversation &&
         message.conversation === activeConversation._id
       ) {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prev) => {
+          // Prevent duplicate by checking if message already exists
+          if (prev.some((m) => m._id === message._id)) return prev;
+          return [...prev, message];
+        });
         scrollToBottom();
       }
       // Refresh conversation list
