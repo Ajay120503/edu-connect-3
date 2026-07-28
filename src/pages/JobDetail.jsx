@@ -50,6 +50,16 @@ const JobDetail = () => {
         ← Back to Jobs
       </Link>
       <div className="card bg-base-100 shadow-sm border border-base-300 p-6">
+        {/* Job Image */}
+        {(job.image?.url || job.institutionLogo?.url) && (
+          <div className="mb-4 rounded-xl overflow-hidden max-h-64">
+            <img
+              src={job.image?.url || job.institutionLogo?.url}
+              alt={job.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
         <h1 className="text-2xl font-bold">{job.title}</h1>
         <p className="text-base-content/60 mt-1">{job.institutionName}</p>
         <div className="flex gap-4 mt-4 text-sm">

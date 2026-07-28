@@ -89,44 +89,69 @@ const Jobs = () => {
               to={`/jobs/${job._id}`}
               className="card bg-base-100 border border-base-300/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-5 block"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-base mb-1.5">
-                    {job.title}
-                  </h3>
-                  <p className="text-sm text-base-content/50 mb-3">
-                    {job.institutionName || "Unknown Institution"}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-3 text-xs">
-                    <span className="flex items-center gap-1 text-base-content/50">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {job.location}
-                    </span>
-                    <span
-                      className={`flex items-center gap-1 font-medium ${
-                        job.isPaid ? "text-success" : "text-base-content/40"
-                      }`}
-                    >
-                      <DollarSign className="w-3.5 h-3.5" />
-                      {job.isPaid
-                        ? `₹${job.stipend?.toLocaleString() || 0}`
-                        : "Unpaid"}
-                    </span>
-                    <span className="flex items-center gap-1 text-base-content/40">
-                      <Clock className="w-3.5 h-3.5" />
-                      {new Date(job.deadline).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                  <span className="badge badge-sm badge-soft badge-primary text-xs font-medium">
-                    {job.roleType}
-                  </span>
-                  {job.applicants?.length > 0 && (
-                    <span className="text-xs text-base-content/30">
-                      {job.applicants.length} applicants
-                    </span>
+              <div className="flex items-start gap-4">
+                {/* Job image or institution logo */}
+                <div className="w-14 h-14 rounded-xl bg-primary/10 overflow-hidden shrink-0">
+                  {job.image?.url ? (
+                    <img
+                      src={job.image.url}
+                      alt={job.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : job.institutionLogo?.url ? (
+                    <img
+                      src={job.institutionLogo.url}
+                      alt={job.institutionName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Briefcase className="w-6 h-6 text-primary/60" />
+                    </div>
                   )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-base mb-1.5">
+                        {job.title}
+                      </h3>
+                      <p className="text-sm text-base-content/50 mb-3">
+                        {job.institutionName || "Unknown Institution"}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-3 text-xs">
+                        <span className="flex items-center gap-1 text-base-content/50">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {job.location}
+                        </span>
+                        <span
+                          className={`flex items-center gap-1 font-medium ${
+                            job.isPaid ? "text-success" : "text-base-content/40"
+                          }`}
+                        >
+                          <DollarSign className="w-3.5 h-3.5" />
+                          {job.isPaid
+                            ? `₹${job.stipend?.toLocaleString() || 0}`
+                            : "Unpaid"}
+                        </span>
+                        <span className="flex items-center gap-1 text-base-content/40">
+                          <Clock className="w-3.5 h-3.5" />
+                          {new Date(job.deadline).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                      <span className="badge badge-sm badge-soft badge-primary text-xs font-medium">
+                        {job.roleType}
+                      </span>
+                      {job.applicants?.length > 0 && (
+                        <span className="text-xs text-base-content/30">
+                          {job.applicants.length} applicants
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </Link>
