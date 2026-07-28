@@ -2,11 +2,11 @@ import { NavLink } from "react-router-dom";
 import { Home, Compass, Bell, MessageCircle, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import CreatePostModal from "../post/CreatePostModal";
-import useUnreadCount from "../../hooks/useUnreadCount";
+import { useSocket } from "../../context/SocketContext";
 
 const BottomNav = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const { notificationCount, messageCount } = useUnreadCount();
+  const { notificationCount, messageCount } = useSocket();
 
   const navItems = [
     { to: "/feed", icon: Home, label: "Home" },

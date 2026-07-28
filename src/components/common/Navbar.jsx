@@ -10,13 +10,13 @@ import {
   GraduationCap,
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
-import useUnreadCount from "../../hooks/useUnreadCount";
+import { useSocket } from "../../context/SocketContext";
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const { notificationCount, messageCount } = useUnreadCount();
+  const { notificationCount, messageCount } = useSocket();
 
   const handleSearch = (e) => {
     e.preventDefault();
