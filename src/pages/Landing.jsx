@@ -1,0 +1,267 @@
+import { Link } from "react-router-dom";
+import {
+  GraduationCap,
+  Users,
+  Briefcase,
+  ArrowRight,
+  CheckCircle2,
+  Star,
+} from "lucide-react";
+
+const Landing = () => {
+  const features = [
+    {
+      icon: Users,
+      title: "Connect & Network",
+      desc: "Build your academic network with students, teachers, and institutions worldwide.",
+      color: "primary",
+    },
+    {
+      icon: Briefcase,
+      title: "Find Opportunities",
+      desc: "Discover teaching jobs, internships, and research roles posted by verified institutions.",
+      color: "secondary",
+    },
+    {
+      icon: GraduationCap,
+      title: "Grow Your Career",
+      desc: "Share achievements, get noticed by recruiters, and advance your academic career.",
+      color: "accent",
+    },
+  ];
+
+  const steps = [
+    {
+      step: "01",
+      title: "Create Profile",
+      desc: "Sign up as a student or teacher and build your academic profile.",
+    },
+    {
+      step: "02",
+      title: "Connect & Explore",
+      desc: "Follow peers, browse posts, and search for opportunities.",
+    },
+    {
+      step: "03",
+      title: "Apply & Grow",
+      desc: "Apply to jobs, chat with connections, and track your career growth.",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-base-100 overflow-x-hidden">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-base-100/80 backdrop-blur-lg border-b border-base-300/50">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
+              <GraduationCap className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-primary font-heading tracking-tight">
+              EduConnect
+            </span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="btn btn-ghost btn-sm font-medium">
+              Sign In
+            </Link>
+            <Link
+              to="/register"
+              className="btn btn-primary btn-sm shadow-lg shadow-primary/25"
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative pt-28 pb-20 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 -z-10" />
+        <div className="absolute top-20 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl -z-10" />
+        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10" />
+
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
+            <Star className="w-3.5 h-3.5 fill-current" />
+            Academic Social Network
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-extrabold font-heading text-neutral leading-[1.1] mb-6">
+            Where Academic{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Careers Begin
+            </span>
+          </h1>
+          <p className="text-lg md:text-xl text-base-content/60 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Connect students with teachers, find teaching roles, and build your
+            academic network — all in one place.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/register?role=student"
+              className="btn btn-primary btn-lg gap-2.5 shadow-xl shadow-primary/25 px-8 text-base"
+            >
+              <GraduationCap className="w-5 h-5" /> Join as Student
+            </Link>
+            <Link
+              to="/register?role=teacher"
+              className="btn btn-outline btn-lg gap-2.5 px-8 text-base"
+            >
+              <Users className="w-5 h-5" /> Join as Teacher
+            </Link>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-8 mt-12 text-sm text-base-content/40">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-success" /> Free forever
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-success" /> No ads
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-success" /> Secure &
+              verified
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-24 px-6 bg-base-200/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
+              How It <span className="text-primary">Works</span>
+            </h2>
+            <p className="text-base-content/50 max-w-xl mx-auto">
+              Get started in three simple steps and unlock your academic
+              potential.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {steps.map((s, i) => (
+              <div key={i} className="relative group">
+                <div className="card bg-base-100 border border-base-300/50 p-8 text-center hover:shadow-xl hover:border-primary/30 transition-all duration-300 h-full">
+                  <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:bg-primary/20 transition-colors">
+                    <span className="text-xl font-bold text-primary">
+                      {s.step}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold font-heading mb-3">
+                    {s.title}
+                  </h3>
+                  <p className="text-base-content/50 leading-relaxed">
+                    {s.desc}
+                  </p>
+                </div>
+                {i < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-primary/30" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
+              Everything You <span className="text-primary">Need</span>
+            </h2>
+            <p className="text-base-content/50 max-w-xl mx-auto">
+              Powerful tools designed for the academic community.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {features.map((feat, i) => (
+              <div
+                key={i}
+                className="card bg-base-100 border border-base-300/50 shadow-lg p-8 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <div
+                  className={`w-16 h-16 bg-${feat.color}/10 rounded-2xl flex items-center justify-center mx-auto mb-5`}
+                >
+                  <feat.icon className={`w-8 h-8 text-${feat.color}`} />
+                </div>
+                <h3 className="text-xl font-bold font-heading mb-3">
+                  {feat.title}
+                </h3>
+                <p className="text-base-content/50 leading-relaxed">
+                  {feat.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="py-20 px-6 bg-primary text-primary-content">
+        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 text-center">
+          {[
+            { value: "10,000+", label: "Students" },
+            { value: "5,000+", label: "Teachers" },
+            { value: "2,000+", label: "Job Posts" },
+          ].map((stat, i) => (
+            <div key={i} className="space-y-2">
+              <div className="text-3xl md:text-4xl font-extrabold font-heading">
+                {stat.value}
+              </div>
+              <div className="text-primary-content/70 text-sm font-medium">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="card bg-base-200 border border-base-300/50 p-10 md:p-14 shadow-lg">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
+              Ready to <span className="text-primary">Connect?</span>
+            </h2>
+            <p className="text-base-content/60 mb-8 max-w-md mx-auto leading-relaxed">
+              Join thousands of students and teachers already building their
+              academic future on EduConnect.
+            </p>
+            <Link
+              to="/register"
+              className="btn btn-primary btn-lg gap-2.5 shadow-xl shadow-primary/25 px-10 text-base"
+            >
+              Get Started Free <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-neutral text-neutral-content py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold font-heading text-neutral-content">
+                EduConnect
+              </span>
+            </div>
+            <p className="text-sm text-neutral-content/50">
+              © 2026 EduConnect. Where Academic Careers Begin.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Landing;

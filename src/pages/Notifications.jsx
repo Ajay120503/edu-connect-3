@@ -1,0 +1,222 @@
+import { useState, useEffect } from "react";
+import {
+  Bell,
+  Heart,
+  MessageCircle,
+  UserPlus,
+  Briefcase,
+  Check,
+  Trash2,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import API from "../utils/axios";
+import toast from "react-hot-toast";
+
+const iconMap = {
+  post_like: { icon: Heart, color: "text-error", bg: "bg-error/10" },
+  post_comment: {
+    icon: MessageCircle,
+    color: "text-primary",
+    bg: "bg-primary/10",
+  },
+  comment_like: { icon: Heart, color: "text-error", bg: "bg-error/10" },
+  comment_reply: {
+    icon: MessageCircle,
+    color: "text-secondary",
+    bg: "bg-secondary/10",
+  },
+  new_follower: { icon: UserPlus, color: "text-success", bg: "bg-success/10" },
+  job_applied: { icon: Briefcase, color: "text-accent", bg: "bg-accent/10" },
+  application_status: {
+    icon: Briefcase,
+    color: "text-accent",
+    bg: "bg-accent/10",
+  },
+  new_message: {
+    icon: MessageCircle,
+    color: "text-primary",
+    bg: "bg-primary/10",
+  },
+  welcome: { icon: Bell, color: "text-primary", bg: "bg-primary/5" },
+};
+
+const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await API.get("/notifications");
+      setNotifications(data.notifications || []);
+    } catch {
+      toast.error("Failed to load notifications");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await API.put("/notifications/read-all");
+      fetchNotifications();
+      toast.success("All marked as read");
+    } catch {
+      toast.error("Failed");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await API.delete(`/notifications/${id}`);
+      setNotifications((prev) => prev.filter((n) => n._id !== id));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-3">
+        <div className="h-10 w-48 skeleton mb-6"></div>
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="flex items-center gap-4 bg-base-100 border border-base-300/50 rounded-xl p-4"
+          >
+            <div className="w-10 h-10 rounded-full skeleton"></div>
+            <div className="flex-1 space-y-1.5">
+              <div className="h-3.5 w-3/4 skeleton rounded"></div>
+              <div className="h-3 w-1/3 skeleton rounded"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto p-4 md:p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold font-heading">Notifications</h1>
+          <p className="text-sm text-base-content/40 mt-0.5">
+            {notifications.filter((n) => !n.isRead).length || 0} unread
+          </p>
+        </div>
+        {notifications.some((n) => !n.isRead) && (
+          <button
+            onClick={handleMarkAllRead}
+            className="btn btn-ghost btn-sm gap-1.5 text-primary"
+          >
+            <Check className="w-4 h-4" /> Mark all read
+          </button>
+        )}
+      </div>
+
+      {notifications.length === 0 ? (
+        <div className="text-center py-20">
+          <div className="w-20 h-20 bg-base-200 rounded-2xl flex items-center justify-center mx-auto mb-5">
+            <Bell className="w-10 h-10 text-base-content/15" />
+          </div>
+          <h3 className="text-lg font-semibold text-base-content/40 mb-1">
+            All caught up!
+          </h3>
+          <p className="text-sm text-base-content/30">No notifications yet</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {notifications.map((notif) => {
+            const item = iconMap[notif.type] || {
+              icon: Bell,
+              color: "text-primary",
+              bg: "bg-primary/10",
+            };
+            const Icon = item.icon;
+
+            return (
+              <div
+                key={notif._id}
+                className={`relative flex items-start gap-4 bg-base-100 border rounded-xl p-4 transition-all hover:shadow-sm group ${
+                  !notif.isRead
+                    ? "border-l-4 border-l-primary border-base-300/50 bg-primary/[0.02] shadow-sm"
+                    : "border-base-300/50"
+                }`}
+              >
+                {!notif.isRead && (
+                  <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-primary rounded-full animate-pulse"></div>
+                )}
+
+                <div
+                  className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center flex-shrink-0 mt-0.5`}
+                >
+                  <Icon className={`w-5 h-5 ${item.color}`} />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p
+                    className={`text-sm leading-relaxed ${
+                      !notif.isRead ? "font-semibold" : ""
+                    }`}
+                  >
+                    {notif.link ? (
+                      <Link
+                        to={
+                          notif.link.startsWith("/post") ? `/feed` : notif.link
+                        }
+                        className="hover:text-primary transition-colors"
+                      >
+                        {notif.message}
+                      </Link>
+                    ) : (
+                      notif.message
+                    )}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span className="text-xs text-base-content/30">
+                      {new Date(notif.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    {notif.sender?.name && (
+                      <>
+                        <span className="text-xs text-base-content/20">·</span>
+                        <Link
+                          to={`/profile/${notif.sender._id}`}
+                          className="text-xs text-primary hover:underline truncate max-w-[120px]"
+                        >
+                          {notif.sender.name}
+                        </Link>
+                      </>
+                    )}
+                    {notif.link?.startsWith("/post") && (
+                      <span className="text-[10px] text-base-content/20">
+                        (opens in feed)
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleDelete(notif._id)}
+                  className="btn btn-ghost btn-xs btn-square text-base-content/20 hover:text-error opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                  title="Delete"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Notifications;
