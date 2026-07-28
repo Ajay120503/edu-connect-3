@@ -1,19 +1,26 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Briefcase, MapPin, DollarSign, Clock, Search } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, Clock, Plus } from "lucide-react";
 import API from "../utils/axios";
+import useAuthStore from "../store/authStore";
+
+const CAN_POST_JOBS = ["teacher", "professor", "hod", "principal"];
 
 const Jobs = () => {
+  const { user } = useAuthStore();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+
+  const canPost = user && CAN_POST_JOBS.includes(user.role);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const { data } = await API.get("/jobs");
         setJobs(data.jobs || []);
-      } catch {
+      } catch (err) {
+        console.error("Failed to fetch jobs:", err);
       } finally {
         setLoading(false);
       }
@@ -45,7 +52,7 @@ const Jobs = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold font-heading">Job Board</h1>
-          <p className="text-sm text-base-content/40 mt-0.5">
+          <p className="text-sm text-base-content/50 mt-0.5">
             Find academic opportunities
           </p>
         </div>
@@ -59,6 +66,13 @@ const Jobs = () => {
             <option value="paid">Paid Only</option>
             <option value="unpaid">Unpaid Only</option>
           </select>
+
+          {canPost && (
+            <Link to="/jobs/create" className="btn btn-primary btn-sm gap-1.5">
+              <Plus className="w-4 h-4" />
+              Post a Job
+            </Link>
+          )}
         </div>
       </div>
 

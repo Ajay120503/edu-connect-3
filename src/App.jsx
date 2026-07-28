@@ -35,6 +35,7 @@ import Chat from "./pages/Chat";
 import Notifications from "./pages/Notifications";
 import SavedPosts from "./pages/SavedPosts";
 import Settings from "./pages/Settings";
+import CreateJob from "./pages/CreateJob";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -123,6 +124,7 @@ function App() {
                           <Route path="/feed" element={<Feed />} />
                           <Route path="/explore" element={<Explore />} />
                           <Route path="/jobs" element={<Jobs />} />
+                          <Route path="/jobs/create" element={<CreateJob />} />
                           <Route path="/jobs/:id" element={<JobDetail />} />
                           <Route
                             path="/jobs/:id/applicants"

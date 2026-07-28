@@ -65,6 +65,20 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  // Delete account
+  deleteAccount: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await API.delete('/auth/me');
+      localStorage.removeItem('accessToken');
+      set({ user: null, isAuthenticated: false, isLoading: false });
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to delete account';
+      set({ error: message, isLoading: false });
+      throw error;
+    }
+  },
+
   // Update user
   setUser: (user) => set({ user }),
 
