@@ -70,12 +70,12 @@ export const SocketProvider = ({ children }) => {
       });
     });
 
-    // Global notification listener - updates badge count + shows toast
+    // Global notification listener - updates badge count + shows clickable toast
     socket.on("notification", (notification) => {
       // Increment notification badge
       setNotificationCount((prev) => prev + 1);
 
-      // Show toast for new notifications
+      // Show clickable toast that navigates to the exact link
       const iconMap = {
         new_message: "💬",
         post_like: "❤️",
@@ -86,10 +86,25 @@ export const SocketProvider = ({ children }) => {
         job_applied: "📋",
         application_status: "📄",
       };
-      toast(notification.message, {
-        icon: iconMap[notification.type] || "🔔",
-        duration: 4000,
-      });
+      toast(
+        (t) => (
+          <div
+            onClick={() => {
+              toast.dismiss(t.id);
+              if (notification.link) {
+                window.location.href = notification.link;
+              }
+            }}
+            style={{ cursor: notification.link ? "pointer" : "default" }}
+          >
+            {notification.message}
+          </div>
+        ),
+        {
+          icon: iconMap[notification.type] || "🔔",
+          duration: 5000,
+        }
+      );
     });
 
     // Real-time message listener - updates message badge
