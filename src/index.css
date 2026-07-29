@@ -72,6 +72,22 @@ h6 {
 
 /* Mobile bottom nav spacing - handled inline via pb-[70px] */
 
+/* Consistent placeholder backgrounds for icons, avatars, and image placeholders */
+.bg-placeholder {
+  background-color: #e2e8f0; /* base-200 */
+}
+
+.bg-placeholder-icon {
+  background-color: #e2e8f0; /* base-200 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-placeholder-text {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
 /* Loading skeleton animation */
 @keyframes shimmer {
   0% {

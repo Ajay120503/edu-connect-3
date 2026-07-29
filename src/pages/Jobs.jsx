@@ -91,7 +91,7 @@ const Jobs = () => {
             >
               <div className="flex items-start gap-4">
                 {/* Job image or institution logo */}
-                <div className="w-14 h-14 rounded-xl bg-primary/10 overflow-hidden shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-placeholder overflow-hidden shrink-0">
                   {job.image?.url ? (
                     <img
                       src={job.image.url}
@@ -106,7 +106,7 @@ const Jobs = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Briefcase className="w-6 h-6 text-primary/60" />
+                      <Briefcase className="w-6 h-6 text-base-content/40" />
                     </div>
                   )}
                 </div>

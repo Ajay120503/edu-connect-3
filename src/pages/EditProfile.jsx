@@ -87,7 +87,7 @@ const EditProfile = () => {
           <h3 className="font-semibold text-sm mb-3">Profile Picture</h3>
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-primary/10 overflow-hidden ring-4 ring-base-200">
+              <div className="w-24 h-24 rounded-full bg-placeholder overflow-hidden ring-4 ring-base-200">
                 {previewUrl ? (
                   <img
                     src={previewUrl}
@@ -95,8 +95,8 @@ const EditProfile = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-primary text-3xl font-bold">
-                    {form.name?.charAt(0)?.toUpperCase() || "?"}
+                  <div className="w-full h-full flex items-center justify-center text-base-content/40 text-4xl font-bold">
+                    {user?.name?.charAt(0)?.toUpperCase() || "?"}
                   </div>
                 )}
               </div>

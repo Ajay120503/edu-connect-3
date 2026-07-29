@@ -66,7 +66,7 @@ const Sidebar = () => {
             to={`/profile/${user?._id}`}
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-base-200"
           >
-            <div className="w-10 h-10 rounded-full bg-primary/10 overflow-hidden flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden flex-shrink-0">
               {user?.profilePic?.url ? (
                 <img
                   src={user.profilePic.url}
@@ -74,7 +74,7 @@ const Sidebar = () => {
                   className="w-10 h-10 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-primary font-bold">
+                <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold">
                   {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               )}

@@ -157,7 +157,7 @@ const PostDetail = () => {
             onClick={() => navigate(`/profile/${postAuthor._id}`)}
           >
             <div className="avatar placeholder">
-              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary">
+              <div className="w-10 h-10 rounded-full bg-placeholder text-base-content/40 flex items-center justify-center">
                 {postAuthor.profilePic ? (
                   <img
                     src={postAuthor.profilePic}
@@ -282,7 +282,7 @@ const PostDetail = () => {
         {/* Add comment */}
         <div className="flex gap-3 mb-6">
           <div className="avatar placeholder flex-shrink-0">
-            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary">
+            <div className="w-8 h-8 rounded-full bg-placeholder text-base-content/40 flex items-center justify-center">
               <span className="text-xs font-bold">
                 {user?.name?.charAt(0)?.toUpperCase() || "U"}
               </span>
@@ -330,7 +330,7 @@ const PostDetail = () => {
             {comments.map((comment) => (
               <div key={comment._id} className="flex gap-3">
                 <div className="avatar placeholder flex-shrink-0">
-                  <div className="w-7 h-7 rounded-full bg-primary/10 text-primary">
+                  <div className="w-7 h-7 rounded-full bg-placeholder text-base-content/40 flex items-center justify-center">
                     {comment.user?.profilePic ? (
                       <img
                         src={comment.user.profilePic}
@@ -372,7 +372,7 @@ const PostDetail = () => {
                       {comment.replies.map((reply) => (
                         <div key={reply._id} className="flex gap-2">
                           <div className="avatar placeholder flex-shrink-0">
-                            <div className="w-6 h-6 rounded-full bg-primary/10 text-primary">
+                            <div className="w-6 h-6 rounded-full bg-placeholder text-base-content/40 flex items-center justify-center">
                               <span className="text-[10px] font-bold">
                                 {reply.user?.name?.charAt(0)?.toUpperCase() ||
                                   "U"}

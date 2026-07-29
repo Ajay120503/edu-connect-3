@@ -46,16 +46,16 @@ const ApplicantCard = ({ app, onStatusUpdate }) => {
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           {/* Avatar & Basic Info */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-14 h-14 rounded-full bg-primary/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm">
+            <div className="w-14 h-14 rounded-full bg-placeholder overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm">
               {a?.profilePic?.url ? (
                 <img
                   src={a.profilePic.url}
-                  alt=""
+                  alt={a.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-primary font-bold text-xl">
-                  {a?.name?.charAt(0)?.toUpperCase() || "?"}
+                <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-lg">
+                  {a.name?.charAt(0)?.toUpperCase() || "?"}
                 </div>
               )}
             </div>

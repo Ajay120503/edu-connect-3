@@ -90,7 +90,7 @@ const MobileHeader = () => {
                 onClick={() => handleNavigate(`/profile/${user?._id}`)}
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-base-200 text-left"
               >
-                <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-placeholder overflow-hidden flex-shrink-0">
                   {user?.profilePic?.url ? (
                     <img
                       src={user.profilePic.url}
@@ -98,7 +98,7 @@ const MobileHeader = () => {
                       className="w-8 h-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
+                    <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
                       {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
                   )}

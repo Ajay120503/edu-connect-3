@@ -197,7 +197,7 @@ const Profile = () => {
       <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-10 mb-8">
         {/* Avatar */}
         <div className="shrink-0">
-          <div className="w-24 h-24 md:w-36 md:h-36 rounded-full bg-primary/10 overflow-hidden ring-2 ring-base-300/50 shadow-md">
+          <div className="w-24 h-24 md:w-36 md:h-36 rounded-full bg-placeholder overflow-hidden ring-2 ring-base-300/50 shadow-md">
             {profile.profilePic?.url ? (
               <img
                 src={profile.profilePic.url}
@@ -205,7 +205,7 @@ const Profile = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-primary text-3xl md:text-5xl font-bold">
+              <div className="w-full h-full flex items-center justify-center text-base-content/40 text-3xl md:text-5xl font-bold">
                 {profile.name?.charAt(0)?.toUpperCase() || "?"}
               </div>
             )}
@@ -558,7 +558,7 @@ const Profile = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         {/* Institution Logo */}
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-placeholder overflow-hidden flex-shrink-0 flex items-center justify-center">
                           {job.institutionLogo?.url ? (
                             <img
                               src={job.institutionLogo.url}
@@ -566,7 +566,7 @@ const Profile = () => {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <Briefcase className="w-5 h-5 text-primary/60" />
+                            <Briefcase className="w-5 h-5 text-base-content/40" />
                           )}
                         </div>
                         <div className="min-w-0">

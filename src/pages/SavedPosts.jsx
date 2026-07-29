@@ -105,7 +105,7 @@ const SavedPosts = () => {
                 <div className="card-body p-5">
                   {/* Author Row */}
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-11 h-11 rounded-full bg-primary/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm">
+                    <div className="w-11 h-11 rounded-full bg-placeholder overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm">
                       {post.author?.profilePic?.url ? (
                         <img
                           src={post.author.profilePic.url}
@@ -113,7 +113,7 @@ const SavedPosts = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
+                        <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
                           {post.author?.name?.charAt(0)?.toUpperCase() || "U"}
                         </div>
                       )}

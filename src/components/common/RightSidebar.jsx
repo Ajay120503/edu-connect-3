@@ -71,16 +71,16 @@ const RightSidebar = () => {
                 to={`/profile/${u._id}`}
                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-base-300/50 transition-colors"
               >
-                <div className="w-10 h-10 rounded-full bg-primary/10 overflow-hidden flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden flex-shrink-0">
                   {u.profilePic?.url ? (
                     <img
                       src={u.profilePic.url}
-                      alt=""
-                      className="w-full h-full object-cover"
+                      alt={u.name}
+                      className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
-                      {u.name?.charAt(0)?.toUpperCase() || "?"}
+                    <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold">
+                      {u.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
                   )}
                 </div>

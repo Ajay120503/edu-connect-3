@@ -39,7 +39,7 @@ const CommentItem = ({
   return (
     <div className="space-y-3">
       <div className="flex gap-3 group">
-        <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100">
+        <div className="w-8 h-8 rounded-full bg-placeholder overflow-hidden flex-shrink-0 ring-2 ring-base-100">
           {comment.author?.profilePic?.url ? (
             <img
               src={comment.author.profilePic.url}
@@ -47,7 +47,7 @@ const CommentItem = ({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-primary text-[10px] font-bold">
+            <div className="w-full h-full flex items-center justify-center text-base-content/40 text-[10px] font-bold">
               {comment.author?.name?.charAt(0)?.toUpperCase() || "?"}
             </div>
           )}
@@ -337,7 +337,7 @@ const Feed = () => {
                       to={`/profile/${post.author?._id}`}
                       className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                     >
-                      <div className="w-11 h-11 rounded-full bg-primary/10 overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
+                      <div className="w-11 h-11 rounded-full bg-placeholder overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
                         {post.author?.profilePic?.url ? (
                           <img
                             src={post.author.profilePic.url}
@@ -345,7 +345,7 @@ const Feed = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
+                          <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
                             {post.author?.name?.charAt(0)?.toUpperCase() || "U"}
                           </div>
                         )}
@@ -568,7 +568,7 @@ const Feed = () => {
                 }}
                 className="flex items-center gap-2"
               >
-                <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-placeholder overflow-hidden flex-shrink-0">
                   {user?.profilePic?.url ? (
                     <img
                       src={user.profilePic.url}
@@ -576,7 +576,7 @@ const Feed = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-primary text-xs font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-base-content/40 text-xs font-bold">
                       {user?.name?.charAt(0)?.toUpperCase() || "?"}
                     </div>
                   )}

@@ -90,7 +90,7 @@ const Navbar = () => {
                   className="rounded-full"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                <div className="w-full h-full bg-placeholder rounded-full flex items-center justify-center text-base-content/40 text-sm font-semibold">
                   {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               )}
