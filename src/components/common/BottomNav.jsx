@@ -17,7 +17,7 @@ const BottomNav = () => {
 
   const navItems = [
     { to: "/feed", icon: Home, label: "Home" },
-    { to: "/explore", icon: Compass, label: "Explore" },
+    // { to: "/explore", icon: Compass, label: "Explore" },
     { to: "/jobs", icon: Briefcase, label: "Jobs" },
     { to: "/saved", icon: Bookmark, label: "Saved" },
     { to: `/profile/${user?._id}`, icon: User, label: "Profile" },
