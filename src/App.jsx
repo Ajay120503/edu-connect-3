@@ -15,6 +15,7 @@ import Navbar from "./components/common/Navbar";
 import Sidebar from "./components/common/Sidebar";
 import RightSidebar from "./components/common/RightSidebar";
 import BottomNav from "./components/common/BottomNav";
+import MobileHeader from "./components/common/MobileHeader";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 // Pages
@@ -117,6 +118,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <div className="flex flex-col h-screen overflow-hidden bg-base-100">
+                    <MobileHeader />
                     <Navbar />
                     <div className="flex flex-1 min-h-0">
                       <Sidebar />

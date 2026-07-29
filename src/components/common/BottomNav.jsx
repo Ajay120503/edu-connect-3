@@ -1,23 +1,26 @@
 import { NavLink } from "react-router-dom";
-import { Home, Compass, Bell, MessageCircle, PlusCircle } from "lucide-react";
+import {
+  Home,
+  Compass,
+  Briefcase,
+  Bookmark,
+  User,
+  PlusCircle,
+} from "lucide-react";
 import { useState } from "react";
 import CreatePostModal from "../post/CreatePostModal";
-import { useSocket } from "../../context/SocketContext";
+import useAuthStore from "../../store/authStore";
 
 const BottomNav = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const { notificationCount, messageCount } = useSocket();
+  const { user } = useAuthStore();
 
   const navItems = [
     { to: "/feed", icon: Home, label: "Home" },
     { to: "/explore", icon: Compass, label: "Explore" },
-    {
-      to: "/notifications",
-      icon: Bell,
-      label: "Alerts",
-      badge: notificationCount,
-    },
-    { to: "/chat", icon: MessageCircle, label: "Chat", badge: messageCount },
+    { to: "/jobs", icon: Briefcase, label: "Jobs" },
+    { to: "/saved", icon: Bookmark, label: "Saved" },
+    { to: `/profile/${user?._id}`, icon: User, label: "Profile" },
   ];
 
   return (
@@ -29,7 +32,7 @@ const BottomNav = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all ${
+                `flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all ${
                   isActive
                     ? "text-primary"
                     : "text-base-content/40 hover:text-base-content/70"
@@ -38,13 +41,11 @@ const BottomNav = () => {
             >
               {({ isActive }) => (
                 <>
-                  <div className="relative">
-                    <item.icon
-                      className={`w-6 h-6 transition-transform ${
-                        isActive ? "scale-110" : ""
-                      }`}
-                    />
-                  </div>
+                  <item.icon
+                    className={`w-5 h-5 transition-transform ${
+                      isActive ? "scale-110" : ""
+                    }`}
+                  />
                   <span className="text-[10px] font-medium leading-tight">
                     {item.label}
                   </span>
@@ -56,7 +57,7 @@ const BottomNav = () => {
           {/* Center Create Post Button */}
           <button
             onClick={() => setShowCreatePost(true)}
-            className="flex flex-col items-center gap-0.5 px-3 py-1 -mt-5"
+            className="flex flex-col items-center gap-0.5 px-2 py-1 -mt-5"
           >
             <div className="w-11 h-11 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-xl hover:scale-105 transition-all">
               <PlusCircle className="w-6 h-6 text-white" />
@@ -71,7 +72,7 @@ const BottomNav = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all ${
+                `flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all ${
                   isActive
                     ? "text-primary"
                     : "text-base-content/40 hover:text-base-content/70"
@@ -80,24 +81,11 @@ const BottomNav = () => {
             >
               {({ isActive }) => (
                 <>
-                  <div className="relative">
-                    <item.icon
-                      className={`w-6 h-6 transition-transform ${
-                        isActive ? "scale-110" : ""
-                      }`}
-                    />
-                    {item.badge > 0 && (
-                      <span
-                        className={`absolute -top-1 -right-1.5 w-4 h-4 text-[8px] font-bold rounded-full flex items-center justify-center shadow-sm text-white ${
-                          item.to === "/notifications"
-                            ? "bg-error"
-                            : "bg-primary"
-                        }`}
-                      >
-                        {item.badge > 9 ? "9+" : item.badge}
-                      </span>
-                    )}
-                  </div>
+                  <item.icon
+                    className={`w-5 h-5 transition-transform ${
+                      isActive ? "scale-110" : ""
+                    }`}
+                  />
                   <span className="text-[10px] font-medium leading-tight">
                     {item.label}
                   </span>
