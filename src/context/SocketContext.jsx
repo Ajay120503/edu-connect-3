@@ -8,7 +8,7 @@ const SocketContext = createContext(null);
 export const useSocket = () => useContext(SocketContext);
 
 const SOCKET_URL = import.meta.env.DEV
-  ? "/"
+  ? "http://localhost:5000"
   : "https://edu-connect-fwoo.onrender.com";
 
 export const SocketProvider = ({ children }) => {
