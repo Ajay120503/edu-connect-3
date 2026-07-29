@@ -71,7 +71,7 @@ const PostDetail = () => {
       const { data } = await API.post(`/posts/${id}/save`);
       setPost((prev) => ({
         ...prev,
-        savedBy: data.savedBy,
+        saves: data.saves,
         isSaved: data.saved,
       }));
       toast.success(data.saved ? "Post saved!" : "Post unsaved");
@@ -135,7 +135,7 @@ const PostDetail = () => {
   const postAuthor = post.user || post.postedBy || {};
   const isOwner = user && postAuthor._id === user._id;
   const isLiked = post.likes?.includes(user?._id) || post.isLiked;
-  const isSaved = post.savedBy?.includes(user?._id) || post.isSaved;
+  const isSaved = post.saves?.includes(user?._id) || post.isSaved;
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6">
