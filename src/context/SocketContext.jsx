@@ -18,11 +18,11 @@ export const SocketProvider = ({ children }) => {
   const socketRef = useRef(null);
   const { user, isAuthenticated } = useAuthStore();
 
-  // Fetch initial counts on auth change
+  // Fetch initial counts + online users on auth change
   useEffect(() => {
     if (!isAuthenticated || !user?._id) return;
 
-    const fetchInitialCounts = async () => {
+    const fetchInitialData = async () => {
       try {
         const API = (await import("../utils/axios")).default;
         const [notifRes, convRes] = await Promise.all([
@@ -40,11 +40,26 @@ export const SocketProvider = ({ children }) => {
           return sum + count;
         }, 0);
         setMessageCount(totalUnread);
+
+        // Populate online users from conversations data
+        const onlineIds = new Set();
+        conversations.forEach((conv) => {
+          if (conv.isOnline && conv.otherParticipant?._id) {
+            onlineIds.add(conv.otherParticipant._id);
+          }
+        });
+        if (onlineIds.size > 0) {
+          setOnlineUsers((prev) => {
+            const updated = new Set(prev);
+            onlineIds.forEach((id) => updated.add(id));
+            return updated;
+          });
+        }
       } catch {
         // silent
       }
     };
-    fetchInitialCounts();
+    fetchInitialData();
   }, [isAuthenticated, user?._id]);
 
   // Socket connection
