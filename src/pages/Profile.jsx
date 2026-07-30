@@ -17,6 +17,10 @@ import {
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
+import StrengthMeter from "../components/profile/StrengthMeter";
+import VerifiedBadge from "../components/common/VerifiedBadge";
+import AcademicTimeline from "../components/profile/AcademicTimeline";
+import EndorsementTag from "../components/profile/EndorsementTag";
 
 const Profile = () => {
   const { id } = useParams();
@@ -215,8 +219,9 @@ const Profile = () => {
         {/* Info */}
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
-            <h1 className="text-xl md:text-2xl font-bold font-heading">
+            <h1 className="text-xl md:text-2xl font-bold font-heading flex items-center gap-2 flex-wrap">
               {profile.name}
+              <VerifiedBadge verifiedStatus={profile.verifiedStatus} />
             </h1>
 
             {/* Action buttons */}
@@ -297,6 +302,15 @@ const Profile = () => {
             </p>
           )}
 
+          {/* Skills with Endorsements */}
+          {profile.skills?.length > 0 && (
+            <div className="flex flex-wrap justify-center md:justify-start gap-1.5 mt-2">
+              {profile.skills.map((skill, idx) => (
+                <EndorsementTag key={idx} skill={skill} profileId={id} />
+              ))}
+            </div>
+          )}
+
           {/* Location / Contact */}
           {(profile.city || profile.email) && (
             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-xs text-base-content/40">
@@ -315,6 +329,12 @@ const Profile = () => {
           )}
         </div>
       </div>
+
+      {/* Strength Meter (own profile only) */}
+      {isOwnProfile && <StrengthMeter user={profile} />}
+
+      {/* Academic Timeline */}
+      <AcademicTimeline timeline={profile.timeline} isOwner={isOwnProfile} />
 
       {/* ============ TAB BAR ============ */}
       <div className="flex border-t border-base-300 mb-0">
@@ -603,11 +623,13 @@ const Profile = () => {
 
                       {/* Actions for own profile */}
                       {isOwnProfile && (
-                        <div className="dropdown dropdown-end flex-shrink-0">
+                        <div
+                          className="dropdown dropdown-end flex-shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             tabIndex={0}
                             className="btn btn-ghost btn-xs btn-circle"
-                            onClick={(e) => e.stopPropagation()}
                           >
                             <MoreHorizontal className="w-4 h-4" />
                           </button>

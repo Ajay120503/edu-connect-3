@@ -5,13 +5,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { GraduationCap } from "lucide-react";
 import useAuthStore from "./store/authStore";
 import { SocketProvider } from "./context/SocketContext";
 
 // Layout Components
-import Navbar from "./components/common/Navbar";
 import Sidebar from "./components/common/Sidebar";
 import RightSidebar from "./components/common/RightSidebar";
 import BottomNav from "./components/common/BottomNav";
@@ -43,6 +42,11 @@ import NotFound from "./pages/NotFound";
 function App() {
   const { fetchMe, isAuthenticated } = useAuthStore();
   const [appInitialized, setAppInitialized] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((prev) => !prev);
+  }, []);
 
   useEffect(() => {
     const initApp = async () => {
@@ -119,9 +123,11 @@ function App() {
                 <ProtectedRoute>
                   <div className="flex flex-col h-screen overflow-hidden bg-base-100">
                     <MobileHeader />
-                    <Navbar />
                     <div className="flex flex-1 min-h-0">
-                      <Sidebar />
+                      <Sidebar
+                        collapsed={sidebarCollapsed}
+                        onToggle={toggleSidebar}
+                      />
                       <main className="flex-1 overflow-y-auto pb-[70px] md:pb-0 scroll-smooth">
                         <Routes>
                           <Route path="/feed" element={<Feed />} />

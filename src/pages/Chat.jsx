@@ -81,9 +81,16 @@ const Chat = () => {
     };
   }, [activeConversation?._id]);
 
-  // Listen for incoming messages
+  // Store the active conversation ID in a ref to avoid stale closures
+  const activeConversationRef = useRef(null);
   useEffect(() => {
-    if (!socket?.current) return;
+    activeConversationRef.current = activeConversation;
+  }, [activeConversation]);
+
+  // Listen for incoming messages (set up only once)
+  useEffect(() => {
+    const s = socket?.current;
+    if (!s) return;
 
     const handleReceiveMessage = (message) => {
       // Skip messages sent by current user (already added from REST response)
@@ -93,16 +100,14 @@ const Chat = () => {
           : message.sender;
       if (senderId === user._id) return;
 
-      if (
-        activeConversation &&
-        message.conversation === activeConversation._id
-      ) {
+      // Use ref to avoid stale activeConversation reference
+      const activeConv = activeConversationRef.current;
+      if (activeConv && message.conversation === activeConv._id) {
         setMessages((prev) => {
           // Prevent duplicate by checking if message already exists
           if (prev.some((m) => m._id === message._id)) return prev;
           return [...prev, message];
         });
-        scrollToBottom();
       }
       // Refresh conversation list
       API.get("/chat/conversations").then(({ data }) =>
@@ -111,7 +116,8 @@ const Chat = () => {
     };
 
     const handleTyping = ({ conversationId, userId }) => {
-      if (conversationId === activeConversation?._id) {
+      const activeConv = activeConversationRef.current;
+      if (conversationId === activeConv?._id) {
         setTypingUsers((prev) => ({ ...prev, [userId]: true }));
       }
     };
@@ -120,16 +126,16 @@ const Chat = () => {
       setTypingUsers((prev) => ({ ...prev, [userId]: false }));
     };
 
-    socket.current.on("receive_message", handleReceiveMessage);
-    socket.current.on("is_typing", handleTyping);
-    socket.current.on("stopped_typing", handleStopTyping);
+    s.on("receive_message", handleReceiveMessage);
+    s.on("is_typing", handleTyping);
+    s.on("stopped_typing", handleStopTyping);
 
     return () => {
-      socket.current?.off("receive_message", handleReceiveMessage);
-      socket.current?.off("is_typing", handleTyping);
-      socket.current?.off("stopped_typing", handleStopTyping);
+      s.off("receive_message", handleReceiveMessage);
+      s.off("is_typing", handleTyping);
+      s.off("stopped_typing", handleStopTyping);
     };
-  }, [socket?.current, activeConversation?._id]);
+  }, [socket?.current, user._id]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -149,7 +155,8 @@ const Chat = () => {
         content: messageText.trim(),
         type: "text",
       });
-      setMessages([...messages, data.message]);
+      // Use functional update to avoid stale closure
+      setMessages((prev) => [...prev, data.message]);
       setMessageText("");
       emitStopTyping(activeConversation._id, user._id);
     } catch {

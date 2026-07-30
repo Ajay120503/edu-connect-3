@@ -4,6 +4,10 @@ import { MapPin, DollarSign, Calendar, Mail, Users } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
+import SkillGapBar from "../components/job/SkillGapBar";
+import QuickApplyBtn from "../components/job/QuickApplyBtn";
+import ReachStats from "../components/job/ReachStats";
+import JobQnA from "../components/job/JobQnA";
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -16,6 +20,8 @@ const JobDetail = () => {
       try {
         const { data } = await API.get(`/jobs/${id}`);
         setJob(data.job);
+        // Increment view count silently
+        API.patch(`/jobs/${id}/view`).catch(() => {});
       } catch {
       } finally {
         setLoading(false);
@@ -104,12 +110,27 @@ const JobDetail = () => {
           </div>
         )}
 
+        {/* Skill Gap for students */}
+        {user?.role === "student" && <SkillGapBar job={job} />}
+
+        {/* Reach stats for job poster */}
+        <ReachStats job={job} isOwner={isJobPoster} />
+
         {/* Student actions */}
         {user?.role === "student" && (
-          <button onClick={handleApply} className="btn btn-primary mt-6 w-full">
-            Apply Now
-          </button>
+          <div className="flex gap-2 mt-6">
+            <QuickApplyBtn
+              jobId={job._id}
+              alreadyApplied={job.applicants?.includes?.(user?._id)}
+            />
+            <button onClick={handleApply} className="btn btn-primary flex-1">
+              Apply Now
+            </button>
+          </div>
         )}
+
+        {/* Q&A Section */}
+        <JobQnA jobId={job._id} isJobPoster={isJobPoster} />
       </div>
     </div>
   );

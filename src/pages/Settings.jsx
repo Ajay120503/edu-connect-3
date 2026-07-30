@@ -2,12 +2,33 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
+import API from "../utils/axios";
 import toast from "react-hot-toast";
 
 const Settings = () => {
-  const { user, logout, deleteAccount, isLoading } = useAuthStore();
+  const { user, logout, deleteAccount, isLoading, setUser } = useAuthStore();
   const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [opportunityLoading, setOpportunityLoading] = useState(false);
+
+  const handleOpportunityToggle = async () => {
+    setOpportunityLoading(true);
+    try {
+      const { data } = await API.patch("/users/me/opportunity-status", {
+        openToOpportunities: !user?.openToOpportunities,
+      });
+      setUser({ ...user, openToOpportunities: data.openToOpportunities });
+      toast.success(
+        data.openToOpportunities
+          ? "You are now open to opportunities!"
+          : "Opportunity status disabled"
+      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update");
+    } finally {
+      setOpportunityLoading(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     try {
@@ -44,6 +65,28 @@ const Settings = () => {
           </div>
         </div>
       </div>
+
+      {/* Open to Opportunities Toggle (Students only) */}
+      {user?.role === "student" && (
+        <div className="card bg-base-100 shadow-sm border border-base-300 p-6 mb-6">
+          <h3 className="font-semibold text-lg mb-4">Opportunities</h3>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-sm">Open to Opportunities</p>
+              <p className="text-xs text-base-content/50">
+                Let institutions know you're available for roles
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              className="toggle toggle-success"
+              checked={user?.openToOpportunities || false}
+              onChange={handleOpportunityToggle}
+              disabled={opportunityLoading}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="card bg-base-100 shadow-sm border border-base-300 p-6 mb-6">

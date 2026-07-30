@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Briefcase, MapPin, DollarSign, Clock, Plus } from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
+import MatchedJobsRow from "../components/job/MatchedJobsRow";
+import QuickApplyBtn from "../components/job/QuickApplyBtn";
 
 const CAN_POST_JOBS = ["teacher", "professor", "hod", "principal"];
 
@@ -49,6 +51,8 @@ const Jobs = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
+      <MatchedJobsRow />
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold font-heading">Job Board</h1>
@@ -142,6 +146,10 @@ const Jobs = () => {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                      <QuickApplyBtn
+                        jobId={job._id}
+                        alreadyApplied={job.applicants?.includes?.(user?._id)}
+                      />
                       <span className="badge badge-sm badge-soft badge-primary text-xs font-medium">
                         {job.roleType}
                       </span>

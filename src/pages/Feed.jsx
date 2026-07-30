@@ -13,6 +13,7 @@ import {
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import CreatePostModal from "../components/post/CreatePostModal";
+import StoryBar from "../components/post/StoryBar";
 import toast from "react-hot-toast";
 
 const CommentItem = ({
@@ -128,6 +129,12 @@ const Feed = () => {
   const [commentText, setCommentText] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [loadingComments, setLoadingComments] = useState(false);
+
+  // Story creator state
+  const [showStoryCreator, setShowStoryCreator] = useState(false);
+  const [storyImage, setStoryImage] = useState(null);
+  const [storyText, setStoryText] = useState("");
+  const [storyUploading, setStoryUploading] = useState(false);
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -255,6 +262,27 @@ const Feed = () => {
     fetchPosts();
   };
 
+  const handleStorySubmit = async () => {
+    if (!storyImage && !storyText.trim()) return;
+    setStoryUploading(true);
+    try {
+      const formData = new FormData();
+      if (storyImage) formData.append("image", storyImage);
+      if (storyText.trim()) formData.append("text", storyText);
+      await API.post("/stories", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setShowStoryCreator(false);
+      setStoryImage(null);
+      setStoryText("");
+      toast.success("Story posted!");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to post story");
+    } finally {
+      setStoryUploading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-4">
@@ -281,6 +309,9 @@ const Feed = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6 pb-20 md:pb-6">
+      {/* Story Bar */}
+      <StoryBar onAddStory={() => setShowStoryCreator(true)} />
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -337,7 +368,7 @@ const Feed = () => {
                       to={`/profile/${post.author?._id}`}
                       className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                     >
-                      <div className="w-11 h-11 rounded-full bg-placeholder overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
                         {post.author?.profilePic?.url ? (
                           <img
                             src={post.author.profilePic.url}
@@ -345,7 +376,7 @@ const Feed = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
+                          <div className="w-full h-full flex items-center justify-center text-primary font-bold text-sm">
                             {post.author?.name?.charAt(0)?.toUpperCase() || "U"}
                           </div>
                         )}
@@ -355,11 +386,8 @@ const Feed = () => {
                           {post.author?.name}
                         </p>
                         <div className="flex items-center gap-2 text-xs text-base-content/40">
-                          <span>
-                            {post.author?.role
-                              ? post.author.role.charAt(0).toUpperCase() +
-                                post.author.role.slice(1)
-                              : "User"}
+                          <span className="capitalize">
+                            {post.author?.role || "User"}
                           </span>
                           <span>·</span>
                           <span>
@@ -373,14 +401,24 @@ const Feed = () => {
                     </RouterLink>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {post.type && post.type !== "general" && (
-                        <span className="badge badge-sm badge-soft badge-primary text-xs font-medium px-2.5 py-1">
+                        <span
+                          className={`badge badge-sm font-medium text-xs px-2.5 py-1 ${
+                            post.type === "noticeboard"
+                              ? "badge-warning badge-soft"
+                              : post.type === "achievement"
+                              ? "badge-success badge-soft"
+                              : post.type === "announcement"
+                              ? "badge-info badge-soft"
+                              : "badge-primary badge-soft"
+                          }`}
+                        >
                           {post.type}
                         </span>
                       )}
                       {post.author?._id === user?._id && (
                         <button
                           onClick={() => handleDeletePost(post._id)}
-                          className="btn btn-ghost btn-xs text-base-content/30 hover:text-error"
+                          className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-error hover:bg-error/10"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -398,7 +436,7 @@ const Feed = () => {
                   {/* Images */}
                   {post.images?.length > 0 && (
                     <div
-                      className={`grid gap-2 mb-4 rounded-xl overflow-hidden ${
+                      className={`grid gap-1.5 mb-4 rounded-2xl overflow-hidden ${
                         post.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
                       }`}
                     >
@@ -407,7 +445,11 @@ const Feed = () => {
                           key={i}
                           src={img.url}
                           alt=""
-                          className="w-full object-cover rounded-lg max-h-96"
+                          className={`w-full object-cover ${
+                            post.images.length === 1
+                              ? "max-h-96 rounded-2xl"
+                              : "max-h-64 first:rounded-l-2xl last:rounded-r-2xl"
+                          }`}
                           loading="lazy"
                         />
                       ))}
@@ -416,11 +458,11 @@ const Feed = () => {
 
                   {/* Tags */}
                   {post.tags?.length > 0 && (
-                    <div className="flex gap-2 mb-4 flex-wrap">
+                    <div className="flex gap-1.5 mb-4 flex-wrap">
                       {post.tags.map((tag, i) => (
                         <span
                           key={i}
-                          className="badge badge-sm badge-ghost text-xs font-medium"
+                          className="badge badge-sm badge-ghost text-xs font-medium hover:badge-primary transition-colors cursor-pointer"
                         >
                           #{tag}
                         </span>
@@ -429,40 +471,44 @@ const Feed = () => {
                   )}
 
                   {/* Actions */}
-                  <div className="flex items-center gap-1 pt-3 border-t border-base-200">
+                  <div className="flex items-center gap-1 pt-3 border-t border-base-200/60">
                     <button
                       onClick={() => handleLike(post._id)}
-                      className={`btn btn-ghost btn-sm gap-2 font-medium text-xs ${
+                      className={`btn btn-ghost btn-sm gap-2 font-medium text-xs hover:bg-error/10 ${
                         isLiked ? "text-error" : ""
                       }`}
                     >
                       <Heart
-                        className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`}
+                        className={`w-4 h-4 transition-transform ${
+                          isLiked ? "fill-current scale-110" : ""
+                        }`}
                       />
                       {post.likes?.length || 0}
                     </button>
                     <button
                       onClick={() => openComments(post)}
-                      className="btn btn-ghost btn-sm gap-2 font-medium text-xs"
+                      className="btn btn-ghost btn-sm gap-2 font-medium text-xs hover:bg-primary/10"
                     >
                       <MessageCircle className="w-4 h-4" />
                       {post.comments?.length || 0}
                     </button>
                     <button
                       onClick={() => handleShare(post._id)}
-                      className="btn btn-ghost btn-sm"
+                      className="btn btn-ghost btn-sm btn-circle"
                       title="Copy link"
                     >
                       <Share2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleSave(post._id)}
-                      className={`btn btn-ghost btn-sm ml-auto ${
+                      className={`btn btn-ghost btn-sm ml-auto gap-2 font-medium text-xs hover:bg-primary/10 ${
                         isSaved ? "text-primary" : ""
                       }`}
                     >
                       <Bookmark
-                        className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`}
+                        className={`w-4 h-4 transition-transform ${
+                          isSaved ? "fill-current scale-110" : ""
+                        }`}
                       />
                     </button>
                   </div>
@@ -475,6 +521,62 @@ const Feed = () => {
 
       {/* Create Post Modal */}
       {showCreatePost && <CreatePostModal onClose={handlePostCreated} />}
+
+      {/* Story Creator Modal */}
+      {showStoryCreator && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setShowStoryCreator(false)}
+        >
+          <div
+            className="bg-base-100 rounded-2xl w-full max-w-sm p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-bold text-lg mb-4">Create Story</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium mb-1 block">
+                  Upload Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setStoryImage(e.target.files[0])}
+                  className="file-input file-input-sm file-input-bordered w-full text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium mb-1 block">
+                  Caption (optional)
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered input-sm w-full text-sm"
+                  placeholder="Add a caption..."
+                  value={storyText}
+                  onChange={(e) => setStoryText(e.target.value)}
+                  maxLength={200}
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button
+                  onClick={() => setShowStoryCreator(false)}
+                  className="btn btn-outline btn-sm flex-1"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleStorySubmit}
+                  className="btn btn-primary btn-sm flex-1"
+                  disabled={storyUploading}
+                >
+                  {storyUploading ? "Posting..." : "Post Story"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Comment Modal */}
       {commentPost && (

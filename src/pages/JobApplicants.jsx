@@ -23,6 +23,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import API from "../utils/axios";
+import ApplicantKanban from "../components/job/ApplicantKanban";
 import toast from "react-hot-toast";
 
 const statusColors = {
@@ -313,6 +314,7 @@ const JobApplicants = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
+  const [viewMode, setViewMode] = useState("list"); // "list" or "kanban"
 
   useEffect(() => {
     const fetchData = async () => {
@@ -410,13 +412,38 @@ const JobApplicants = () => {
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <span className="text-sm font-medium text-base-content/60">
-          Filter:
-        </span>
-        {["", "applied", "reviewed", "shortlisted", "selected", "rejected"].map(
-          (status) => (
+      {/* View Toggle + Filter */}
+      <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setViewMode("list")}
+            className={`btn btn-xs ${
+              viewMode === "list" ? "btn-primary" : "btn-ghost"
+            }`}
+          >
+            List View
+          </button>
+          <button
+            onClick={() => setViewMode("kanban")}
+            className={`btn btn-xs ${
+              viewMode === "kanban" ? "btn-primary" : "btn-ghost"
+            }`}
+          >
+            Kanban
+          </button>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-medium text-base-content/60">
+            Filter:
+          </span>
+          {[
+            "",
+            "applied",
+            "reviewed",
+            "shortlisted",
+            "selected",
+            "rejected",
+          ].map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
@@ -430,12 +457,17 @@ const JobApplicants = () => {
             >
               {status || "All"}
             </button>
-          )
-        )}
+          ))}
+        </div>
       </div>
 
       {/* Applications */}
-      {applications.length === 0 ? (
+      {viewMode === "kanban" ? (
+        <ApplicantKanban
+          applications={applications}
+          onStatusChange={() => {}}
+        />
+      ) : applications.length === 0 ? (
         <div className="text-center py-16">
           <Eye className="w-16 h-16 mx-auto text-base-content/15 mb-4" />
           <p className="text-base-content/40 font-medium">
