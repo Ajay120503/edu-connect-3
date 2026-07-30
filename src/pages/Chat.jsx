@@ -1,6 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Send, ImagePlus, ArrowLeft, User, MessageCircle } from "lucide-react";
+import {
+  Send,
+  ImagePlus,
+  ArrowLeft,
+  User,
+  MessageCircle,
+  Edit3,
+  Trash2,
+  Check,
+  X,
+  MoreHorizontal,
+} from "lucide-react";
 import useAuthStore from "../store/authStore";
 import { useSocket } from "../context/SocketContext";
 import API from "../utils/axios";
@@ -25,7 +36,11 @@ const Chat = () => {
   const [messageText, setMessageText] = useState("");
   const [loading, setLoading] = useState(true);
   const [typingUsers, setTypingUsers] = useState({});
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [menuOpenId, setMenuOpenId] = useState(null);
   const messagesEndRef = useRef(null);
+  const editInputRef = useRef(null);
 
   // Fetch conversations
   useEffect(() => {
@@ -93,26 +108,49 @@ const Chat = () => {
     if (!s) return;
 
     const handleReceiveMessage = (message) => {
-      // Skip messages sent by current user (already added from REST response)
       const senderId =
         typeof message.sender === "object"
           ? message.sender._id
           : message.sender;
       if (senderId === user._id) return;
 
-      // Use ref to avoid stale activeConversation reference
       const activeConv = activeConversationRef.current;
       if (activeConv && message.conversation === activeConv._id) {
         setMessages((prev) => {
-          // Prevent duplicate by checking if message already exists
           if (prev.some((m) => m._id === message._id)) return prev;
           return [...prev, message];
         });
       }
-      // Refresh conversation list
       API.get("/chat/conversations").then(({ data }) =>
         setConversations(data.conversations || [])
       );
+    };
+
+    const handleMessageUpdated = (updatedMsg) => {
+      const activeConv = activeConversationRef.current;
+      if (activeConv && updatedMsg.conversation === activeConv._id) {
+        setMessages((prev) =>
+          prev.map((m) => (m._id === updatedMsg._id ? updatedMsg : m))
+        );
+      }
+    };
+
+    const handleMessageDeleted = ({ messageId, conversationId }) => {
+      const activeConv = activeConversationRef.current;
+      if (activeConv && conversationId === activeConv._id) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m._id === messageId
+              ? {
+                  ...m,
+                  content: "This message was deleted",
+                  type: "deleted",
+                  deletedAt: new Date(),
+                }
+              : m
+          )
+        );
+      }
     };
 
     const handleTyping = ({ conversationId, userId }) => {
@@ -127,15 +165,26 @@ const Chat = () => {
     };
 
     s.on("receive_message", handleReceiveMessage);
+    s.on("message_updated", handleMessageUpdated);
+    s.on("message_deleted", handleMessageDeleted);
     s.on("is_typing", handleTyping);
     s.on("stopped_typing", handleStopTyping);
 
     return () => {
       s.off("receive_message", handleReceiveMessage);
+      s.off("message_updated", handleMessageUpdated);
+      s.off("message_deleted", handleMessageDeleted);
       s.off("is_typing", handleTyping);
       s.off("stopped_typing", handleStopTyping);
     };
   }, [socket?.current, user._id]);
+
+  // Focus edit input when entering edit mode
+  useEffect(() => {
+    if (editingMessage && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [editingMessage]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -155,13 +204,58 @@ const Chat = () => {
         content: messageText.trim(),
         type: "text",
       });
-      // Use functional update to avoid stale closure
       setMessages((prev) => [...prev, data.message]);
       setMessageText("");
       emitStopTyping(activeConversation._id, user._id);
     } catch {
       toast.error("Failed to send message");
     }
+  };
+
+  const handleEditMessage = async (msgId, newContent) => {
+    if (!newContent.trim()) return;
+    try {
+      const { data } = await API.put(`/chat/messages/${msgId}`, {
+        content: newContent.trim(),
+      });
+      setMessages((prev) =>
+        prev.map((m) => (m._id === msgId ? data.message : m))
+      );
+      setEditingMessage(null);
+      setEditText("");
+      toast.success("Message updated");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update message");
+    }
+  };
+
+  const handleDeleteMessage = async (msgId) => {
+    if (!window.confirm("Delete this message?")) return;
+    try {
+      await API.delete(`/chat/messages/${msgId}`);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === msgId
+            ? {
+                ...m,
+                content: "This message was deleted",
+                type: "deleted",
+                deletedAt: new Date(),
+              }
+            : m
+        )
+      );
+      setMenuOpenId(null);
+      toast.success("Message deleted");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete message");
+    }
+  };
+
+  const startEdit = (msg) => {
+    setEditingMessage(msg._id);
+    setEditText(msg.content);
+    setMenuOpenId(null);
   };
 
   const handleTyping = () => {
@@ -312,10 +406,14 @@ const Chat = () => {
               messages.map((msg) => {
                 const isMine =
                   msg.sender?._id === user._id || msg.sender === user._id;
+                const isDeleted = msg.type === "deleted";
+                const isEditing = editingMessage === msg._id;
                 return (
                   <div
                     key={msg._id}
-                    className={`chat ${isMine ? "chat-end" : "chat-start"}`}
+                    className={`chat ${
+                      isMine ? "chat-end" : "chat-start"
+                    } group`}
                   >
                     <div className="chat-image avatar">
                       <div className="w-8 rounded-full">
@@ -328,41 +426,115 @@ const Chat = () => {
                         )}
                       </div>
                     </div>
-                    <div className="chat-header text-xs opacity-50 mb-0.5">
-                      {msg.sender?.name || "User"}
-                      <time className="ml-2 text-[10px]">
+                    <div className="chat-header text-xs opacity-50 mb-0.5 flex items-center gap-2">
+                      <span>{msg.sender?.name || "User"}</span>
+                      <time className="text-[10px]">
                         {new Date(msg.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
                       </time>
+                      {msg.editedAt && !isDeleted && (
+                        <span className="text-[9px] opacity-60">(edited)</span>
+                      )}
                     </div>
                     <div
-                      className={`chat-bubble text-sm ${
+                      className={`chat-bubble text-sm relative ${
                         isMine ? "chat-bubble-primary" : ""
-                      }`}
+                      } ${isDeleted ? "opacity-50 italic" : ""}`}
                     >
-                      {msg.type === "text" && msg.content}
-                      {msg.type === "image" && (
+                      {isEditing ? (
+                        <div className="flex gap-1 min-w-[200px]">
+                          <input
+                            ref={editInputRef}
+                            type="text"
+                            className="input input-bordered input-xs flex-1 text-sm"
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter")
+                                handleEditMessage(msg._id, editText);
+                              if (e.key === "Escape") setEditingMessage(null);
+                            }}
+                          />
+                          <button
+                            onClick={() => handleEditMessage(msg._id, editText)}
+                            className="btn btn-ghost btn-xs btn-square text-success"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setEditingMessage(null)}
+                            className="btn btn-ghost btn-xs btn-square text-error"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : isDeleted ? (
+                        <span className="text-xs italic">
+                          This message was deleted
+                        </span>
+                      ) : msg.type === "text" ? (
+                        <span>{msg.content}</span>
+                      ) : msg.type === "image" ? (
                         <img
                           src={msg.fileUrl}
                           alt=""
-                          className="max-w-xs rounded-lg"
+                          className="max-w-[200px] rounded-lg"
                         />
-                      )}
-                      {msg.type === "file" && (
+                      ) : msg.type === "file" ? (
                         <a
                           href={msg.fileUrl}
                           target="_blank"
-                          className="underline"
+                          className="underline text-sm"
                         >
                           {msg.fileName || "Download File"}
                         </a>
+                      ) : (
+                        <span>{msg.content}</span>
                       )}
                     </div>
-                    {isMine && (
+                    {isMine && !isDeleted && (
+                      <div className="chat-footer flex items-center gap-1 mt-0.5">
+                        <span className="text-[10px] opacity-50">
+                          {msg.readBy?.length > 1 ? "✓✓ Read" : "✓ Sent"}
+                        </span>
+                        {/* Edit/Delete dropdown */}
+                        <div className="relative">
+                          <button
+                            onClick={() =>
+                              setMenuOpenId(
+                                menuOpenId === msg._id ? null : msg._id
+                              )
+                            }
+                            className="btn btn-ghost btn-xs btn-square opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <MoreHorizontal className="w-3 h-3" />
+                          </button>
+                          {menuOpenId === msg._id && (
+                            <div className="absolute bottom-full right-0 mb-1 bg-base-100 shadow-lg rounded-xl border border-base-300 p-1 z-10 min-w-[120px]">
+                              {msg.type === "text" && (
+                                <button
+                                  onClick={() => startEdit(msg)}
+                                  className="flex items-center gap-2 w-full px-3 py-2 text-xs rounded-lg hover:bg-base-200 transition-colors"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" /> Edit
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDeleteMessage(msg._id)}
+                                className="flex items-center gap-2 w-full px-3 py-2 text-xs rounded-lg hover:bg-error/10 text-error transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {isMine && isDeleted && (
                       <div className="chat-footer text-[10px] opacity-50 mt-0.5">
-                        {msg.readBy?.length > 1 ? "✓✓ Read" : "✓ Sent"}
+                        Deleted
                       </div>
                     )}
                   </div>
