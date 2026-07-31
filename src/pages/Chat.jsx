@@ -11,6 +11,8 @@ import {
   Check,
   X,
   MoreHorizontal,
+  Eraser,
+  AlertTriangle,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import { useSocket } from "../context/SocketContext";
@@ -252,6 +254,35 @@ const Chat = () => {
     }
   };
 
+  const handleClearChat = async (conversationId) => {
+    try {
+      await API.delete(`/chat/conversations/${conversationId}/clear`);
+      setMessages([]);
+      // Refresh conversation list
+      const { data } = await API.get("/chat/conversations");
+      setConversations(data.conversations || []);
+      toast.success("Chat cleared");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to clear chat");
+    }
+  };
+
+  const handleDeleteChat = async (conversationId) => {
+    try {
+      await API.delete(`/chat/conversations/${conversationId}`);
+      setActiveConversation(null);
+      setMessages([]);
+      // Refresh conversation list
+      const { data } = await API.get("/chat/conversations");
+      setConversations(data.conversations || []);
+      toast.success("Conversation deleted");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to delete conversation"
+      );
+    }
+  };
+
   const startEdit = (msg) => {
     setEditingMessage(msg._id);
     setEditText(msg.content);
@@ -354,46 +385,94 @@ const Chat = () => {
       {activeConversation ? (
         <div className="flex-1 flex flex-col">
           {/* Chat Header */}
-          <div className="flex items-center gap-3 p-4 border-b border-base-300 bg-base-100">
-            <button
-              className="btn btn-ghost btn-circle btn-sm md:hidden"
-              onClick={() => setActiveConversation(null)}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <Link
-              to={`/profile/${getOtherParticipant(activeConversation)?._id}`}
-              className="flex items-center gap-3"
-            >
-              <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden">
-                {getOtherParticipant(activeConversation)?.profilePic?.url ? (
-                  <img
-                    src={getOtherParticipant(activeConversation).profilePic.url}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold">
-                    {getOtherParticipant(activeConversation)?.name?.charAt(0) ||
-                      "?"}
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="font-semibold text-sm">
-                  {getOtherParticipant(activeConversation)?.name}
-                </p>
-                <p className="text-xs text-base-content/50">
-                  {isUserOnline(
-                    getOtherParticipant(activeConversation)?._id
-                  ) ? (
-                    <span className="text-success">Online</span>
+          <div className="flex items-center justify-between p-4 border-b border-base-300 bg-base-100">
+            <div className="flex items-center gap-3">
+              <button
+                className="btn btn-ghost btn-circle btn-sm md:hidden"
+                onClick={() => setActiveConversation(null)}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <Link
+                to={`/profile/${getOtherParticipant(activeConversation)?._id}`}
+                className="flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden">
+                  {getOtherParticipant(activeConversation)?.profilePic?.url ? (
+                    <img
+                      src={
+                        getOtherParticipant(activeConversation).profilePic.url
+                      }
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    "Offline"
+                    <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold">
+                      {getOtherParticipant(activeConversation)?.name?.charAt(
+                        0
+                      ) || "?"}
+                    </div>
                   )}
-                </p>
-              </div>
-            </Link>
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">
+                    {getOtherParticipant(activeConversation)?.name}
+                  </p>
+                  <p className="text-xs text-base-content/50">
+                    {isUserOnline(
+                      getOtherParticipant(activeConversation)?._id
+                    ) ? (
+                      <span className="text-success">Online</span>
+                    ) : (
+                      "Offline"
+                    )}
+                  </p>
+                </div>
+              </Link>
+            </div>
+            {/* Chat actions dropdown */}
+            <div className="dropdown dropdown-end">
+              <button tabIndex={0} className="btn btn-ghost btn-circle btn-sm">
+                <MoreHorizontal className="w-5 h-5" />
+              </button>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-xl border border-base-300 w-48 mt-2"
+              >
+                <li>
+                  <button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Clear all messages in this conversation?"
+                        )
+                      ) {
+                        handleClearChat(activeConversation._id);
+                      }
+                    }}
+                    className="flex items-center gap-2 py-2"
+                  >
+                    <Eraser className="w-4 h-4" /> Clear Chat
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Delete this entire conversation? This cannot be undone."
+                        )
+                      ) {
+                        handleDeleteChat(activeConversation._id);
+                      }
+                    }}
+                    className="flex items-center gap-2 py-2 text-error"
+                  >
+                    <Trash2 className="w-4 h-4" /> Delete Chat
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Messages */}
