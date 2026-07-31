@@ -40,6 +40,7 @@ const CreateJob = () => {
     institutionName: "",
     roleType: "teacher",
     isPaid: false,
+    currency: "INR",
     stipend: "",
     location: "onsite",
     requiredQualifications: "",
@@ -109,6 +110,7 @@ const CreateJob = () => {
 
     if (form.stipend && form.isPaid) {
       formData.append("stipend", form.stipend);
+      formData.append("currency", form.currency);
     }
     if (form.maxApplicants) {
       formData.append("maxApplicants", form.maxApplicants);
@@ -282,22 +284,35 @@ const CreateJob = () => {
 
             {/* Stipend (only if paid) */}
             {form.isPaid && (
-              <div className="form-control">
-                <label className="label pb-1">
-                  <span className="label-text font-medium text-sm flex items-center gap-1.5">
-                    <DollarSign className="w-3.5 h-3.5" />
-                    Stipend / Salary (₹)
-                  </span>
-                </label>
-                <input
-                  type="number"
-                  name="stipend"
-                  className="input input-bordered w-full h-12 text-sm"
-                  placeholder="e.g., 50000"
-                  value={form.stipend}
-                  onChange={handleChange}
-                  min="0"
-                />
+              <div className="space-y-3">
+                <div className="form-control">
+                  <label className="label pb-1">
+                    <span className="label-text font-medium text-sm flex items-center gap-1.5">
+                      {/* <DollarSign className="w-3.5 h-3.5" /> */}
+                      Stipend / Salary
+                    </span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      name="stipend"
+                      className="input input-bordered flex-1 h-12 text-sm"
+                      placeholder="e.g., 50000"
+                      value={form.stipend}
+                      onChange={handleChange}
+                      min="0"
+                    />
+                    <select
+                      name="currency"
+                      className="select select-bordered w-24 h-12 text-sm"
+                      value={form.currency}
+                      onChange={handleChange}
+                    >
+                      <option value="INR">₹ INR</option>
+                      <option value="USD">$ USD</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             )}
 

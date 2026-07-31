@@ -1,12 +1,27 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Briefcase, MapPin, DollarSign, Clock, Plus } from "lucide-react";
+import {
+  Briefcase,
+  MapPin,
+  Clock,
+  Plus,
+  Search,
+  Filter,
+  DollarSign,
+} from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
 import MatchedJobsRow from "../components/job/MatchedJobsRow";
 import QuickApplyBtn from "../components/job/QuickApplyBtn";
 
 const CAN_POST_JOBS = ["teacher", "professor", "hod", "principal"];
+
+const formatStipend = (stipend, currency, isPaid) => {
+  if (!isPaid) return "Unpaid";
+  const formatted = Number(stipend).toLocaleString();
+  if (currency === "USD") return `$${formatted}`;
+  return `₹${formatted}`;
+};
 
 const Jobs = () => {
   const { user } = useAuthStore();
@@ -61,15 +76,32 @@ const Jobs = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <select
-            className="select select-bordered select-sm text-sm"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="all">All Jobs</option>
-            <option value="paid">Paid Only</option>
-            <option value="unpaid">Unpaid Only</option>
-          </select>
+          <div className="join">
+            <button
+              className={`btn btn-sm join-item ${
+                filter === "all" ? "btn-primary" : "btn-ghost"
+              }`}
+              onClick={() => setFilter("all")}
+            >
+              All
+            </button>
+            <button
+              className={`btn btn-sm join-item ${
+                filter === "paid" ? "btn-primary" : "btn-ghost"
+              }`}
+              onClick={() => setFilter("paid")}
+            >
+              Paid
+            </button>
+            <button
+              className={`btn btn-sm join-item ${
+                filter === "unpaid" ? "btn-primary" : "btn-ghost"
+              }`}
+              onClick={() => setFilter("unpaid")}
+            >
+              Unpaid
+            </button>
+          </div>
 
           {canPost && (
             <Link to="/jobs/create" className="btn btn-primary btn-sm gap-1.5">
@@ -82,16 +114,21 @@ const Jobs = () => {
 
       {filtered.length === 0 ? (
         <div className="text-center py-20">
-          <Briefcase className="w-16 h-16 text-base-content/15 mx-auto mb-4" />
-          <p className="text-base-content/40 font-medium">No jobs found</p>
+          <div className="w-20 h-20 bg-base-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Briefcase className="w-10 h-10 text-base-content/20" />
+          </div>
+          <p className="text-base-content/40 font-medium mb-1">No jobs found</p>
+          <p className="text-sm text-base-content/30">
+            Try adjusting your filters or check back later
+          </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filtered.map((job) => (
             <Link
               key={job._id}
               to={`/jobs/${job._id}`}
-              className="card bg-base-100 border border-base-300/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all p-5 block"
+              className="card bg-base-100 border border-base-300/50 shadow-sm hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 transition-all p-4 block"
             >
               <div className="flex items-start gap-4">
                 {/* Job image or institution logo */}
@@ -109,8 +146,8 @@ const Jobs = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Briefcase className="w-6 h-6 text-base-content/40" />
+                    <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                      <Briefcase className="w-6 h-6 text-primary/40" />
                     </div>
                   )}
                 </div>
@@ -118,30 +155,38 @@ const Jobs = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-base mb-1.5">
+                      <h3 className="font-semibold text-base mb-0.5">
                         {job.title}
                       </h3>
-                      <p className="text-sm text-base-content/50 mb-3">
+                      <p className="text-sm text-base-content/50 mb-2.5">
                         {job.institutionName || "Unknown Institution"}
                       </p>
                       <div className="flex flex-wrap items-center gap-3 text-xs">
                         <span className="flex items-center gap-1 text-base-content/50">
                           <MapPin className="w-3.5 h-3.5" />
-                          {job.location}
+                          {job.location === "remote"
+                            ? "Remote"
+                            : job.location === "hybrid"
+                            ? "Hybrid"
+                            : "On-site"}
                         </span>
                         <span
                           className={`flex items-center gap-1 font-medium ${
                             job.isPaid ? "text-success" : "text-base-content/40"
                           }`}
                         >
-                          <DollarSign className="w-3.5 h-3.5" />
-                          {job.isPaid
-                            ? `₹${job.stipend?.toLocaleString() || 0}`
-                            : "Unpaid"}
+                          {/* <DollarSign className="w-3.5 h-3.5" /> */}
+                          {formatStipend(job.stipend, job.currency, job.isPaid)}
                         </span>
                         <span className="flex items-center gap-1 text-base-content/40">
                           <Clock className="w-3.5 h-3.5" />
-                          {new Date(job.deadline).toLocaleDateString()}
+                          {new Date(job.deadline).toLocaleDateString("en-IN", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                        <span className="badge badge-xs badge-soft badge-primary font-medium">
+                          {job.roleType}
                         </span>
                       </div>
                     </div>
@@ -150,12 +195,10 @@ const Jobs = () => {
                         jobId={job._id}
                         alreadyApplied={job.applicants?.includes?.(user?._id)}
                       />
-                      <span className="badge badge-sm badge-soft badge-primary text-xs font-medium">
-                        {job.roleType}
-                      </span>
                       {job.applicants?.length > 0 && (
                         <span className="text-xs text-base-content/30">
-                          {job.applicants.length} applicants
+                          {job.applicants.length} applicant
+                          {job.applicants.length !== 1 ? "s" : ""}
                         </span>
                       )}
                     </div>

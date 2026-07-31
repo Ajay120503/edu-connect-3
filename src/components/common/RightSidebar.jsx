@@ -219,9 +219,11 @@ const RightSidebar = () => {
                                 : "text-base-content/40"
                             }`}
                           >
-                            <DollarSign className="w-3 h-3" />
+                            {/* <DollarSign className="w-3 h-3" /> */}
                             {job.isPaid
-                              ? `₹${job.stipend?.toLocaleString() || 0}`
+                              ? job.currency === "USD"
+                                ? `$${Number(job.stipend).toLocaleString()}`
+                                : `₹${Number(job.stipend).toLocaleString()}`
                               : "Volunteer"}
                           </span>
                         </div>

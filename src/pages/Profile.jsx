@@ -600,7 +600,10 @@ const Profile = () => {
                             {job.isPaid ? (
                               <span className="badge badge-xs badge-success badge-soft">
                                 Paid
-                                {job.stipend > 0 && ` · ₹${job.stipend}`}
+                                {job.stipend > 0 &&
+                                  ` · ${job.currency === "USD" ? "$" : "₹"}${
+                                    job.stipend
+                                  }`}
                               </span>
                             ) : (
                               <span className="badge badge-xs badge-ghost">
