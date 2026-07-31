@@ -285,8 +285,17 @@ const Chat = () => {
 
   const startEdit = (msg) => {
     setEditingMessage(msg._id);
-    setEditText(msg.content);
+    setMessageText(msg.content);
     setMenuOpenId(null);
+    // Focus the input after state update
+    setTimeout(() => {
+      document.querySelector('input[placeholder="Type a message..."]')?.focus();
+    }, 50);
+  };
+
+  const cancelEdit = () => {
+    setEditingMessage(null);
+    setMessageText("");
   };
 
   const handleTyping = () => {
@@ -522,34 +531,7 @@ const Chat = () => {
                         isMine ? "chat-bubble-primary" : ""
                       } ${isDeleted ? "opacity-50 italic" : ""}`}
                     >
-                      {isEditing ? (
-                        <div className="flex gap-1 min-w-[200px]">
-                          <input
-                            ref={editInputRef}
-                            type="text"
-                            className="input input-bordered input-xs flex-1 text-sm"
-                            value={editText}
-                            onChange={(e) => setEditText(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter")
-                                handleEditMessage(msg._id, editText);
-                              if (e.key === "Escape") setEditingMessage(null);
-                            }}
-                          />
-                          <button
-                            onClick={() => handleEditMessage(msg._id, editText)}
-                            className="btn btn-ghost btn-xs btn-square text-success"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => setEditingMessage(null)}
-                            className="btn btn-ghost btn-xs btn-square text-error"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ) : isDeleted ? (
+                      {isDeleted ? (
                         <span className="text-xs italic">
                           This message was deleted
                         </span>
@@ -647,31 +629,63 @@ const Chat = () => {
           </div>
 
           {/* Message Input */}
-          <form
-            onSubmit={handleSendMessage}
-            className="p-4 border-t border-base-300 bg-base-100 flex gap-2"
-          >
-            <button type="button" className="btn btn-ghost btn-circle btn-sm">
-              <ImagePlus className="w-5 h-5" />
-            </button>
-            <input
-              type="text"
-              className="input input-bordered flex-1 rounded-full"
-              placeholder="Type a message..."
-              value={messageText}
-              onChange={(e) => {
-                setMessageText(e.target.value);
-                handleTyping();
+          <div className="border-t border-base-300 bg-base-100">
+            {editingMessage && (
+              <div className="flex items-center justify-between px-4 py-2 bg-primary/5 border-b border-primary/10">
+                <div className="flex items-center gap-2 text-xs text-primary">
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Editing message</span>
+                </div>
+                <button
+                  onClick={cancelEdit}
+                  className="btn btn-ghost btn-xs btn-circle"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (editingMessage) {
+                  handleEditMessage(editingMessage, messageText);
+                } else {
+                  handleSendMessage(e);
+                }
               }}
-            />
-            <button
-              type="submit"
-              className="btn btn-primary btn-circle btn-sm"
-              disabled={!messageText.trim()}
+              className="p-4 flex gap-2"
             >
-              <Send className="w-4 h-4" />
-            </button>
-          </form>
+              <button type="button" className="btn btn-ghost btn-circle btn-sm">
+                <ImagePlus className="w-5 h-5" />
+              </button>
+              <input
+                ref={editInputRef}
+                type="text"
+                className="input input-bordered flex-1 rounded-full"
+                placeholder={
+                  editingMessage ? "Edit message..." : "Type a message..."
+                }
+                value={messageText}
+                onChange={(e) => {
+                  setMessageText(e.target.value);
+                  if (!editingMessage) handleTyping();
+                }}
+              />
+              <button
+                type="submit"
+                className={`btn btn-circle btn-sm ${
+                  editingMessage ? "btn-success" : "btn-primary"
+                }`}
+                disabled={!messageText.trim()}
+              >
+                {editingMessage ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       ) : (
         <div className="hidden md:flex flex-1 items-center justify-center text-base-content/40">
