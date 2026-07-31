@@ -428,7 +428,7 @@ const Profile = () => {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
+                        <div className="w-full h-full bg-primary/5 flex items-center justify-center p-4">
                           <p className="text-xs text-base-content/50 text-center line-clamp-3">
                             {post.text || "No caption"}
                           </p>

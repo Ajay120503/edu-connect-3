@@ -295,7 +295,7 @@ const PostDetail = () => {
 
         {/* Add comment */}
         <div className="flex gap-3 mb-6 bg-base-200/50 rounded-2xl p-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center flex-shrink-0 ring-2 ring-base-100 overflow-hidden">
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 ring-2 ring-base-100 overflow-hidden">
             {user?.profilePic?.url ? (
               <img
                 src={user.profilePic.url}
@@ -360,7 +360,7 @@ const PostDetail = () => {
               return (
                 <div key={comment._id} className="group">
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-base-300 to-base-200 flex items-center justify-center flex-shrink-0 ring-2 ring-base-100 overflow-hidden">
+                    <div className="w-8 h-8 rounded-full bg-placeholder flex items-center justify-center flex-shrink-0 ring-2 ring-base-100 overflow-hidden">
                       {commentAuthor.profilePic?.url ? (
                         <img
                           src={commentAuthor.profilePic.url}
@@ -417,7 +417,7 @@ const PostDetail = () => {
                               reply.author || reply.user || {};
                             return (
                               <div key={reply._id} className="flex gap-2">
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-base-300 to-base-200 flex items-center justify-center flex-shrink-0 ring-1 ring-base-100 overflow-hidden">
+                                <div className="w-6 h-6 rounded-full bg-placeholder flex items-center justify-center flex-shrink-0 ring-1 ring-base-100 overflow-hidden">
                                   {replyAuthor.profilePic?.url ? (
                                     <img
                                       src={replyAuthor.profilePic.url}

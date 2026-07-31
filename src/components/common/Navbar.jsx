@@ -29,10 +29,10 @@ const Navbar = () => {
     <nav className="hidden md:flex items-center justify-between px-4 lg:px-6 py-2.5 bg-base-100/95 backdrop-blur-md border-b border-base-300/80 sticky top-0 z-50 shadow-sm">
       {/* Logo */}
       <Link to="/feed" className="flex items-center gap-2 shrink-0">
-        <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-sm">
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
           <GraduationCap className="w-4.5 h-4.5 text-white" />
         </div>
-        <span className="text-lg lg:text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-heading hidden lg:block">
+        <span className="text-lg lg:text-xl font-bold text-primary hidden lg:block">
           EduConnect
         </span>
       </Link>

@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => ({
               name: 'EduConnect',
               short_name: 'EduConnect',
               description: 'Academic Social Network - Where Academic Careers Begin',
-              theme_color: '#4F46E5',
-              background_color: '#fff',
+              theme_color: '#1A56DB',
+              background_color: '#F8FAFF',
               display: 'standalone',
               start_url: '/',
               icons: [

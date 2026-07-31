@@ -8,6 +8,7 @@ import {
   Sparkles,
   TrendingUp,
   ArrowRight,
+  GraduationCap,
 } from "lucide-react";
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
@@ -54,7 +55,7 @@ const RightSidebar = () => {
     <aside className="hidden lg:flex flex-col w-80 bg-base-100 border-l border-base-200/80 sticky top-0 h-screen overflow-hidden">
       <div className="flex-1 overflow-y-auto scrollbar-thin p-5 space-y-5">
         {/* Who to Follow */}
-        <div className="card bg-gradient-to-br from-base-200/80 to-base-200/40 border border-base-300/30 shadow-sm">
+        <div className="card bg-base-200/50 border border-base-300/30 shadow-sm">
           <div className="card-body p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-sm flex items-center gap-2">
@@ -97,14 +98,14 @@ const RightSidebar = () => {
               </div>
             ) : (
               <div className="space-y-1">
-                {suggestedUsers.slice(0, 5).map((u) => (
+                {suggestedUsers.map((u) => (
                   <Link
                     key={u._id}
                     to={`/profile/${u._id}`}
                     className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-base-200/70 transition-all group"
                   >
                     <div className="relative flex-shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30 overflow-hidden ring-2 ring-base-100 shadow-sm">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 overflow-hidden ring-2 ring-base-100 shadow-sm">
                         {u.profilePic?.url ? (
                           <img
                             src={u.profilePic.url}
@@ -145,7 +146,7 @@ const RightSidebar = () => {
         </div>
 
         {/* Trending Jobs */}
-        <div className="card bg-gradient-to-br from-base-200/80 to-base-200/40 border border-base-300/30 shadow-sm">
+        <div className="card bg-base-200/50 border border-base-300/30 shadow-sm">
           <div className="card-body p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-sm flex items-center gap-2">
@@ -189,7 +190,7 @@ const RightSidebar = () => {
               </div>
             ) : (
               <div className="space-y-1">
-                {recentJobs.slice(0, 5).map((job, idx) => (
+                {recentJobs.map((job) => (
                   <Link
                     key={job._id}
                     to={`/jobs/${job._id}`}
@@ -251,7 +252,7 @@ const RightSidebar = () => {
         </div>
 
         {/* Quick Tip Card */}
-        <div className="card bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10 shadow-sm">
+        <div className="card bg-primary/5 border border-primary/10 shadow-sm">
           <div className="card-body p-4">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -276,10 +277,10 @@ const RightSidebar = () => {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-base-200/80 bg-base-200/30 flex-shrink-0">
+      <div className="p-4 border-t border-base-200/80 flex-shrink-0">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-5 h-5 bg-gradient-to-br from-primary to-secondary rounded flex items-center justify-center">
-            <span className="text-[8px] text-white font-bold">E</span>
+          <div className="w-5 h-5 bg-primary/10 rounded flex items-center justify-center">
+            <GraduationCap className="w-3 h-3 text-primary" />
           </div>
           <span className="text-xs font-semibold text-base-content/40">
             EduConnect

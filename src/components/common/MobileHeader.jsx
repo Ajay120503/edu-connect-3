@@ -33,12 +33,10 @@ const MobileHeader = () => {
         <div className="flex items-center justify-between px-3 py-2">
           {/* Logo */}
           <Link to="/feed" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
               <GraduationCap className="w-4.5 h-4.5 text-white" />
             </div>
-            <span className="text-base font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-heading">
-              EduConnect
-            </span>
+            <span className="text-base font-bold text-primary">EduConnect</span>
           </Link>
 
           {/* Right side: search + menu */}

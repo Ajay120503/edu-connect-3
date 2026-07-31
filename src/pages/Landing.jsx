@@ -77,7 +77,7 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative pt-28 pb-20 px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 -z-10" />
+        <div className="absolute inset-0 bg-primary/[0.02] -z-10" />
         <div className="absolute top-20 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10" />
 
@@ -88,10 +88,7 @@ const Landing = () => {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold font-heading text-neutral leading-[1.1] mb-6">
-            Where Academic{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Careers Begin
-            </span>
+            Where Academic <span className="text-primary">Careers Begin</span>
           </h1>
           <p className="text-lg md:text-xl text-base-content/60 max-w-2xl mx-auto mb-10 leading-relaxed">
             Connect students with teachers, find teaching roles, and build your

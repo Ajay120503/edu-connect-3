@@ -368,7 +368,7 @@ const Feed = () => {
                       to={`/profile/${post.author?._id}`}
                       className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                     >
-                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
+                      <div className="w-11 h-11 rounded-full bg-primary/10 overflow-hidden shrink-0 ring-2 ring-base-100 shadow-sm">
                         {post.author?.profilePic?.url ? (
                           <img
                             src={post.author.profilePic.url}

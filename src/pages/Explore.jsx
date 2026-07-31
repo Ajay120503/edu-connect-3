@@ -232,7 +232,7 @@ const Explore = () => {
                     to={`/profile/${u._id}`}
                     className="flex items-center gap-4 flex-1 min-w-0"
                   >
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm group-hover:ring-primary/30 transition-all">
+                    <div className="w-14 h-14 rounded-full bg-primary/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm group-hover:ring-primary/30 transition-all">
                       {u.profilePic?.url ? (
                         <img
                           src={u.profilePic.url}
@@ -355,7 +355,7 @@ const Explore = () => {
                     to={`/profile/${u._id}`}
                     className="card bg-base-100 border border-base-300/30 rounded-2xl p-4 text-center hover:shadow-md hover:border-primary/20 hover:-translate-y-1 transition-all group"
                   >
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 overflow-hidden ring-2 ring-base-100 shadow-sm mx-auto group-hover:ring-primary/30 transition-all">
+                    <div className="w-14 h-14 rounded-full bg-primary/10 overflow-hidden ring-2 ring-base-100 shadow-sm mx-auto group-hover:ring-primary/30 transition-all">
                       {u.profilePic?.url ? (
                         <img
                           src={u.profilePic.url}
@@ -425,7 +425,7 @@ const Explore = () => {
                       to={`/profile/${u._id}`}
                       className="flex items-center gap-4 flex-1 min-w-0"
                     >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-success/20 to-primary/20 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm group-hover:ring-primary/30 transition-all">
+                      <div className="w-12 h-12 rounded-full bg-success/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm group-hover:ring-primary/30 transition-all">
                         {u.profilePic?.url ? (
                           <img
                             src={u.profilePic.url}
@@ -477,7 +477,7 @@ const Explore = () => {
 
           {/* Bottom CTA */}
           <div className="text-center pb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-primary/10">
+            <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-primary/10">
               <Users className="w-8 h-8 text-primary/30" />
             </div>
             <p className="text-sm text-base-content/40 font-medium">

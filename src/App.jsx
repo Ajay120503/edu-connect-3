@@ -67,12 +67,10 @@ function App() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-base-100">
         <div className="text-center">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/25">
+          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-primary font-heading">
-            EduConnect
-          </h1>
+          <h1 className="text-3xl font-bold text-primary">EduConnect</h1>
           <p className="mt-2 text-base-content/60">
             Where Academic Careers Begin
           </p>

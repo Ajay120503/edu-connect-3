@@ -59,7 +59,7 @@ const BottomNav = () => {
             onClick={() => setShowCreatePost(true)}
             className="flex flex-col items-center gap-0.5 px-2 py-1 -mt-5"
           >
-            <div className="w-11 h-11 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-xl hover:scale-105 transition-all">
+            <div className="w-11 h-11 bg-primary rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all">
               <PlusCircle className="w-6 h-6 text-white" />
             </div>
             <span className="text-[10px] font-medium text-primary leading-tight">

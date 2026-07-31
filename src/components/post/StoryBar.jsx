@@ -74,9 +74,7 @@ const StoryBar = ({ onAddStory }) => {
             >
               <div
                 className={`w-16 h-16 rounded-full p-0.5 ${
-                  hasUnseen
-                    ? "bg-gradient-to-tr from-primary via-secondary to-accent"
-                    : "bg-base-300"
+                  hasUnseen ? "bg-primary" : "bg-base-300"
                 }`}
               >
                 <div className="w-full h-full rounded-full bg-base-100 overflow-hidden border-2 border-base-100 flex items-center justify-center">
