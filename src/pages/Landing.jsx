@@ -158,7 +158,8 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full mb-4">
-              <Sparkles className="w-3 h-3" /> Simple 3-step process
+              <Sparkles className="w-3 h-3" />
+              Simple 3-step process
             </div>
             <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
               How It <span className="text-primary">Works</span>
