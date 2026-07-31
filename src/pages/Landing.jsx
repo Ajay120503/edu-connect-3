@@ -6,6 +6,10 @@ import {
   ArrowRight,
   CheckCircle2,
   Star,
+  Sparkles,
+  Search,
+  MessageCircle,
+  TrendingUp,
 } from "lucide-react";
 
 const Landing = () => {
@@ -15,34 +19,43 @@ const Landing = () => {
       title: "Connect & Network",
       desc: "Build your academic network with students, teachers, and institutions worldwide.",
       color: "primary",
+      bg: "bg-primary/10",
+      textColor: "text-primary",
     },
     {
       icon: Briefcase,
       title: "Find Opportunities",
       desc: "Discover teaching jobs, internships, and research roles posted by verified institutions.",
-      color: "secondary",
+      color: "accent",
+      bg: "bg-accent/10",
+      textColor: "text-accent",
     },
     {
       icon: GraduationCap,
       title: "Grow Your Career",
       desc: "Share achievements, get noticed by recruiters, and advance your academic career.",
-      color: "accent",
+      color: "secondary",
+      bg: "bg-secondary/10",
+      textColor: "text-secondary",
     },
   ];
 
   const steps = [
     {
       step: "01",
+      icon: Search,
       title: "Create Profile",
-      desc: "Sign up as a student or teacher and build your academic profile.",
+      desc: "Sign up as a student or teacher and build your academic profile in minutes.",
     },
     {
       step: "02",
+      icon: MessageCircle,
       title: "Connect & Explore",
-      desc: "Follow peers, browse posts, and search for opportunities.",
+      desc: "Follow peers, browse posts, search for opportunities, and grow your network.",
     },
     {
       step: "03",
+      icon: TrendingUp,
       title: "Apply & Grow",
       desc: "Apply to jobs, chat with connections, and track your career growth.",
     },
@@ -51,24 +64,21 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-base-100 overflow-x-hidden">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-base-100/80 backdrop-blur-lg border-b border-base-300/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-base-100/95 backdrop-blur-md border-b border-base-300/50">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
+            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-sm">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-primary font-heading tracking-tight">
+            <span className="text-lg font-bold text-primary font-heading tracking-tight">
               EduConnect
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link to="/login" className="btn btn-ghost btn-sm font-medium">
               Sign In
             </Link>
-            <Link
-              to="/register"
-              className="btn btn-primary btn-sm shadow-lg shadow-primary/25"
-            >
+            <Link to="/register" className="btn btn-primary btn-sm shadow-sm">
               Get Started
             </Link>
           </div>
@@ -76,13 +86,11 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-20 px-6 overflow-hidden">
+      <section className="relative pt-36 pb-24 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-primary/[0.02] -z-10" />
-        <div className="absolute top-20 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl -z-10" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10" />
 
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full mb-8">
             <Star className="w-3.5 h-3.5 fill-current" />
             Academic Social Network
           </div>
@@ -98,7 +106,7 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/register?role=student"
-              className="btn btn-primary btn-lg gap-2.5 shadow-xl shadow-primary/25 px-8 text-base"
+              className="btn btn-primary btn-lg gap-2.5 shadow-sm px-8 text-base"
             >
               <GraduationCap className="w-5 h-5" /> Join as Student
             </Link>
@@ -125,10 +133,33 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Stats Bar */}
+      <section className="py-12 px-6 bg-primary">
+        <div className="max-w-5xl mx-auto grid grid-cols-3 gap-8 text-center">
+          {[
+            { value: "10,000+", label: "Students" },
+            { value: "5,000+", label: "Teachers" },
+            { value: "2,000+", label: "Job Posts" },
+          ].map((stat, i) => (
+            <div key={i} className="space-y-1">
+              <div className="text-3xl md:text-4xl font-extrabold font-heading text-white">
+                {stat.value}
+              </div>
+              <div className="text-white/60 text-sm font-medium">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* How It Works */}
-      <section className="py-24 px-6 bg-base-200/50">
+      <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full mb-4">
+              <Sparkles className="w-3 h-3" /> Simple 3-step process
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
               How It <span className="text-primary">Works</span>
             </h2>
@@ -139,32 +170,36 @@ const Landing = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {steps.map((s, i) => (
-              <div key={i} className="relative group">
-                <div className="card bg-base-100 border border-base-300/50 p-8 text-center hover:shadow-xl hover:border-primary/30 transition-all duration-300 h-full">
-                  <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:bg-primary/20 transition-colors">
-                    <span className="text-xl font-bold text-primary">
-                      {s.step}
-                    </span>
+            {steps.map((s, i) => {
+              const Icon = s.icon;
+              return (
+                <div key={i} className="relative group">
+                  <div className="card bg-base-100 border border-base-300/50 p-8 text-center hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 h-full">
+                    <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:bg-primary/20 transition-colors">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="text-xs font-semibold text-primary/50 uppercase tracking-wider mb-2">
+                      Step {s.step}
+                    </div>
+                    <h3 className="text-xl font-bold font-heading mb-3">
+                      {s.title}
+                    </h3>
+                    <p className="text-base-content/50 leading-relaxed text-sm">
+                      {s.desc}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold font-heading mb-3">
-                    {s.title}
-                  </h3>
-                  <p className="text-base-content/50 leading-relaxed">
-                    {s.desc}
-                  </p>
+                  {i < 2 && (
+                    <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-primary/20" />
+                  )}
                 </div>
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-primary/30" />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="py-24 px-6">
+      <section className="py-24 px-6 bg-base-200/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
@@ -176,82 +211,87 @@ const Landing = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {features.map((feat, i) => (
-              <div
-                key={i}
-                className="card bg-base-100 border border-base-300/50 shadow-lg p-8 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-              >
+            {features.map((feat, i) => {
+              const Icon = feat.icon;
+              return (
                 <div
-                  className={`w-16 h-16 bg-${feat.color}/10 rounded-2xl flex items-center justify-center mx-auto mb-5`}
+                  key={i}
+                  className="card bg-base-100 border border-base-300/50 shadow-sm p-8 text-center hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                 >
-                  <feat.icon className={`w-8 h-8 text-${feat.color}`} />
+                  <div
+                    className={`w-16 h-16 ${feat.bg} rounded-2xl flex items-center justify-center mx-auto mb-5`}
+                  >
+                    <Icon className={`w-8 h-8 ${feat.textColor}`} />
+                  </div>
+                  <h3 className="text-xl font-bold font-heading mb-3">
+                    {feat.title}
+                  </h3>
+                  <p className="text-base-content/50 leading-relaxed text-sm">
+                    {feat.desc}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold font-heading mb-3">
-                  {feat.title}
-                </h3>
-                <p className="text-base-content/50 leading-relaxed">
-                  {feat.desc}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-20 px-6 bg-primary text-primary-content">
-        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 text-center">
-          {[
-            { value: "10,000+", label: "Students" },
-            { value: "5,000+", label: "Teachers" },
-            { value: "2,000+", label: "Job Posts" },
-          ].map((stat, i) => (
-            <div key={i} className="space-y-2">
-              <div className="text-3xl md:text-4xl font-extrabold font-heading">
-                {stat.value}
-              </div>
-              <div className="text-primary-content/70 text-sm font-medium">
-                {stat.label}
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-24 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="card bg-base-200 border border-base-300/50 p-10 md:p-14 shadow-lg">
-            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">
-              Ready to <span className="text-primary">Connect?</span>
+          <div className="card bg-primary border-0 p-10 md:p-14 shadow-lg">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
+              Ready to Begin?
             </h2>
-            <p className="text-base-content/60 mb-8 max-w-md mx-auto leading-relaxed">
+            <p className="text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
               Join thousands of students and teachers already building their
               academic future on EduConnect.
             </p>
-            <Link
-              to="/register"
-              className="btn btn-primary btn-lg gap-2.5 shadow-xl shadow-primary/25 px-10 text-base"
-            >
-              Get Started Free <ArrowRight className="w-5 h-5" />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                to="/register"
+                className="btn bg-white text-primary hover:bg-white/90 border-0 btn-lg gap-2.5 px-10 text-base shadow-sm"
+              >
+                Get Started Free <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                to="/login"
+                className="btn btn-ghost text-white hover:bg-white/10 btn-lg gap-2.5 px-10 text-base"
+              >
+                Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-neutral text-neutral-content py-10">
+      <footer className="border-t border-base-300/50 py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <GraduationCap className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold font-heading text-neutral-content">
+              <span className="font-bold font-heading text-base-content">
                 EduConnect
               </span>
             </div>
-            <p className="text-sm text-neutral-content/50">
+            <div className="flex items-center gap-6 text-sm text-base-content/40">
+              <Link
+                to="/login"
+                className="hover:text-primary transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="hover:text-primary transition-colors"
+              >
+                Register
+              </Link>
+            </div>
+            <p className="text-sm text-base-content/30">
               © 2026 EduConnect. Where Academic Careers Begin.
             </p>
           </div>
