@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus } from "lucide-react";
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
@@ -12,7 +12,7 @@ const StoryBar = ({ onAddStory }) => {
   const [loading, setLoading] = useState(true);
   const [viewingStory, setViewingStory] = useState(null);
 
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     try {
       const { data } = await API.get("/stories");
       setStories(data.stories || []);
@@ -21,10 +21,24 @@ const StoryBar = ({ onAddStory }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchStories();
+    let isMounted = true;
+    const loadStories = async () => {
+      try {
+        const { data } = await API.get("/stories");
+        if (isMounted) setStories(data.stories || []);
+      } catch {
+        /* silently fail */
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    loadStories();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const canPost = user && CAN_POST_STORY.includes(user.role);
@@ -46,7 +60,7 @@ const StoryBar = ({ onAddStory }) => {
 
   return (
     <>
-      <div className="flex gap-3 mb-4 overflow-x-auto pb-2 -mx-4 px-4">
+      <div className="flex gap-3 mb-4 overflow-x-auto pb-2 -mx-3 px-3 sm:-mx-4 sm:px-4">
         {/* Add story button for institution members */}
         {canPost && (
           <button
