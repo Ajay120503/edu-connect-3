@@ -29,6 +29,8 @@ import Explore from "./pages/Explore";
 import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
 import JobApplicants from "./pages/JobApplicants";
+import CreatePost from "./pages/CreatePost";
+import CreateStory from "./pages/CreateStory";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Chat from "./pages/Chat";
@@ -129,6 +131,14 @@ function App() {
                       <main className="flex-1 overflow-y-auto pb-[70px] md:pb-0 scroll-smooth">
                         <Routes>
                           <Route path="/feed" element={<Feed />} />
+                          <Route
+                            path="/posts/create"
+                            element={<CreatePost />}
+                          />
+                          <Route
+                            path="/stories/create"
+                            element={<CreateStory />}
+                          />
                           <Route path="/explore" element={<Explore />} />
                           <Route path="/jobs" element={<Jobs />} />
                           <Route path="/jobs/create" element={<CreateJob />} />

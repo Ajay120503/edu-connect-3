@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Heart,
   MessageCircle,
@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
-import CreatePostModal from "../components/post/CreatePostModal";
 import StoryBar from "../components/post/StoryBar";
 import ConfirmModal from "../components/common/ConfirmModal";
 import toast from "react-hot-toast";
@@ -120,9 +119,9 @@ const CommentItem = ({
 
 const Feed = () => {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCreatePost, setShowCreatePost] = useState(false);
 
   // Comment modal state
   const [commentPost, setCommentPost] = useState(null);
@@ -131,11 +130,8 @@ const Feed = () => {
   const [replyTo, setReplyTo] = useState(null);
   const [loadingComments, setLoadingComments] = useState(false);
 
-  // Story creator state
-  const [showStoryCreator, setShowStoryCreator] = useState(false);
-  const [storyImage, setStoryImage] = useState(null);
-  const [storyText, setStoryText] = useState("");
-  const [storyUploading, setStoryUploading] = useState(false);
+  // Delete post confirmation
+  const [postToDelete, setPostToDelete] = useState(null);
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -245,8 +241,6 @@ const Feed = () => {
     }
   };
 
-  const [postToDelete, setPostToDelete] = useState(null);
-
   // Delete post
   const handleDeletePost = async (postId) => {
     try {
@@ -256,33 +250,6 @@ const Feed = () => {
       toast.success("Post deleted");
     } catch {
       toast.error("Cannot delete this post");
-    }
-  };
-
-  // Handle post created callback
-  const handlePostCreated = () => {
-    setShowCreatePost(false);
-    fetchPosts();
-  };
-
-  const handleStorySubmit = async () => {
-    if (!storyImage && !storyText.trim()) return;
-    setStoryUploading(true);
-    try {
-      const formData = new FormData();
-      if (storyImage) formData.append("image", storyImage);
-      if (storyText.trim()) formData.append("text", storyText);
-      await API.post("/stories", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setShowStoryCreator(false);
-      setStoryImage(null);
-      setStoryText("");
-      toast.success("Story posted!");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to post story");
-    } finally {
-      setStoryUploading(false);
     }
   };
 
@@ -313,7 +280,7 @@ const Feed = () => {
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6 pb-20 md:pb-6">
       {/* Story Bar */}
-      <StoryBar onAddStory={() => setShowStoryCreator(true)} />
+      <StoryBar onAddStory={() => navigate("/stories/create")} />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -325,7 +292,7 @@ const Feed = () => {
         </div>
         <button
           className="btn btn-primary btn-sm gap-2 md:hidden shadow-lg shadow-primary/20"
-          onClick={() => setShowCreatePost(true)}
+          onClick={() => navigate("/posts/create")}
         >
           <PlusCircle className="w-4 h-4" /> New Post
         </button>
@@ -344,7 +311,7 @@ const Feed = () => {
           </p>
           <button
             className="btn btn-primary btn-sm mt-6 shadow-lg shadow-primary/20"
-            onClick={() => setShowCreatePost(true)}
+            onClick={() => navigate("/posts/create")}
           >
             <PlusCircle className="w-4 h-4" /> Create Your First Post
           </button>
@@ -520,65 +487,6 @@ const Feed = () => {
               </div>
             );
           })}
-        </div>
-      )}
-
-      {/* Create Post Modal */}
-      {showCreatePost && <CreatePostModal onClose={handlePostCreated} />}
-
-      {/* Story Creator Modal */}
-      {showStoryCreator && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-          onClick={() => setShowStoryCreator(false)}
-        >
-          <div
-            className="bg-base-100 rounded-2xl w-full max-w-sm p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="font-bold text-lg mb-4">Create Story</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs font-medium mb-1 block">
-                  Upload Image
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setStoryImage(e.target.files[0])}
-                  className="file-input file-input-sm file-input-bordered w-full text-xs"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium mb-1 block">
-                  Caption (optional)
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered input-sm w-full text-sm"
-                  placeholder="Add a caption..."
-                  value={storyText}
-                  onChange={(e) => setStoryText(e.target.value)}
-                  maxLength={200}
-                />
-              </div>
-              <div className="flex gap-2 pt-2">
-                <button
-                  onClick={() => setShowStoryCreator(false)}
-                  className="btn btn-outline btn-sm flex-1"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleStorySubmit}
-                  className="btn btn-primary btn-sm flex-1"
-                  disabled={storyUploading}
-                >
-                  {storyUploading ? "Posting..." : "Post Story"}
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 

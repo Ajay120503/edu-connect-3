@@ -1,5 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Home,
   Compass,
@@ -12,23 +11,15 @@ import {
   Settings,
   Bell,
   MessageCircle,
-  LogOut,
   GraduationCap,
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
-import CreatePostModal from "../post/CreatePostModal";
 
 const Sidebar = ({ collapsed, onToggle }) => {
   const { user } = useAuthStore();
-  const location = useLocation();
-  const [showCreatePost, setShowCreatePost] = useState(false);
+  const navigate = useNavigate();
   const { notificationCount, messageCount } = useSocket();
-
-  // Close modal on route change
-  useEffect(() => {
-    setShowCreatePost(false);
-  }, [location.pathname]);
 
   const primaryNavItems = [
     { to: "/feed", icon: Home, label: "Feed" },
@@ -55,162 +46,153 @@ const Sidebar = ({ collapsed, onToggle }) => {
   ];
 
   return (
-    <>
-      <aside
-        className={`hidden md:flex flex-col bg-base-100 border-r border-base-300 sticky top-0 h-screen transition-all duration-300 ease-in-out z-30 ${
-          collapsed ? "w-[72px]" : "w-64"
+    <aside
+      className={`hidden md:flex flex-col bg-base-100 border-r border-base-300 sticky top-0 h-screen transition-all duration-300 ease-in-out z-30 ${
+        collapsed ? "w-[72px]" : "w-64"
+      }`}
+    >
+      {/* Logo area */}
+      <div
+        className={`flex items-center h-16 px-4 border-b border-base-300 ${
+          collapsed ? "justify-center" : "justify-between"
         }`}
       >
-        {/* Logo area */}
-        <div
-          className={`flex items-center h-16 px-4 border-b border-base-300 ${
-            collapsed ? "justify-center" : "justify-between"
-          }`}
+        {!collapsed && (
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+              <GraduationCap className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-lg font-bold text-primary">EduConnect</span>
+          </div>
+        )}
+        <button
+          onClick={onToggle}
+          className="btn btn-ghost btn-circle btn-sm hover:bg-base-200"
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {!collapsed && (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-                <GraduationCap className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-lg font-bold text-primary">EduConnect</span>
-            </div>
+          {collapsed ? (
+            <PanelLeftOpen className="w-4 h-4" />
+          ) : (
+            <PanelLeftClose className="w-4 h-4" />
           )}
-          <button
-            onClick={onToggle}
-            className="btn btn-ghost btn-circle btn-sm hover:bg-base-200"
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? (
-              <PanelLeftOpen className="w-4 h-4" />
-            ) : (
-              <PanelLeftClose className="w-4 h-4" />
-            )}
-          </button>
-        </div>
+        </button>
+      </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 flex flex-col gap-0.5 px-2 py-3">
-          {primaryNavItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${
-                  isActive
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : "text-base-content/70 hover:bg-base-200"
-                } ${collapsed ? "justify-center" : ""}`
-              }
-              title={collapsed ? item.label : undefined}
-            >
-              <item.icon
-                className={`w-5 h-5 flex-shrink-0 ${
-                  collapsed ? "group-hover:scale-110 transition-transform" : ""
-                }`}
-              />
-              {!collapsed && <span className="text-sm">{item.label}</span>}
-              {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-base-900 text-base-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
-                  {item.label}
-                </div>
-              )}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Create Post */}
-        <div className="px-2 pb-2">
-          <button
-            className={`btn btn-primary shadow-lg shadow-primary/20 hover:shadow-xl transition-all ${
-              collapsed ? "btn-circle btn-sm w-10 h-10 mx-auto flex" : "w-full"
-            }`}
-            onClick={() => setShowCreatePost(true)}
-            title={collapsed ? "Create Post" : undefined}
-          >
-            <PlusCircle className={`${collapsed ? "w-5 h-5" : "w-5 h-5"}`} />
-            {!collapsed && <span>Create Post</span>}
-          </button>
-        </div>
-
-        {/* Secondary nav items */}
-        <div className="px-2 py-1 border-t border-base-200 mt-1">
-          {secondaryNavItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-base-content/50 hover:text-base-content/80 hover:bg-base-200"
-                } ${collapsed ? "justify-center" : ""}`
-              }
-              title={collapsed ? item.label : undefined}
-            >
-              <div className="relative">
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                {item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-error text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                    {item.badge > 9 ? "9+" : item.badge}
-                  </span>
-                )}
-              </div>
-              {!collapsed && (
-                <span className="text-sm flex-1">{item.label}</span>
-              )}
-              {!collapsed && item.badge > 0 && (
-                <span className="badge badge-xs badge-error text-white">
-                  {item.badge}
-                </span>
-              )}
-              {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-base-900 text-base-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
-                  {item.label}
-                  {item.badge > 0 ? ` (${item.badge})` : ""}
-                </div>
-              )}
-            </NavLink>
-          ))}
-        </div>
-
-        {/* User profile at bottom */}
-        <div className="px-2 py-2 border-t border-base-300 mt-auto">
+      {/* Navigation */}
+      <nav className="flex-1 flex flex-col gap-0.5 px-2 py-3">
+        {primaryNavItems.map((item) => (
           <NavLink
-            to={`/profile/${user?._id}`}
-            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-base-200 transition-colors ${
-              collapsed ? "justify-center" : ""
-            }`}
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${
+                isActive
+                  ? "bg-primary/10 text-primary font-semibold"
+                  : "text-base-content/70 hover:bg-base-200"
+              } ${collapsed ? "justify-center" : ""}`
+            }
+            title={collapsed ? item.label : undefined}
           >
-            <div className="w-9 h-9 rounded-full bg-placeholder overflow-hidden flex-shrink-0 ring-2 ring-base-200">
-              {user?.profilePic?.url ? (
-                <img
-                  src={user.profilePic.url}
-                  alt={user.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
-                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                </div>
-              )}
-            </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">{user?.name}</p>
-                <p className="text-xs text-base-content/50 truncate capitalize">
-                  {user?.role}
-                </p>
+            <item.icon
+              className={`w-5 h-5 flex-shrink-0 ${
+                collapsed ? "group-hover:scale-110 transition-transform" : ""
+              }`}
+            />
+            {!collapsed && <span className="text-sm">{item.label}</span>}
+            {collapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-base-900 text-base-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
+                {item.label}
               </div>
             )}
           </NavLink>
-        </div>
-      </aside>
+        ))}
+      </nav>
 
-      {/* Create Post Modal (state-based, shared across layout) */}
-      {showCreatePost && (
-        <CreatePostModal onClose={() => setShowCreatePost(false)} />
-      )}
-    </>
+      {/* Create Post */}
+      <div className="px-2 pb-2">
+        <button
+          className={`btn btn-primary shadow-lg shadow-primary/20 hover:shadow-xl transition-all ${
+            collapsed ? "btn-circle btn-sm w-10 h-10 mx-auto flex" : "w-full"
+          }`}
+          onClick={() => navigate("/posts/create")}
+          title={collapsed ? "Create Post" : undefined}
+        >
+          <PlusCircle className="w-5 h-5" />
+          {!collapsed && <span>Create Post</span>}
+        </button>
+      </div>
+
+      {/* Secondary nav items */}
+      <div className="px-2 py-1 border-t border-base-200 mt-1">
+        {secondaryNavItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-base-content/50 hover:text-base-content/80 hover:bg-base-200"
+              } ${collapsed ? "justify-center" : ""}`
+            }
+            title={collapsed ? item.label : undefined}
+          >
+            <div className="relative">
+              <item.icon className="w-5 h-5 flex-shrink-0" />
+              {item.badge > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-error text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {item.badge > 9 ? "9+" : item.badge}
+                </span>
+              )}
+            </div>
+            {!collapsed && <span className="text-sm flex-1">{item.label}</span>}
+            {!collapsed && item.badge > 0 && (
+              <span className="badge badge-xs badge-error text-white">
+                {item.badge}
+              </span>
+            )}
+            {collapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-base-900 text-base-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
+                {item.label}
+                {item.badge > 0 ? ` (${item.badge})` : ""}
+              </div>
+            )}
+          </NavLink>
+        ))}
+      </div>
+
+      {/* User profile at bottom */}
+      <div className="px-2 py-2 border-t border-base-300 mt-auto">
+        <NavLink
+          to={`/profile/${user?._id}`}
+          className={`flex items-center gap-3 p-2 rounded-xl hover:bg-base-200 transition-colors ${
+            collapsed ? "justify-center" : ""
+          }`}
+        >
+          <div className="w-9 h-9 rounded-full bg-placeholder overflow-hidden flex-shrink-0 ring-2 ring-base-200">
+            {user?.profilePic?.url ? (
+              <img
+                src={user.profilePic.url}
+                alt={user.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+            )}
+          </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold truncate">{user?.name}</p>
+              <p className="text-xs text-base-content/50 truncate capitalize">
+                {user?.role}
+              </p>
+            </div>
+          )}
+        </NavLink>
+      </div>
+    </aside>
   );
 };
 
