@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MessageCircleQuestion, Send, Trash2 } from "lucide-react";
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
+import ConfirmModal from "../common/ConfirmModal";
 import toast from "react-hot-toast";
 
 const JobQnA = ({ jobId, isJobPoster }) => {
@@ -62,11 +63,13 @@ const JobQnA = ({ jobId, isJobPoster }) => {
     }
   };
 
+  const [qnaToDelete, setQnaToDelete] = useState(null);
+
   const handleDelete = async (qnaId) => {
-    if (!window.confirm("Delete this question?")) return;
     try {
       await API.delete(`/jobs/${jobId}/qna/${qnaId}`);
       setQuestions((prev) => prev.filter((q) => q._id !== qnaId));
+      setQnaToDelete(null);
       toast.success("Question deleted");
     } catch {
       toast.error("Failed to delete question");
@@ -119,7 +122,7 @@ const JobQnA = ({ jobId, isJobPoster }) => {
                 </div>
                 {(q.askedBy?._id === user?._id || isJobPoster) && (
                   <button
-                    onClick={() => handleDelete(q._id)}
+                    onClick={() => setQnaToDelete(q)}
                     className="btn btn-ghost btn-xs text-error"
                   >
                     <Trash2 className="w-3 h-3" />
@@ -206,6 +209,18 @@ const JobQnA = ({ jobId, isJobPoster }) => {
           </label>
         </form>
       )}
+
+      {/* Delete Question Confirm Modal */}
+      <ConfirmModal
+        isOpen={!!qnaToDelete}
+        onClose={() => setQnaToDelete(null)}
+        onConfirm={() => handleDelete(qnaToDelete?._id)}
+        title="Delete this question?"
+        message="This action cannot be undone. The question and its answer will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </div>
   );
 };

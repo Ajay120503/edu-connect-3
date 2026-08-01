@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
+import ConfirmModal from "../components/common/ConfirmModal";
 import toast from "react-hot-toast";
 
 const PostDetail = () => {
@@ -88,8 +89,9 @@ const PostDetail = () => {
     );
   };
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const handleDelete = async () => {
-    if (!window.confirm("Delete this post?")) return;
     try {
       await API.delete(`/posts/${id}`);
       toast.success("Post deleted");
@@ -195,7 +197,10 @@ const PostDetail = () => {
               </button>
               <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40 z-10">
                 <li>
-                  <button onClick={handleDelete} className="text-error">
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="text-error"
+                  >
                     <Trash2 className="w-4 h-4" />
                     Delete
                   </button>
@@ -457,6 +462,18 @@ const PostDetail = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Post Confirm Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Delete this post?"
+        message="This action cannot be undone. The post and all its comments will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </div>
   );
 };

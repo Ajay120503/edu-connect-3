@@ -4,7 +4,7 @@ import {
   Briefcase,
   Building2,
   MapPin,
-  DollarSign,
+  // DollarSign,
   Mail,
   Calendar,
   FileText,

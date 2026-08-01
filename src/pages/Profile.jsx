@@ -20,6 +20,7 @@ import {
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
+import ConfirmModal from "../components/common/ConfirmModal";
 import StrengthMeter from "../components/profile/StrengthMeter";
 import VerifiedBadge from "../components/common/VerifiedBadge";
 import AcademicTimeline from "../components/profile/AcademicTimeline";
@@ -172,11 +173,14 @@ const Profile = () => {
     }
   };
 
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [jobToDelete, setJobToDelete] = useState(null);
+
   const handleDeletePost = async (postId) => {
-    if (!window.confirm("Delete this post?")) return;
     try {
       await API.delete(`/posts/${postId}`);
       setUserPosts((prev) => prev.filter((p) => p._id !== postId));
+      setPostToDelete(null);
       toast.success("Post deleted");
     } catch {
       toast.error("Failed to delete post");
@@ -184,10 +188,10 @@ const Profile = () => {
   };
 
   const handleDeleteJob = async (jobId) => {
-    if (!window.confirm("Delete this job posting?")) return;
     try {
       await API.delete(`/jobs/${jobId}`);
       setUserJobs((prev) => prev.filter((j) => j._id !== jobId));
+      setJobToDelete(null);
       toast.success("Job deleted");
     } catch {
       toast.error("Failed to delete job");
@@ -542,7 +546,7 @@ const Profile = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeletePost(post._id);
+                            setPostToDelete(post);
                           }}
                           className="text-error"
                         >
@@ -570,7 +574,7 @@ const Profile = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleDeletePost(post._id);
+                                  setPostToDelete(post);
                                 }}
                                 className="text-error"
                               >
@@ -703,7 +707,7 @@ const Profile = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleDeleteJob(job._id);
+                                  setJobToDelete(job);
                                 }}
                                 className="text-error"
                               >
@@ -820,6 +824,30 @@ const Profile = () => {
           </div>
         </div>
       )}
+
+      {/* ============ DELETE POST CONFIRM MODAL ============ */}
+      <ConfirmModal
+        isOpen={!!postToDelete}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={() => handleDeletePost(postToDelete?._id)}
+        title="Delete this post?"
+        message="This action cannot be undone. The post and all its comments will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
+
+      {/* ============ DELETE JOB CONFIRM MODAL ============ */}
+      <ConfirmModal
+        isOpen={!!jobToDelete}
+        onClose={() => setJobToDelete(null)}
+        onConfirm={() => handleDeleteJob(jobToDelete?._id)}
+        title="Delete this job posting?"
+        message="This action cannot be undone. All applications for this job will also be removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
 
       {/* ============ FOLLOWING MODAL ============ */}
       {showFollowingModal && (

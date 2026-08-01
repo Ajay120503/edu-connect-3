@@ -14,6 +14,7 @@ import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import CreatePostModal from "../components/post/CreatePostModal";
 import StoryBar from "../components/post/StoryBar";
+import ConfirmModal from "../components/common/ConfirmModal";
 import toast from "react-hot-toast";
 
 const CommentItem = ({
@@ -244,12 +245,14 @@ const Feed = () => {
     }
   };
 
+  const [postToDelete, setPostToDelete] = useState(null);
+
   // Delete post
   const handleDeletePost = async (postId) => {
-    if (!confirm("Delete this post?")) return;
     try {
       await API.delete(`/posts/${postId}`);
       setPosts((prev) => prev.filter((p) => p._id !== postId));
+      setPostToDelete(null);
       toast.success("Post deleted");
     } catch {
       toast.error("Cannot delete this post");
@@ -417,8 +420,9 @@ const Feed = () => {
                       )}
                       {post.author?._id === user?._id && (
                         <button
-                          onClick={() => handleDeletePost(post._id)}
+                          onClick={() => setPostToDelete(post)}
                           className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-error hover:bg-error/10"
+                          title="Delete post"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -577,6 +581,18 @@ const Feed = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Post Confirm Modal */}
+      <ConfirmModal
+        isOpen={!!postToDelete}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={() => handleDeletePost(postToDelete?._id)}
+        title="Delete this post?"
+        message="This action cannot be undone. The post and all its comments will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
 
       {/* Comment Modal */}
       {commentPost && (

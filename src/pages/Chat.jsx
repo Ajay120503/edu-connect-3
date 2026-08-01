@@ -17,6 +17,7 @@ import {
 import useAuthStore from "../store/authStore";
 import { useSocket } from "../context/SocketContext";
 import API from "../utils/axios";
+import ConfirmModal from "../components/common/ConfirmModal";
 import toast from "react-hot-toast";
 
 const Chat = () => {
@@ -41,6 +42,11 @@ const Chat = () => {
   const [editingMessage, setEditingMessage] = useState(null);
   const [editText, setEditText] = useState("");
   const [menuOpenId, setMenuOpenId] = useState(null);
+
+  // Confirm modal states
+  const [msgToDelete, setMsgToDelete] = useState(null);
+  const [showClearChatModal, setShowClearChatModal] = useState(false);
+  const [showDeleteChatModal, setShowDeleteChatModal] = useState(false);
   const messagesEndRef = useRef(null);
   const editInputRef = useRef(null);
 
@@ -232,7 +238,6 @@ const Chat = () => {
   };
 
   const handleDeleteMessage = async (msgId) => {
-    if (!window.confirm("Delete this message?")) return;
     try {
       await API.delete(`/chat/messages/${msgId}`);
       setMessages((prev) =>
@@ -248,6 +253,7 @@ const Chat = () => {
         )
       );
       setMenuOpenId(null);
+      setMsgToDelete(null);
       toast.success("Message deleted");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to delete message");
@@ -450,15 +456,7 @@ const Chat = () => {
               >
                 <li>
                   <button
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          "Clear all messages in this conversation?"
-                        )
-                      ) {
-                        handleClearChat(activeConversation._id);
-                      }
-                    }}
+                    onClick={() => setShowClearChatModal(true)}
                     className="flex items-center gap-2 py-2"
                   >
                     <Eraser className="w-4 h-4" /> Clear Chat
@@ -466,15 +464,7 @@ const Chat = () => {
                 </li>
                 <li>
                   <button
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          "Delete this entire conversation? This cannot be undone."
-                        )
-                      ) {
-                        handleDeleteChat(activeConversation._id);
-                      }
-                    }}
+                    onClick={() => setShowDeleteChatModal(true)}
                     className="flex items-center gap-2 py-2 text-error"
                   >
                     <Trash2 className="w-4 h-4" /> Delete Chat
@@ -583,7 +573,7 @@ const Chat = () => {
                                 </button>
                               )}
                               <button
-                                onClick={() => handleDeleteMessage(msg._id)}
+                                onClick={() => setMsgToDelete(msg)}
                                 className="flex items-center gap-2 w-full px-3 py-2 text-xs rounded-lg hover:bg-error/10 text-error transition-colors"
                               >
                                 <Trash2 className="w-3.5 h-3.5" /> Delete
@@ -696,6 +686,41 @@ const Chat = () => {
           </div>
         </div>
       )}
+      {/* Delete Message Confirm Modal */}
+      <ConfirmModal
+        isOpen={!!msgToDelete}
+        onClose={() => setMsgToDelete(null)}
+        onConfirm={() => handleDeleteMessage(msgToDelete?._id)}
+        title="Delete this message?"
+        message="This action cannot be undone. The message will be removed permanently."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
+
+      {/* Clear Chat Confirm Modal */}
+      <ConfirmModal
+        isOpen={showClearChatModal}
+        onClose={() => setShowClearChatModal(false)}
+        onConfirm={() => handleClearChat(activeConversation?._id)}
+        title="Clear all messages?"
+        message="This will delete all messages in this conversation. This action cannot be undone."
+        confirmText="Clear"
+        cancelText="Cancel"
+        variant="danger"
+      />
+
+      {/* Delete Chat Confirm Modal */}
+      <ConfirmModal
+        isOpen={showDeleteChatModal}
+        onClose={() => setShowDeleteChatModal(false)}
+        onConfirm={() => handleDeleteChat(activeConversation?._id)}
+        title="Delete this conversation?"
+        message="This will permanently delete the entire conversation and all its messages. This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </div>
   );
 };
