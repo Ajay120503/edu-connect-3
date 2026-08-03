@@ -267,7 +267,7 @@ const Profile = () => {
         {/* Info */}
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
-            <h1 className="text-xl md:text-2xl font-bold font-heading flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl md:text-2xl font-bold font-heading flex items-center justify-center gap-2 flex-wrap">
               {profile.name}
               <VerifiedBadge verifiedStatus={profile.verifiedStatus} />
             </h1>
