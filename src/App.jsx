@@ -30,6 +30,7 @@ import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
 import JobApplicants from "./pages/JobApplicants";
 import CreatePost from "./pages/CreatePost";
+import EditPost from "./pages/EditPost";
 import CreateStory from "./pages/CreateStory";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
@@ -38,6 +39,7 @@ import Notifications from "./pages/Notifications";
 import SavedPosts from "./pages/SavedPosts";
 import Settings from "./pages/Settings";
 import CreateJob from "./pages/CreateJob";
+import EditJob from "./pages/EditJob";
 import PostDetail from "./pages/PostDetail";
 import NotFound from "./pages/NotFound";
 
@@ -142,6 +144,7 @@ function App() {
                           <Route path="/explore" element={<Explore />} />
                           <Route path="/jobs" element={<Jobs />} />
                           <Route path="/jobs/create" element={<CreateJob />} />
+                          <Route path="/jobs/:id/edit" element={<EditJob />} />
                           <Route path="/jobs/:id" element={<JobDetail />} />
                           <Route
                             path="/jobs/:id/applicants"
@@ -161,6 +164,7 @@ function App() {
                           <Route path="/saved" element={<SavedPosts />} />
                           <Route path="/settings" element={<Settings />} />
                           <Route path="/post/:id" element={<PostDetail />} />
+                          <Route path="/post/:id/edit" element={<EditPost />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>

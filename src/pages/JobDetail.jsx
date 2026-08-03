@@ -7,10 +7,9 @@ import {
   Users,
   Briefcase,
   Building2,
-  Clock,
   ArrowLeft,
   Eye,
-  CheckCircle2,
+  Pencil,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
@@ -227,6 +226,13 @@ const JobDetail = () => {
         {/* Faculty actions */}
         {isJobPoster && isFaculty && (
           <div className="mt-4 space-y-3">
+            <Link
+              to={`/jobs/${job._id}/edit`}
+              className="btn btn-ghost w-full gap-2 border border-base-300"
+            >
+              <Pencil className="w-4 h-4" />
+              Edit Job
+            </Link>
             <Link
               to={`/jobs/${job._id}/applicants`}
               className="btn btn-primary w-full gap-2"

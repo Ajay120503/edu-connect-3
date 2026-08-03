@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate, Link } from "react-router-dom";
 import {
   Heart,
   MessageCircle,
@@ -9,10 +9,12 @@ import {
   Image as ImageIcon,
   Send,
   X,
+  Pencil,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import StoryBar from "../components/post/StoryBar";
+import LinkedJobCard from "../components/job/LinkedJobCard";
 import ConfirmModal from "../components/common/ConfirmModal";
 import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
@@ -362,15 +364,24 @@ const Feed = () => {
                           {post.type}
                         </span>
                       )}
-                      {post.author?._id === user?._id && (
-                        <button
-                          onClick={() => setPostToDelete(post)}
-                          className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-error hover:bg-error/10"
-                          title="Delete post"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      )}
+                      {/* {post.author?._id === user?._id && (
+                        <>
+                          <Link
+                            to={`/post/${post._id}/edit`}
+                            className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-primary hover:bg-primary/10"
+                            title="Edit post"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Link>
+                          <button
+                            onClick={() => setPostToDelete(post)}
+                            className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-error hover:bg-error/10"
+                            title="Delete post"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )} */}
                     </div>
                   </div>
 
@@ -380,6 +391,9 @@ const Feed = () => {
                       {post.text}
                     </p>
                   )}
+
+                  {/* Linked Job Card */}
+                  {post.jobPost && <LinkedJobCard job={post.jobPost} />}
 
                   {/* Images */}
                   {post.images?.length > 0 && (

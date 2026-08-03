@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Heart,
   MessageCircle,
@@ -9,10 +9,12 @@ import {
   ArrowLeft,
   Trash2,
   MoreHorizontal,
+  Pencil,
 } from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
+import LinkedJobCard from "../components/job/LinkedJobCard";
 import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
@@ -178,6 +180,12 @@ const PostDetail = () => {
               </button>
               <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40 z-10">
                 <li>
+                  <Link to={`/post/${id}/edit`} className="text-base-content">
+                    <Pencil className="w-4 h-4" />
+                    Edit
+                  </Link>
+                </li>
+                <li>
                   <button
                     onClick={() => setShowDeleteModal(true)}
                     className="text-error"
@@ -197,6 +205,9 @@ const PostDetail = () => {
             {post.text}
           </p>
         </div>
+
+        {/* Linked Job Card */}
+        {post.jobPost && <LinkedJobCard job={post.jobPost} />}
 
         {/* Images */}
         {post.images?.length > 0 && (
