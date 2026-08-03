@@ -25,6 +25,7 @@ import StrengthMeter from "../components/profile/StrengthMeter";
 import VerifiedBadge from "../components/common/VerifiedBadge";
 import AcademicTimeline from "../components/profile/AcademicTimeline";
 import EndorsementTag from "../components/profile/EndorsementTag";
+import UserAvatar from "../components/common/UserAvatar";
 
 const Profile = () => {
   const { id } = useParams();
@@ -249,19 +250,18 @@ const Profile = () => {
       <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-10 mb-8">
         {/* Avatar */}
         <div className="shrink-0">
-          <div className="w-24 h-24 md:w-36 md:h-36 rounded-full bg-placeholder overflow-hidden ring-2 ring-base-300/50 shadow-md">
-            {profile.profilePic?.url ? (
-              <img
-                src={profile.profilePic.url}
-                alt={profile.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-base-content/40 text-3xl md:text-5xl font-bold">
-                {profile.name?.charAt(0)?.toUpperCase() || "?"}
-              </div>
-            )}
-          </div>
+          <UserAvatar
+            user={profile}
+            size={96}
+            className="md:hidden"
+            ringClass="ring-2 ring-base-300/50"
+          />
+          <UserAvatar
+            user={profile}
+            size={144}
+            className="hidden md:block"
+            ringClass="ring-2 ring-base-300/50"
+          />
         </div>
 
         {/* Info */}
@@ -792,19 +792,7 @@ const Profile = () => {
                       onClick={() => setShowFollowersModal(false)}
                       className="flex items-center gap-3 p-3 rounded-xl hover:bg-base-200 transition-colors"
                     >
-                      <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden ring-2 ring-base-100 flex-shrink-0">
-                        {follower.profilePic?.url ? (
-                          <img
-                            src={follower.profilePic.url}
-                            alt={follower.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
-                            {follower.name?.charAt(0)?.toUpperCase() || "?"}
-                          </div>
-                        )}
-                      </div>
+                      <UserAvatar user={follower} size={40} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold truncate">
                           {follower.name}
@@ -903,19 +891,7 @@ const Profile = () => {
                       onClick={() => setShowFollowingModal(false)}
                       className="flex items-center gap-3 p-3 rounded-xl hover:bg-base-200 transition-colors"
                     >
-                      <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden ring-2 ring-base-100 flex-shrink-0">
-                        {followed.profilePic?.url ? (
-                          <img
-                            src={followed.profilePic.url}
-                            alt={followed.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
-                            {followed.name?.charAt(0)?.toUpperCase() || "?"}
-                          </div>
-                        )}
-                      </div>
+                      <UserAvatar user={followed} size={40} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold truncate">
                           {followed.name}

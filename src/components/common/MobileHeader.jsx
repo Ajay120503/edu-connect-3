@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
+import UserAvatar from "./UserAvatar";
 
 const MobileHeader = () => {
   const { user, logout } = useAuthStore();
@@ -88,19 +89,7 @@ const MobileHeader = () => {
                 onClick={() => handleNavigate(`/profile/${user?._id}`)}
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-base-200 text-left"
               >
-                <div className="w-8 h-8 rounded-full bg-placeholder overflow-hidden flex-shrink-0">
-                  {user?.profilePic?.url ? (
-                    <img
-                      src={user.profilePic.url}
-                      alt={user?.name}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
-                      {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                    </div>
-                  )}
-                </div>
+                <UserAvatar user={user} size={32} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate">{user?.name}</p>
                   <p className="text-xs text-base-content/50">View Profile</p>

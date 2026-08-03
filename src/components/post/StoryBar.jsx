@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
 import StoryViewer from "./StoryViewer";
+import UserAvatar from "../common/UserAvatar";
 
 const CAN_POST_STORY = ["teacher", "professor", "hod", "principal"];
 
@@ -98,16 +99,8 @@ const StoryBar = ({ onAddStory }) => {
                       alt=""
                       className="w-full h-full object-cover"
                     />
-                  ) : group.author?.profilePic?.url ? (
-                    <img
-                      src={group.author.profilePic.url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
                   ) : (
-                    <span className="text-lg font-bold text-base-content/40">
-                      {group.author?.name?.charAt(0) || "?"}
-                    </span>
+                    <UserAvatar user={group.author} size={60} />
                   )}
                 </div>
               </div>

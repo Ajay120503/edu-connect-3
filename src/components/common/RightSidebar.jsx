@@ -4,7 +4,6 @@ import {
   UserPlus,
   Briefcase,
   MapPin,
-  DollarSign,
   Sparkles,
   TrendingUp,
   ArrowRight,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
+import UserAvatar from "./UserAvatar";
 
 const RightSidebar = () => {
   const { user } = useAuthStore();
@@ -104,22 +104,7 @@ const RightSidebar = () => {
                     to={`/profile/${u._id}`}
                     className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-base-200/70 transition-all group"
                   >
-                    <div className="relative flex-shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 overflow-hidden ring-2 ring-base-100 shadow-sm">
-                        {u.profilePic?.url ? (
-                          <img
-                            src={u.profilePic.url}
-                            alt={u.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center font-bold text-sm text-primary">
-                            {u.name?.charAt(0)?.toUpperCase() || "?"}
-                          </div>
-                        )}
-                      </div>
-                      <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-success rounded-full border-2 border-base-100"></div>
-                    </div>
+                    <UserAvatar user={u} size={40} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
                         {u.name}
@@ -219,7 +204,6 @@ const RightSidebar = () => {
                                 : "text-base-content/40"
                             }`}
                           >
-                            {/* <DollarSign className="w-3 h-3" /> */}
                             {job.isPaid
                               ? job.currency === "USD"
                                 ? `$${Number(job.stipend).toLocaleString()}`

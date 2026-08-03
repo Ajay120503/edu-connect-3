@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   MapPin,
-  DollarSign,
   Calendar,
   Mail,
   Users,
@@ -144,11 +143,6 @@ const JobDetail = () => {
             <p className="text-[10px] text-base-content/40">Location</p>
           </div>
           <div className="bg-base-200/50 rounded-xl p-3 text-center">
-            {/* <DollarSign
-              className={`w-4 h-4 mx-auto mb-1 ${
-                job.isPaid ? "text-success" : "text-base-content/40"
-              }`}
-            /> */}
             <p
               className={`text-xs font-medium ${
                 job.isPaid ? "text-success" : ""

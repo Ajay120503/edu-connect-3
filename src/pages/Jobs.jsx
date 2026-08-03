@@ -1,14 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Briefcase,
-  MapPin,
-  Clock,
-  Plus,
-  Search,
-  Filter,
-  DollarSign,
-} from "lucide-react";
+import { Briefcase, MapPin, Clock, Plus, Search, Filter } from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
 import MatchedJobsRow from "../components/job/MatchedJobsRow";
@@ -175,7 +167,6 @@ const Jobs = () => {
                             job.isPaid ? "text-success" : "text-base-content/40"
                           }`}
                         >
-                          {/* <DollarSign className="w-3.5 h-3.5" /> */}
                           {formatStipend(job.stipend, job.currency, job.isPaid)}
                         </span>
                         <span className="flex items-center gap-1 text-base-content/40">

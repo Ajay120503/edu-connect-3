@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
+import UserAvatar from "./UserAvatar";
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();
@@ -82,19 +83,11 @@ const Navbar = () => {
             role="button"
             className="btn btn-ghost btn-circle btn-sm avatar hover:bg-primary/10"
           >
-            <div className="w-8 rounded-full ring-2 ring-primary/20">
-              {user?.profilePic?.url ? (
-                <img
-                  src={user.profilePic.url}
-                  alt={user.name}
-                  className="rounded-full"
-                />
-              ) : (
-                <div className="w-full h-full bg-placeholder rounded-full flex items-center justify-center text-base-content/40 text-sm font-semibold">
-                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                </div>
-              )}
-            </div>
+            <UserAvatar
+              user={user}
+              size={32}
+              ringClass="ring-2 ring-primary/20"
+            />
           </div>
           <ul
             tabIndex={0}

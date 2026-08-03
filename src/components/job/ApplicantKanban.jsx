@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../../utils/axios";
+import UserAvatar from "../common/UserAvatar";
 import toast from "react-hot-toast";
 
 const COLUMNS = [
@@ -87,19 +88,7 @@ const ApplicantKanban = ({ applications: initialApps, onStatusChange }) => {
                 onDragStart={(e) => handleDragStart(e, app._id)}
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-base-300 overflow-hidden flex-shrink-0 flex items-center justify-center">
-                    {app.applicant?.profilePic?.url ? (
-                      <img
-                        src={app.applicant.profilePic.url}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-xs font-bold">
-                        {app.applicant?.name?.charAt(0) || "?"}
-                      </span>
-                    )}
-                  </div>
+                  <UserAvatar user={app.applicant} size={28} />
                   <div className="min-w-0 flex-1">
                     <Link
                       to={`/profile/${app.applicant?._id}`}

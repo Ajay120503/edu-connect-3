@@ -4,7 +4,6 @@ import {
   Briefcase,
   Building2,
   MapPin,
-  // DollarSign,
   Mail,
   Calendar,
   FileText,
@@ -288,7 +287,6 @@ const CreateJob = () => {
                 <div className="form-control">
                   <label className="label pb-1">
                     <span className="label-text font-medium text-sm flex items-center gap-1.5">
-                      {/* <DollarSign className="w-3.5 h-3.5" /> */}
                       Stipend / Salary
                     </span>
                   </label>

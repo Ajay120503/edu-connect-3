@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
+import UserAvatar from "./UserAvatar";
 
 const Sidebar = ({ collapsed, onToggle }) => {
   const { user } = useAuthStore();
@@ -169,19 +170,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             collapsed ? "justify-center" : ""
           }`}
         >
-          <div className="w-9 h-9 rounded-full bg-placeholder overflow-hidden flex-shrink-0 ring-2 ring-base-200">
-            {user?.profilePic?.url ? (
-              <img
-                src={user.profilePic.url}
-                alt={user.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold text-sm">
-                {user?.name?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-            )}
-          </div>
+          <UserAvatar user={user} size={36} ringClass="ring-2 ring-base-200" />
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate">{user?.name}</p>

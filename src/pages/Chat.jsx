@@ -18,6 +18,7 @@ import useAuthStore from "../store/authStore";
 import { useSocket } from "../context/SocketContext";
 import API from "../utils/axios";
 import ConfirmModal from "../components/common/ConfirmModal";
+import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
 const Chat = () => {
@@ -352,19 +353,7 @@ const Chat = () => {
                   }`}
                 >
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-placeholder overflow-hidden">
-                      {other?.profilePic?.url ? (
-                        <img
-                          src={other.profilePic.url}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold">
-                          {other?.name?.charAt(0) || "?"}
-                        </div>
-                      )}
-                    </div>
+                    <UserAvatar user={other} size={48} />
                     {isUserOnline(other?._id) && (
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-base-100"></div>
                     )}
@@ -412,23 +401,10 @@ const Chat = () => {
                 to={`/profile/${getOtherParticipant(activeConversation)?._id}`}
                 className="flex items-center gap-3"
               >
-                <div className="w-10 h-10 rounded-full bg-placeholder overflow-hidden">
-                  {getOtherParticipant(activeConversation)?.profilePic?.url ? (
-                    <img
-                      src={
-                        getOtherParticipant(activeConversation).profilePic.url
-                      }
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-base-content/40 font-bold">
-                      {getOtherParticipant(activeConversation)?.name?.charAt(
-                        0
-                      ) || "?"}
-                    </div>
-                  )}
-                </div>
+                <UserAvatar
+                  user={getOtherParticipant(activeConversation)}
+                  size={40}
+                />
                 <div>
                   <p className="font-semibold text-sm">
                     {getOtherParticipant(activeConversation)?.name}
@@ -494,15 +470,7 @@ const Chat = () => {
                     } group`}
                   >
                     <div className="chat-image avatar">
-                      <div className="w-8 rounded-full">
-                        {msg.sender?.profilePic?.url ? (
-                          <img src={msg.sender.profilePic.url} alt="" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-placeholder text-base-content/40 text-xs font-bold rounded-full">
-                            {msg.sender?.name?.charAt(0) || "?"}
-                          </div>
-                        )}
-                      </div>
+                      <UserAvatar user={msg.sender} size={32} />
                     </div>
                     <div className="chat-header text-xs opacity-50 mb-0.5 flex items-center gap-2">
                       <span>{msg.sender?.name || "User"}</span>

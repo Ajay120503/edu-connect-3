@@ -13,6 +13,7 @@ import {
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
+import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
 const PostDetail = () => {
@@ -158,27 +159,7 @@ const PostDetail = () => {
             className="flex items-center gap-3 cursor-pointer"
             onClick={() => navigate(`/profile/${postAuthor._id}`)}
           >
-            <div className="avatar placeholder">
-              <div className="w-10 h-10 rounded-full bg-placeholder text-base-content/40 flex items-center justify-center overflow-hidden">
-                {postAuthor.profilePic?.url ? (
-                  <img
-                    src={postAuthor.profilePic.url}
-                    alt={postAuthor.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : postAuthor.profilePic ? (
-                  <img
-                    src={postAuthor.profilePic}
-                    alt={postAuthor.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-sm font-bold">
-                    {postAuthor.name?.charAt(0)?.toUpperCase() || "U"}
-                  </span>
-                )}
-              </div>
-            </div>
+            <UserAvatar user={postAuthor} size={40} />
             <div>
               <p className="font-semibold text-sm">{postAuthor.name}</p>
               {postAuthor.role && (
@@ -300,19 +281,7 @@ const PostDetail = () => {
 
         {/* Add comment */}
         <div className="flex gap-3 mb-6 bg-base-200/50 rounded-2xl p-3">
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 ring-2 ring-base-100 overflow-hidden">
-            {user?.profilePic?.url ? (
-              <img
-                src={user.profilePic.url}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-xs font-bold text-primary">
-                {user?.name?.charAt(0)?.toUpperCase() || "?"}
-              </span>
-            )}
-          </div>
+          <UserAvatar user={user} size={36} />
           <div className="flex-1">
             {replyTo && (
               <div className="text-xs text-base-content/50 mb-2 flex items-center gap-1 bg-base-200 rounded-lg px-2 py-1">
@@ -365,25 +334,7 @@ const PostDetail = () => {
               return (
                 <div key={comment._id} className="group">
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-placeholder flex items-center justify-center flex-shrink-0 ring-2 ring-base-100 overflow-hidden">
-                      {commentAuthor.profilePic?.url ? (
-                        <img
-                          src={commentAuthor.profilePic.url}
-                          alt={commentAuthor.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : commentAuthor.profilePic ? (
-                        <img
-                          src={commentAuthor.profilePic}
-                          alt={commentAuthor.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-[11px] font-bold text-base-content/40">
-                          {commentAuthor.name?.charAt(0)?.toUpperCase() || "?"}
-                        </span>
-                      )}
-                    </div>
+                    <UserAvatar user={commentAuthor} size={32} />
                     <div className="flex-1 min-w-0">
                       <div className="bg-base-200/60 rounded-2xl rounded-tl-sm px-4 py-2.5">
                         <p className="text-xs font-semibold mb-0.5">
@@ -422,27 +373,7 @@ const PostDetail = () => {
                               reply.author || reply.user || {};
                             return (
                               <div key={reply._id} className="flex gap-2">
-                                <div className="w-6 h-6 rounded-full bg-placeholder flex items-center justify-center flex-shrink-0 ring-1 ring-base-100 overflow-hidden">
-                                  {replyAuthor.profilePic?.url ? (
-                                    <img
-                                      src={replyAuthor.profilePic.url}
-                                      alt=""
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : replyAuthor.profilePic ? (
-                                    <img
-                                      src={replyAuthor.profilePic}
-                                      alt=""
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <span className="text-[9px] font-bold text-base-content/40">
-                                      {replyAuthor.name
-                                        ?.charAt(0)
-                                        ?.toUpperCase() || "?"}
-                                    </span>
-                                  )}
-                                </div>
+                                <UserAvatar user={replyAuthor} size={24} />
                                 <div className="bg-base-200/40 rounded-xl px-3 py-1.5 flex-1 min-w-0">
                                   <p className="text-[11px] font-semibold mb-0.5">
                                     {replyAuthor.name || "Unknown"}

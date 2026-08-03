@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, Eye } from "lucide-react";
 import API from "../../utils/axios";
+import UserAvatar from "../common/UserAvatar";
 
 const StoryViewer = ({ group, onClose, onViewed }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -97,19 +98,7 @@ const StoryViewer = ({ group, onClose, onViewed }) => {
 
       {/* Author info */}
       <div className="absolute top-8 left-4 flex items-center gap-2 z-10">
-        <div className="w-8 h-8 rounded-full bg-white/20 overflow-hidden">
-          {group.author?.profilePic?.url ? (
-            <img
-              src={group.author.profilePic.url}
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm">
-              {group.author?.name?.charAt(0) || "?"}
-            </div>
-          )}
-        </div>
+        <UserAvatar user={group.author} size={32} />
         <div>
           <p className="text-white text-sm font-medium">{group.author?.name}</p>
           <p className="text-white/60 text-xs flex items-center gap-1">

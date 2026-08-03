@@ -14,6 +14,7 @@ import {
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
 import NoticeboardBanner from "../components/post/NoticeboardBanner";
+import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
 const roleFilters = [
@@ -232,19 +233,7 @@ const Explore = () => {
                     to={`/profile/${u._id}`}
                     className="flex items-center gap-4 flex-1 min-w-0"
                   >
-                    <div className="w-14 h-14 rounded-full bg-primary/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm group-hover:ring-primary/30 transition-all">
-                      {u.profilePic?.url ? (
-                        <img
-                          src={u.profilePic.url}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-primary font-bold text-lg">
-                          {u.name?.charAt(0)?.toUpperCase() || "?"}
-                        </div>
-                      )}
-                    </div>
+                    <UserAvatar user={u} size={56} />
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                         {u.name}
@@ -355,19 +344,7 @@ const Explore = () => {
                     to={`/profile/${u._id}`}
                     className="card bg-base-100 border border-base-300/30 rounded-2xl p-4 text-center hover:shadow-md hover:border-primary/20 hover:-translate-y-1 transition-all group"
                   >
-                    <div className="w-14 h-14 rounded-full bg-primary/10 overflow-hidden ring-2 ring-base-100 shadow-sm mx-auto group-hover:ring-primary/30 transition-all">
-                      {u.profilePic?.url ? (
-                        <img
-                          src={u.profilePic.url}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-primary font-bold text-xl">
-                          {u.name?.charAt(0)?.toUpperCase() || "?"}
-                        </div>
-                      )}
-                    </div>
+                    <UserAvatar user={u} size={56} className="mx-auto" />
                     <p className="font-semibold text-sm mt-2.5 truncate group-hover:text-primary transition-colors">
                       {u.name}
                     </p>
@@ -425,19 +402,7 @@ const Explore = () => {
                       to={`/profile/${u._id}`}
                       className="flex items-center gap-4 flex-1 min-w-0"
                     >
-                      <div className="w-12 h-12 rounded-full bg-success/10 overflow-hidden flex-shrink-0 ring-2 ring-base-100 shadow-sm group-hover:ring-primary/30 transition-all">
-                        {u.profilePic?.url ? (
-                          <img
-                            src={u.profilePic.url}
-                            alt=""
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-primary font-bold">
-                            {u.name?.charAt(0)?.toUpperCase() || "?"}
-                          </div>
-                        )}
-                      </div>
+                      <UserAvatar user={u} size={48} />
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                           {u.name}
