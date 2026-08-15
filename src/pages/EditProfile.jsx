@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Camera, X, Upload } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
+import { userHasBadge as hasBadge } from "../utils/badgeUtils";
 import toast from "react-hot-toast";
 
 const EditProfile = () => {
@@ -127,10 +128,10 @@ const EditProfile = () => {
         </div>
 
         {/* Institution Picture (for teachers) */}
-        {(user?.role === "teacher" ||
-          user?.role === "professor" ||
-          user?.role === "hod" ||
-          user?.role === "principal") && (
+        {(hasBadge(user, "teacher") ||
+          hasBadge(user, "professor") ||
+          hasBadge(user, "hod") ||
+          hasBadge(user, "principal")) && (
           <div className="card bg-base-100 border border-base-300/50 p-4">
             <h3 className="font-semibold text-sm mb-3">Institution Logo</h3>
             <div className="flex items-center gap-4">
@@ -430,8 +431,8 @@ const EditProfile = () => {
               {resumeFile
                 ? resumeFile.name
                 : user?.resumeUrl
-                ? "Replace"
-                : "Upload PDF"}
+                  ? "Replace"
+                  : "Upload PDF"}
               <input
                 type="file"
                 className="hidden"

@@ -4,55 +4,12 @@ import {
   X,
   Image,
   Send,
-  Sparkles,
-  Megaphone,
-  Award,
-  Briefcase,
-  FileText,
   ArrowLeft,
 } from "lucide-react";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
 import useAuthStore from "../store/authStore";
-
-const postTypes = [
-  {
-    value: "general",
-    label: "General",
-    icon: FileText,
-    color: "text-blue-500",
-    bg: "bg-blue-50",
-  },
-  {
-    value: "job",
-    label: "Job",
-    icon: Briefcase,
-    color: "text-green-500",
-    bg: "bg-green-50",
-  },
-  {
-    value: "announcement",
-    label: "Announcement",
-    icon: Megaphone,
-    color: "text-purple-500",
-    bg: "bg-purple-50",
-  },
-  {
-    value: "achievement",
-    label: "Achievement",
-    icon: Award,
-    color: "text-amber-500",
-    bg: "bg-amber-50",
-  },
-  {
-    value: "noticeboard",
-    label: "Notice",
-    icon: Sparkles,
-    color: "text-rose-500",
-    bg: "bg-rose-50",
-    roles: ["teacher", "professor", "hod", "principal"],
-  },
-];
+import { getAvailablePostTypes } from "../utils/postTypeConfig";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -63,11 +20,7 @@ const CreatePost = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useAuthStore();
-  const canPostNotice = ["teacher", "professor", "hod", "principal"].includes(
-    user?.role
-  );
-
-  const availableTypes = postTypes.filter((t) => !t.roles || canPostNotice);
+  const availableTypes = getAvailablePostTypes(user);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,7 +41,7 @@ const CreatePost = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Post created successfully!");
+      toast.success("Post submitted for review.");
       navigate("/feed");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create post");

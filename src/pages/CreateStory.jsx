@@ -42,7 +42,7 @@ const CreateStory = () => {
       await API.post("/stories", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success("Story posted!");
+      toast.success("Story submitted for review.");
       navigate("/feed");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to post story");

@@ -12,6 +12,7 @@ import {
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
 import UserAvatar from "./UserAvatar";
+import { getUserRoleLabel } from "../../utils/badgeUtils";
 
 const RightSidebar = () => {
   const { user } = useAuthStore();
@@ -111,7 +112,7 @@ const RightSidebar = () => {
                       </p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize font-medium">
-                          {u.role}
+                          {getUserRoleLabel(u)}
                         </span>
                         {u.institutionName && (
                           <span className="text-[10px] text-base-content/40 truncate">

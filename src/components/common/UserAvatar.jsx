@@ -1,5 +1,7 @@
+import { BriefcaseBusiness } from "lucide-react";
+
 /**
- * Reusable avatar component that shows a green ring + badge indicator
+ * Reusable avatar component that shows a refined opportunity indicator
  * when the user has "Open to Opportunities" enabled.
  *
  * Props:
@@ -50,16 +52,24 @@ const UserAvatar = ({
         )}
       </div>
 
-      {/* Green "Open to Opportunities" badge */}
+      {/* Open to Opportunities badge */}
       {isOpen && (
         <span
-          className="absolute bottom-0 right-0 bg-success rounded-full border-2 border-base-100"
+          className="absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-success text-success-content shadow-sm ring-2 ring-base-100"
           style={{
-            width: Math.max(size * 0.28, 8),
-            height: Math.max(size * 0.28, 8),
+            width: Math.max(size * 0.34, 14),
+            height: Math.max(size * 0.34, 14),
           }}
           title="Open to opportunities"
-        />
+        >
+          <BriefcaseBusiness
+            strokeWidth={2.5}
+            style={{
+              width: Math.max(size * 0.17, 7),
+              height: Math.max(size * 0.17, 7),
+            }}
+          />
+        </span>
       )}
     </div>
   );

@@ -16,10 +16,14 @@ import API from "../utils/axios";
 import toast from "react-hot-toast";
 
 const ROLE_TYPES = [
-  { value: "teacher", label: "Teacher" },
-  { value: "professor", label: "Professor" },
-  { value: "hod", label: "Head of Department" },
-  { value: "principal", label: "Principal" },
+  { value: "teacher", label: "Teaching" },
+  { value: "professor", label: "Faculty" },
+  { value: "assistant", label: "Assistant" },
+  { value: "research", label: "Research" },
+  { value: "intern", label: "Internship" },
+  { value: "volunteer", label: "Volunteer" },
+  { value: "hod", label: "Department Leadership" },
+  { value: "principal", label: "Institution Leadership" },
   { value: "other", label: "Other" },
 ];
 
@@ -123,7 +127,7 @@ const CreateJob = () => {
       const { data } = await API.post("/jobs", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success("Job posted successfully!");
+      toast.success("Opportunity submitted for review.");
       navigate(`/jobs/${data.job._id}`);
     } catch (err) {
       const message = err.response?.data?.message || "Failed to create job.";
@@ -146,7 +150,7 @@ const CreateJob = () => {
         <div>
           <h1 className="text-2xl font-bold font-heading">Post a Job</h1>
           <p className="text-sm text-base-content/50 mt-0.5">
-            Find the right talent for your institution
+            Share an opportunity with your professional network
           </p>
         </div>
       </div>
@@ -213,12 +217,12 @@ const CreateJob = () => {
               />
             </div>
 
-            {/* Role Type */}
+            {/* Opportunity Type */}
             <div className="form-control">
               <label className="label pb-1">
                 <span className="label-text font-medium text-sm flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5" />
-                  Role Type
+                  Opportunity Type
                 </span>
               </label>
               <select

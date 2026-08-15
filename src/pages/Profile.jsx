@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
+import { getUserRoleLabel, getActiveBadges } from "../utils/badgeUtils";
+import BadgeChip from "../components/common/BadgeChip";
 import toast from "react-hot-toast";
 import ConfirmModal from "../components/common/ConfirmModal";
 import StrengthMeter from "../components/profile/StrengthMeter";
@@ -333,17 +335,21 @@ const Profile = () => {
 
           {/* Badges */}
           <div className="flex flex-wrap justify-center md:justify-start gap-1.5 mb-2">
-            <span className="badge badge-sm badge-soft badge-primary font-medium capitalize">
-              {profile.role}
-            </span>
+            {getActiveBadges(profile).slice(0, 4).map((badge) => (
+              <BadgeChip
+                key={badge._id || badge.type}
+                badgeType={badge.type}
+                size="sm"
+              />
+            ))}
+            {getActiveBadges(profile).length === 0 && (
+              <span className="badge badge-sm badge-soft badge-primary font-medium">
+                {getUserRoleLabel(profile)}
+              </span>
+            )}
             {profile.institutionName && (
               <span className="badge badge-sm badge-ghost font-medium">
                 {profile.institutionName}
-              </span>
-            )}
-            {profile.category && (
-              <span className="badge badge-sm badge-outline font-medium">
-                {profile.category}
               </span>
             )}
           </div>
@@ -468,6 +474,21 @@ const Profile = () => {
 
                 return (
                   <div key={post._id} className="group relative cursor-pointer">
+                    {isOwnProfile &&
+                      post.status &&
+                      post.status !== "approved" && (
+                        <span
+                          className={`absolute left-1.5 top-1.5 z-10 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm ${
+                            post.status === "pending_review"
+                              ? "bg-warning text-warning-content"
+                              : "bg-error text-error-content"
+                          }`}
+                        >
+                          {post.status === "pending_review"
+                            ? "Under Review"
+                            : "Not Approved"}
+                        </span>
+                      )}
                     {/* Clickable overlay to navigate to post detail */}
                     <div
                       onClick={() => navigate(`/post/${post._id}`)}
@@ -669,6 +690,21 @@ const Profile = () => {
                             <span className="badge badge-xs badge-outline capitalize">
                               {job.roleType}
                             </span>
+                            {isOwnProfile &&
+                              job.status &&
+                              job.status !== "approved" && (
+                                <span
+                                  className={`badge badge-xs font-medium ${
+                                    job.status === "pending_review"
+                                      ? "badge-warning badge-soft"
+                                      : "badge-error badge-soft"
+                                  }`}
+                                >
+                                  {job.status === "pending_review"
+                                    ? "Under Review"
+                                    : "Not Approved"}
+                                </span>
+                              )}
                             <span className="badge badge-xs badge-ghost">
                               {job.applicants?.length || 0} applicant
                               {(job.applicants?.length || 0) !== 1 ? "s" : ""}
@@ -798,7 +834,7 @@ const Profile = () => {
                           {follower.name}
                         </p>
                         <p className="text-xs text-base-content/50 capitalize">
-                          {follower.role}
+                          {getUserRoleLabel(follower)}
                           {follower.institutionName
                             ? ` · ${follower.institutionName}`
                             : ""}
@@ -897,7 +933,7 @@ const Profile = () => {
                           {followed.name}
                         </p>
                         <p className="text-xs text-base-content/50 capitalize">
-                          {followed.role}
+                          {getUserRoleLabel(followed)}
                           {followed.institutionName
                             ? ` · ${followed.institutionName}`
                             : ""}

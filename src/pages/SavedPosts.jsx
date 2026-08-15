@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
+import { getUserRoleLabel } from "../utils/badgeUtils";
 import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
@@ -113,10 +114,7 @@ const SavedPosts = () => {
                       </p>
                       <div className="flex items-center gap-2 text-xs text-base-content/40">
                         <span>
-                          {post.author?.role
-                            ? post.author.role.charAt(0).toUpperCase() +
-                              post.author.role.slice(1)
-                            : "User"}
+                          {getUserRoleLabel(post.author)}
                         </span>
                         <span>·</span>
                         <span>

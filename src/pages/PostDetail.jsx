@@ -12,6 +12,7 @@ import {
   Pencil,
 } from "lucide-react";
 import API from "../utils/axios";
+import { getUserRoleLabel } from "../utils/badgeUtils";
 import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
 import LinkedJobCard from "../components/job/LinkedJobCard";
@@ -164,12 +165,12 @@ const PostDetail = () => {
             <UserAvatar user={postAuthor} size={40} />
             <div>
               <p className="font-semibold text-sm">{postAuthor.name}</p>
-              {postAuthor.role && (
-                <p className="text-xs text-base-content/50 capitalize">
-                  {postAuthor.role} ·{" "}
-                  {postAuthor.category || postAuthor.institutionName || ""}
-                </p>
-              )}
+              <p className="text-xs text-base-content/50">
+                {getUserRoleLabel(postAuthor)}
+                {postAuthor.institutionName
+                  ? ` · ${postAuthor.institutionName}`
+                  : ""}
+              </p>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { GraduationCap, CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 import API from "../utils/axios";
 
 const VerifyEmail = () => {
@@ -36,8 +36,8 @@ const VerifyEmail = () => {
         </div>
         <h2 className="text-2xl font-bold mb-2">Email Verification</h2>
         <p className="text-base-content/60 mb-6">{message}</p>
-        <Link to="/login" className="btn btn-primary">
-          Go to Login
+        <Link to="/complete-profile" className="btn btn-primary">
+          Complete Your Profile
         </Link>
       </div>
     </div>

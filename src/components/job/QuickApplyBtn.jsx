@@ -3,21 +3,26 @@ import { Zap } from "lucide-react";
 import API from "../../utils/axios";
 import { calcStrength } from "../../utils/profileStrength";
 import useAuthStore from "../../store/authStore";
+import { canApplyToJobs } from "../../utils/badgeUtils";
 import toast from "react-hot-toast";
 
-const QuickApplyBtn = ({ jobId, alreadyApplied }) => {
+const QuickApplyBtn = ({ jobId, alreadyApplied, onApplied }) => {
   const { user } = useAuthStore();
-  const [applied, setApplied] = useState(alreadyApplied);
+  const [localApply, setLocalApply] = useState({ jobId: null, applied: false });
   const [loading, setLoading] = useState(false);
+  const applied =
+    Boolean(alreadyApplied) ||
+    (localApply.jobId === jobId && localApply.applied);
 
   const profileStrength = calcStrength(user);
-  if (profileStrength < 80 || user?.role !== "student" || applied) return null;
+  if (profileStrength < 80 || !canApplyToJobs(user) || applied) return null;
 
   const handleQuickApply = async () => {
     setLoading(true);
     try {
       await API.post(`/jobs/${jobId}/quick-apply`);
-      setApplied(true);
+      setLocalApply({ jobId, applied: true });
+      onApplied?.();
       toast.success("Applied successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Quick apply failed");

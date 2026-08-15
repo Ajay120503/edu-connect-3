@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Briefcase, MapPin, Clock, Plus, Search, Filter } from "lucide-react";
+import { Briefcase, MapPin, Clock, Plus } from "lucide-react";
 import API from "../utils/axios";
 import useAuthStore from "../store/authStore";
+import { canCreateJobs } from "../utils/badgeUtils";
 import MatchedJobsRow from "../components/job/MatchedJobsRow";
 import QuickApplyBtn from "../components/job/QuickApplyBtn";
-
-const CAN_POST_JOBS = ["teacher", "professor", "hod", "principal"];
 
 const formatStipend = (stipend, currency, isPaid) => {
   if (!isPaid) return "Unpaid";
@@ -15,13 +14,23 @@ const formatStipend = (stipend, currency, isPaid) => {
   return `₹${formatted}`;
 };
 
+const hasAppliedToJob = (job, userId) =>
+  Boolean(
+    userId &&
+      job?.applicants?.some((applicant) => {
+        const applicantId =
+          typeof applicant === "string" ? applicant : applicant?._id;
+        return applicantId === userId;
+      })
+  );
+
 const Jobs = () => {
   const { user } = useAuthStore();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  const canPost = user && CAN_POST_JOBS.includes(user.role);
+  const canPost = canCreateJobs(user);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -179,12 +188,42 @@ const Jobs = () => {
                         <span className="badge badge-xs badge-soft badge-primary font-medium">
                           {job.roleType}
                         </span>
+                        {job.postedBy?._id === user?._id &&
+                          job.status &&
+                          job.status !== "approved" && (
+                            <span
+                              className={`badge badge-xs font-medium ${
+                                job.status === "pending_review"
+                                  ? "badge-warning badge-soft"
+                                  : "badge-error badge-soft"
+                              }`}
+                            >
+                              {job.status === "pending_review"
+                                ? "Under Review"
+                                : "Not Approved"}
+                            </span>
+                          )}
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                       <QuickApplyBtn
                         jobId={job._id}
-                        alreadyApplied={job.applicants?.includes?.(user?._id)}
+                        alreadyApplied={hasAppliedToJob(job, user?._id)}
+                        onApplied={() =>
+                          setJobs((prev) =>
+                            prev.map((item) =>
+                              item._id === job._id
+                                ? {
+                                    ...item,
+                                    applicants: [
+                                      ...(item.applicants || []),
+                                      user?._id,
+                                    ],
+                                  }
+                                : item
+                            )
+                          )
+                        }
                       />
                       {job.applicants?.length > 0 && (
                         <span className="text-xs text-base-content/30">

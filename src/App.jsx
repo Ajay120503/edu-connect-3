@@ -21,9 +21,11 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import OtpScreen from "./pages/OtpScreen";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import CompleteProfile from "./pages/CompleteProfile";
 import Feed from "./pages/Feed";
 import Explore from "./pages/Explore";
 import Jobs from "./pages/Jobs";
@@ -42,6 +44,13 @@ import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
 import PostDetail from "./pages/PostDetail";
 import NotFound from "./pages/NotFound";
+import BlockedScreen from "./pages/BlockedScreen";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminUserDetail from "./pages/admin/AdminUserDetail";
+import AdminQueue from "./pages/admin/AdminQueue";
+import AdminContentDetail from "./pages/admin/AdminContentDetail";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 function App() {
   const { fetchMe, isAuthenticated } = useAuthStore();
@@ -114,9 +123,17 @@ function App() {
               path="/register"
               element={isAuthenticated ? <Navigate to="/feed" /> : <Register />}
             />
+            <Route
+              path="/otp-verify"
+              element={
+                isAuthenticated ? <Navigate to="/feed" /> : <OtpScreen />
+              }
+            />
             <Route path="/verify-email/:token" element={<VerifyEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
+            <Route path="/blocked" element={<BlockedScreen />} />
 
             {/* Protected routes (with layout) */}
             <Route
@@ -165,6 +182,24 @@ function App() {
                           <Route path="/settings" element={<Settings />} />
                           <Route path="/post/:id" element={<PostDetail />} />
                           <Route path="/post/:id/edit" element={<EditPost />} />
+
+                          {/* Admin routes */}
+                          <Route path="/admin" element={<AdminDashboard />} />
+                          <Route path="/admin/users" element={<AdminUsers />} />
+                          <Route
+                            path="/admin/users/:id"
+                            element={<AdminUserDetail />}
+                          />
+                          <Route path="/admin/queue" element={<AdminQueue />} />
+                          <Route
+                            path="/admin/content/:type/:id"
+                            element={<AdminContentDetail />}
+                          />
+                          <Route
+                            path="/admin/settings"
+                            element={<AdminSettings />}
+                          />
+
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>

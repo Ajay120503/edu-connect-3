@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BriefcaseBusiness, CheckCircle2, CircleOff } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
+import UserAvatar from "../components/common/UserAvatar";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
+import { canApplyToJobs, getUserRoleLabel } from "../utils/badgeUtils";
 
 const Settings = () => {
   const { user, logout, deleteAccount, isLoading, setUser } = useAuthStore();
@@ -60,30 +63,60 @@ const Settings = () => {
             <span className="text-sm font-medium">{user?.email}</span>
           </div>
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-base-content/60">Role</span>
-            <span className="text-sm font-medium capitalize">{user?.role}</span>
+            <span className="text-sm text-base-content/60">Identity</span>
+            <span className="text-sm font-medium capitalize">
+              {getUserRoleLabel(user)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Open to Opportunities Toggle (Students only) */}
-      {user?.role === "student" && (
-        <div className="card bg-base-100 shadow-sm border border-base-300 p-6 mb-6">
-          <h3 className="font-semibold text-lg mb-4">Opportunities</h3>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-semibold text-sm">Open to Opportunities</p>
-              <p className="text-xs text-base-content/50">
-                Let institutions know you're available for roles
-              </p>
+      {/* Open to Opportunities Toggle */}
+      {canApplyToJobs(user) && (
+        <div className="card bg-base-100 shadow-sm border border-base-300 p-6 mb-6 overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="flex items-start gap-4 min-w-0">
+              <UserAvatar user={user} size={56} />
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <BriefcaseBusiness className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold text-lg">Opportunities</h3>
+                </div>
+                <p className="font-semibold text-sm">Open to Opportunities</p>
+                <p className="text-xs text-base-content/50 mt-1 max-w-md">
+                  Show a briefcase badge on your avatar and let institutions
+                  know you are available for roles.
+                </p>
+                <div
+                  className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+                    user?.openToOpportunities
+                      ? "bg-success/10 text-success"
+                      : "bg-base-200 text-base-content/60"
+                  }`}
+                >
+                  {user?.openToOpportunities ? (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  ) : (
+                    <CircleOff className="w-3.5 h-3.5" />
+                  )}
+                  {user?.openToOpportunities
+                    ? "Visible on your profile"
+                    : "Hidden from profile signals"}
+                </div>
+              </div>
             </div>
-            <input
-              type="checkbox"
-              className="toggle toggle-success"
-              checked={user?.openToOpportunities || false}
-              onChange={handleOpportunityToggle}
-              disabled={opportunityLoading}
-            />
+            <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+              <span className="text-xs font-medium text-base-content/50">
+                {user?.openToOpportunities ? "On" : "Off"}
+              </span>
+              <input
+                type="checkbox"
+                className="toggle toggle-success"
+                checked={user?.openToOpportunities || false}
+                onChange={handleOpportunityToggle}
+                disabled={opportunityLoading}
+              />
+            </div>
           </div>
         </div>
       )}

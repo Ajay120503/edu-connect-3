@@ -12,10 +12,12 @@ import {
   Bell,
   MessageCircle,
   GraduationCap,
+  Shield,
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
 import UserAvatar from "./UserAvatar";
+import { isAdminUser, getUserRoleLabel } from "../../utils/badgeUtils";
 
 const Sidebar = ({ collapsed, onToggle }) => {
   const { user } = useAuthStore();
@@ -29,6 +31,8 @@ const Sidebar = ({ collapsed, onToggle }) => {
     { to: "/saved", icon: Bookmark, label: "Saved" },
     { to: `/profile/${user?._id}`, icon: User, label: "Profile" },
   ];
+
+  const isAdmin = isAdminUser(user);
 
   const secondaryNavItems = [
     {
@@ -44,6 +48,9 @@ const Sidebar = ({ collapsed, onToggle }) => {
       badge: messageCount,
     },
     { to: "/settings", icon: Settings, label: "Settings" },
+    ...(isAdmin
+      ? [{ to: "/admin", icon: Shield, label: "Admin Dashboard" }]
+      : []),
   ];
 
   return (
@@ -101,7 +108,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             />
             {!collapsed && <span className="text-sm">{item.label}</span>}
             {collapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-base-900 text-base-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-neutral text-neutral-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
                 {item.label}
               </div>
             )}
@@ -153,7 +160,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
               </span>
             )}
             {collapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-base-900 text-base-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-neutral text-neutral-content rounded-md text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
                 {item.label}
                 {item.badge > 0 ? ` (${item.badge})` : ""}
               </div>
@@ -175,7 +182,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate">{user?.name}</p>
               <p className="text-xs text-base-content/50 truncate capitalize">
-                {user?.role}
+                {getUserRoleLabel(user)}
               </p>
             </div>
           )}

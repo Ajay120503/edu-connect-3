@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [messageCount, setMessageCount] = useState(0);
   const socketRef = useRef(null);
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, forceLogout } = useAuthStore();
 
   // Fetch initial counts + online users on auth change
   useEffect(() => {
@@ -85,6 +85,44 @@ export const SocketProvider = ({ children }) => {
       });
     });
 
+    // ── Moderation: force logout when admin blocks a user ──
+    socket.on("force_logout", (payload) => {
+      const reason =
+        (payload && (payload.reason || payload.message)) ||
+        "Your account has been suspended.";
+      toast.error(reason, { duration: 8000 });
+      forceLogout(reason);
+      window.location.href = "/blocked";
+    });
+
+    // ── Moderation: content approved / rejected ──
+    socket.on("content_approved", (payload) => {
+      toast.success(
+        payload?.message || "Your content has been approved and is now live!",
+      );
+    });
+
+    socket.on("content_rejected", (payload) => {
+      toast.error(
+        payload?.reason ||
+          payload?.message ||
+          "Your content was not approved. See admin notes for details.",
+      );
+    });
+
+    // ── Moderation: auto-moderation result (admin notification) ──
+    socket.on("auto_moderation_done", (payload) => {
+      toast(
+        (t) => (
+          <div onClick={() => toast.dismiss(t.id)} className="cursor-pointer">
+            Auto {payload?.decision === "approved" ? "approved" : "rejected"}:{" "}
+            {payload?.id}
+          </div>
+        ),
+        { icon: "🤖", duration: 6000 },
+      );
+    });
+
     // Global notification listener - updates badge count + shows clickable toast
     socket.on("notification", (notification) => {
       // Increment notification badge
@@ -100,6 +138,9 @@ export const SocketProvider = ({ children }) => {
         new_follower: "👤",
         job_applied: "📋",
         application_status: "📄",
+        content_approved: "✅",
+        content_rejected: "❌",
+        admin_action: "🛡️",
       };
       toast(
         (t) => (
@@ -118,7 +159,7 @@ export const SocketProvider = ({ children }) => {
         {
           icon: iconMap[notification.type] || "🔔",
           duration: 5000,
-        }
+        },
       );
     });
 
@@ -142,7 +183,7 @@ export const SocketProvider = ({ children }) => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [isAuthenticated, user?._id]);
+  }, [isAuthenticated, user?._id, forceLogout]);
 
   const isUserOnline = (userId) => onlineUsers.has(userId);
 

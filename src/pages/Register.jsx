@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import {
   GraduationCap,
   Mail,
@@ -11,61 +9,37 @@ import {
   CheckCircle2,
   Users,
   Briefcase,
-  Sparkles,
   Star,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
   const [showPassword, setShowPassword] = useState(false);
-  const { register, isLoading } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const { initiateRegister } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      await register({ name, email, password, role });
-      toast.success("Registration successful! Please verify your email.");
-      navigate("/feed");
+      await initiateRegister({ name, email, password });
+      toast.success("OTP sent to your email! Please verify to continue.");
+      navigate("/otp-verify", { state: { email } });
     } catch (err) {
       const message =
         err.response?.data?.message || "Registration failed. Please try again.";
       toast.error(message);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const roles = [
-    {
-      value: "student",
-      label: "Student",
-      icon: GraduationCap,
-      desc: "Pursuing or completed education",
-    },
-    {
-      value: "teacher",
-      label: "Teacher",
-      icon: Users,
-      desc: "Teaching at an institution",
-    },
-    {
-      value: "professor",
-      label: "Professor",
-      icon: Star,
-      desc: "Higher education faculty",
-    },
-    { value: "hod", label: "HOD", icon: Users, desc: "Head of Department" },
-    {
-      value: "principal",
-      label: "Principal",
-      icon: Users,
-      desc: "Institution head",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-base-100 flex">
@@ -106,37 +80,11 @@ const Register = () => {
             </div>
             <div className="flex items-center gap-3 text-white/80">
               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-4 h-4 text-white" />
+                <Star className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm">
                 Build your academic career in one place
               </span>
-            </div>
-          </div>
-
-          <div className="mt-10 pt-8 border-t border-white/10">
-            <p className="text-white/50 text-xs mb-3">Trusted by</p>
-            <div className="flex items-center justify-center gap-6">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white font-heading">
-                  10,000+
-                </p>
-                <p className="text-[11px] text-white/50">Students</p>
-              </div>
-              <div className="w-px h-10 bg-white/10" />
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white font-heading">
-                  5,000+
-                </p>
-                <p className="text-[11px] text-white/50">Teachers</p>
-              </div>
-              <div className="w-px h-10 bg-white/10" />
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white font-heading">
-                  2,000+
-                </p>
-                <p className="text-[11px] text-white/50">Job Posts</p>
-              </div>
             </div>
           </div>
         </div>
@@ -145,7 +93,7 @@ const Register = () => {
       {/* Right Form Panel */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
-          {/* Mobile logo */}
+          {/* Mobile logo — visible only on small screens */}
           <div className="lg:hidden text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2.5 mb-4">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
@@ -153,20 +101,20 @@ const Register = () => {
               </div>
             </Link>
             <h1 className="text-2xl font-bold font-heading text-neutral mb-1">
-              Join EduConnect
+              Create Account
             </h1>
             <p className="text-sm text-base-content/50">
-              Create your academic profile
+              Join EduConnect to start your academic journey
             </p>
           </div>
 
           {/* Desktop heading */}
           <div className="hidden lg:block mb-8">
             <h1 className="text-3xl font-bold font-heading text-neutral mb-2">
-              Create Your Account
+              Create Account
             </h1>
             <p className="text-sm text-base-content/50">
-              Join the academic community today
+              Join EduConnect to start your academic journey
             </p>
           </div>
 
@@ -175,16 +123,14 @@ const Register = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="form-control">
                 <label className="label pb-1">
-                  <span className="label-text font-medium text-sm">
-                    Full Name
-                  </span>
+                  <span className="label-text font-medium text-sm">Name</span>
                 </label>
                 <div className="relative">
                   <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/30" />
                   <input
                     type="text"
                     className="input input-bordered w-full pl-10 h-11 text-sm focus:ring-2 focus:ring-primary/20"
-                    placeholder="John Doe"
+                    placeholder="Full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -220,11 +166,10 @@ const Register = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     className="input input-bordered w-full pl-10 pr-10 h-11 text-sm focus:ring-2 focus:ring-primary/20"
-                    placeholder="Min 6 characters"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    minLength={6}
                   />
                   <button
                     type="button"
@@ -237,37 +182,6 @@ const Register = () => {
                       <Eye className="w-4 h-4" />
                     )}
                   </button>
-                </div>
-              </div>
-
-              <div className="form-control">
-                <label className="label pb-1">
-                  <span className="label-text font-medium text-sm">I am a</span>
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {roles.map((r) => {
-                    const Icon = r.icon;
-                    const isSelected = role === r.value;
-                    return (
-                      <button
-                        key={r.value}
-                        type="button"
-                        onClick={() => setRole(r.value)}
-                        className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs transition-all ${
-                          isSelected
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-base-300/50 bg-base-100 text-base-content/50 hover:border-base-300 hover:bg-base-200/50"
-                        }`}
-                      >
-                        <Icon
-                          className={`w-4 h-4 ${
-                            isSelected ? "text-primary" : ""
-                          }`}
-                        />
-                        <span className="font-medium">{r.label}</span>
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
 
@@ -294,7 +208,7 @@ const Register = () => {
                 to="/login"
                 className="text-primary font-semibold hover:underline"
               >
-                Sign In
+                Sign in
               </Link>
             </p>
           </div>

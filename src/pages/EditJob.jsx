@@ -17,14 +17,14 @@ import API from "../utils/axios";
 import toast from "react-hot-toast";
 
 const ROLE_TYPES = [
-  { value: "teacher", label: "Teacher" },
-  { value: "professor", label: "Professor" },
-  { value: "hod", label: "Head of Department" },
-  { value: "principal", label: "Principal" },
-  { value: "intern", label: "Intern" },
-  { value: "volunteer", label: "Volunteer" },
+  { value: "teacher", label: "Teaching" },
+  { value: "professor", label: "Faculty" },
   { value: "assistant", label: "Assistant" },
   { value: "research", label: "Research" },
+  { value: "intern", label: "Internship" },
+  { value: "volunteer", label: "Volunteer" },
+  { value: "hod", label: "Department Leadership" },
+  { value: "principal", label: "Institution Leadership" },
   { value: "other", label: "Other" },
 ];
 
@@ -274,12 +274,12 @@ const EditJob = () => {
               />
             </div>
 
-            {/* Role Type */}
+            {/* Opportunity Type */}
             <div className="form-control">
               <label className="label pb-1">
                 <span className="label-text font-medium text-sm flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5" />
-                  Role Type
+                  Opportunity Type
                 </span>
               </label>
               <select

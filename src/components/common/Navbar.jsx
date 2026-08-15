@@ -31,7 +31,7 @@ const Navbar = () => {
       {/* Logo */}
       <Link to="/feed" className="flex items-center gap-2 shrink-0">
         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-          <GraduationCap className="w-4.5 h-4.5 text-white" />
+          <GraduationCap className="w-[18px] h-[18px] text-white" />
         </div>
         <span className="text-lg lg:text-xl font-bold text-primary hidden lg:block">
           EduConnect
@@ -60,7 +60,7 @@ const Navbar = () => {
         >
           <Bell className="w-5 h-5" />
           {notificationCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-error text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
+            <span className="absolute -top-0.5 -right-0.5 w-[18px] h-[18px] bg-error text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
               {notificationCount > 9 ? "9+" : notificationCount}
             </span>
           )}
@@ -71,7 +71,7 @@ const Navbar = () => {
         >
           <MessageCircle className="w-5 h-5" />
           {messageCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
+            <span className="absolute -top-0.5 -right-0.5 w-[18px] h-[18px] bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
               {messageCount > 9 ? "9+" : messageCount}
             </span>
           )}

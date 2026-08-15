@@ -12,6 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import API from "../utils/axios";
+import { getUserRoleLabel } from "../utils/badgeUtils";
 import useAuthStore from "../store/authStore";
 import NoticeboardBanner from "../components/post/NoticeboardBanner";
 import UserAvatar from "../components/common/UserAvatar";
@@ -19,11 +20,11 @@ import toast from "react-hot-toast";
 
 const roleFilters = [
   { value: "", label: "All", icon: Users },
-  { value: "student", label: "Students", icon: GraduationCap },
-  { value: "teacher", label: "Teachers", icon: Users },
-  { value: "professor", label: "Professors", icon: Users },
-  { value: "hod", label: "HODs", icon: Users },
-  { value: "principal", label: "Principals", icon: Users },
+  { value: "student", label: "Learners", icon: GraduationCap },
+  { value: "teacher", label: "Educators", icon: Users },
+  { value: "researcher", label: "Researchers", icon: Users },
+  { value: "school_member", label: "Schools", icon: Users },
+  { value: "college_member", label: "Colleges", icon: Users },
 ];
 
 const Explore = () => {
@@ -151,7 +152,7 @@ const Explore = () => {
           Explore
         </h1>
         <p className="text-sm text-base-content/50 mt-1">
-          Discover students, teachers, and institutions
+          Discover people, skills, and institutions
         </p>
       </div>
 
@@ -240,7 +241,7 @@ const Explore = () => {
                       </p>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         <span className="badge badge-sm badge-soft badge-primary text-[10px] font-medium capitalize">
-                          {u.role}
+                          {getUserRoleLabel(u)}
                         </span>
                         {u.institutionName && (
                           <span className="text-[11px] text-base-content/40 truncate">
@@ -349,7 +350,7 @@ const Explore = () => {
                       {u.name}
                     </p>
                     <span className="badge badge-xs badge-soft badge-primary text-[10px] mt-1 capitalize">
-                      {u.role}
+                      {getUserRoleLabel(u)}
                     </span>
                     {u.followers?.length > 0 && (
                       <p className="text-[10px] text-base-content/40 mt-1.5">
@@ -409,7 +410,7 @@ const Explore = () => {
                         </p>
                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                           <span className="badge badge-xs badge-soft badge-primary text-[10px] font-medium capitalize">
-                            {u.role}
+                            {getUserRoleLabel(u)}
                           </span>
                           {u.institutionName && (
                             <span className="text-[10px] text-base-content/40 truncate">

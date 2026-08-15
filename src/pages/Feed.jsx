@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
+import { getUserRoleLabel } from "../utils/badgeUtils";
 import StoryBar from "../components/post/StoryBar";
 import LinkedJobCard from "../components/job/LinkedJobCard";
 import ConfirmModal from "../components/common/ConfirmModal";
@@ -278,7 +279,7 @@ const Feed = () => {
         <div>
           <h1 className="text-2xl font-bold font-heading">Feed</h1>
           <p className="text-sm text-base-content/40 mt-0.5">
-            Latest from your network
+            Latest public updates
           </p>
         </div>
         <button
@@ -298,7 +299,7 @@ const Feed = () => {
             No posts yet
           </h3>
           <p className="text-sm text-base-content/30 max-w-sm mx-auto">
-            Follow users or create your first post to see content here.
+            Public posts will appear here after review.
           </p>
           <button
             className="btn btn-primary btn-sm mt-6 shadow-lg shadow-primary/20"
@@ -336,7 +337,7 @@ const Feed = () => {
                         </p>
                         <div className="flex items-center gap-2 text-xs text-base-content/40">
                           <span className="capitalize">
-                            {post.author?.role || "User"}
+                            {getUserRoleLabel(post.author)}
                           </span>
                           <span>·</span>
                           <span>
@@ -349,6 +350,21 @@ const Feed = () => {
                       </div>
                     </RouterLink>
                     <div className="flex items-center gap-2 flex-shrink-0">
+                      {post.author?._id === user?._id &&
+                        post.status &&
+                        post.status !== "approved" && (
+                          <span
+                            className={`badge badge-sm font-medium text-xs px-2.5 py-1 ${
+                              post.status === "pending_review"
+                                ? "badge-warning badge-soft"
+                                : "badge-error badge-soft"
+                            }`}
+                          >
+                            {post.status === "pending_review"
+                              ? "Under Review"
+                              : "Not Approved"}
+                          </span>
+                        )}
                       {post.type && post.type !== "general" && (
                         <span
                           className={`badge badge-sm font-medium text-xs px-2.5 py-1 ${

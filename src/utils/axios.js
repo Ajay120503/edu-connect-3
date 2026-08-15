@@ -50,6 +50,12 @@ API.interceptors.response.use(
       }
     }
 
+    // Handle account suspension (blocked by admin)
+    if (error.response?.status === 403 && error.response?.data?.error === 'account_suspended') {
+      localStorage.removeItem('accessToken');
+      window.location.href = '/blocked';
+    }
+
     return Promise.reject(error);
   }
 );

@@ -1,0 +1,401 @@
+import { useState, useEffect, useCallback } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  Shield,
+  User,
+  Mail,
+  MapPin,
+  Calendar,
+  Ban,
+  Unlock,
+  Award,
+  Trash2,
+  CheckCircle,
+  History,
+} from "lucide-react";
+import useAuthStore from "../../store/authStore";
+import {
+  isAdminUser,
+  getActiveBadges,
+  getUserRoleLabel,
+  TRUST_BADGES,
+} from "../../utils/badgeUtils";
+import { badgeConfig } from "../../utils/badgeConfig";
+import BadgeChip from "../../components/common/BadgeChip";
+import API from "../../utils/axios";
+import toast from "react-hot-toast";
+
+const AdminUserDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user: currentUser, isAuthenticated } = useAuthStore();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [selectedBadge, setSelectedBadge] = useState("");
+
+  const fetchUser = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const { data } = await API.get(`/admin/users/${id}`);
+      setProfile(data.user);
+      setNotes(data.user?.adminNotes || "");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to fetch user");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  // Initial fetch — inlined to avoid setState-in-effect lint
+  useEffect(() => {
+    const load = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        const { data } = await API.get(`/admin/users/${id}`);
+        setProfile(data.user);
+        setNotes(data.user?.adminNotes || "");
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to fetch user");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [id]);
+
+  // Check admin access (after hooks)
+  if (!isAuthenticated || !isAdminUser(currentUser)) {
+    navigate("/feed");
+    return null;
+  }
+
+  const handleBlockAction = async (action) => {
+    setActionLoading(true);
+    try {
+      const endpoint = `/admin/users/${id}/${action}`;
+      const body =
+        action === "block"
+          ? { reason: "Violation of community guidelines" }
+          : {};
+      await API.put(endpoint, body);
+      toast.success(action === "block" ? "User blocked" : "User unblocked");
+      await fetchUser();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Action failed");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleGrantBadge = async () => {
+    if (!selectedBadge) return;
+    setActionLoading(true);
+    try {
+      await API.put(`/admin/users/${id}/grant-badge`, {
+        badgeType: selectedBadge,
+      });
+      toast.success(`Badge "${selectedBadge}" granted`);
+      setSelectedBadge("");
+      await fetchUser();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Grant badge failed");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRevokeBadge = async (badgeType) => {
+    setActionLoading(true);
+    try {
+      await API.put(`/admin/users/${id}/revoke-badge`, { badgeType });
+      toast.success(`Badge "${badgeType}" revoked`);
+      await fetchUser();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Revoke badge failed");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleAddNote = async () => {
+    setActionLoading(true);
+    try {
+      await API.put(`/admin/users/${id}/notes`, { notes });
+      toast.success("Admin note updated");
+      await fetchUser();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update note");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="space-y-4">
+          <div className="h-8 w-48 skeleton rounded mb-4"></div>
+          <div className="card bg-base-100 p-6 space-y-4">
+            <div className="h-6 w-3/4 skeleton rounded"></div>
+            <div className="h-4 w-1/2 skeleton rounded"></div>
+            <div className="h-4 w-1/3 skeleton rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto text-center py-20">
+        <h2 className="text-xl font-semibold text-base-content/40">
+          User not found
+        </h2>
+      </div>
+    );
+  }
+
+  const activeBadges = getActiveBadges(profile);
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Shield className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold font-heading">User Details</h1>
+        </div>
+        <div className="flex gap-2">
+          <Link to="/admin/users" className="btn btn-ghost btn-sm">
+            Back to Users
+          </Link>
+          <Link to="/admin" className="btn btn-ghost btn-sm">
+            Dashboard
+          </Link>
+        </div>
+      </div>
+
+      {/* User Info Card */}
+      <div className="card bg-base-100 shadow-xl border border-base-300/50 mb-6">
+        <div className="card-body">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                {profile.profilePic?.url ? (
+                  <img
+                    src={profile.profilePic.url}
+                    alt={profile.name}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <User className="w-8 h-8 text-primary" />
+                )}
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">{profile.name}</h2>
+                <p className="text-sm text-base-content/50">
+                  {getUserRoleLabel(profile)}
+                </p>
+              </div>
+            </div>
+
+            {/* Block / Unblock button */}
+            {profile.isBlocked ? (
+              <button
+                onClick={() => handleBlockAction("unblock")}
+                className="btn btn-success btn-sm gap-2"
+                disabled={actionLoading}
+              >
+                <Unlock className="w-4 h-4" />
+                Unblock User
+              </button>
+            ) : (
+              <button
+                onClick={() => handleBlockAction("block")}
+                className="btn btn-error btn-sm gap-2"
+                disabled={actionLoading}
+              >
+                <Ban className="w-4 h-4" />
+                Block User
+              </button>
+            )}
+          </div>
+
+          {/* User Details Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm">
+                <Mail className="w-4 h-4 text-base-content/40" />
+                <span>{profile.email}</span>
+              </div>
+              {profile.city && (
+                <div className="flex items-center gap-2 text-sm">
+                  <MapPin className="w-4 h-4 text-base-content/40" />
+                  <span>
+                    {profile.city}
+                    {profile.state ? `, ${profile.state}` : ""}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="w-4 h-4 text-base-content/40" />
+                <span>Joined: {formatDate(profile.createdAt)}</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                {profile.isVerified ? (
+                  <CheckCircle className="w-5 h-5 text-success" />
+                ) : (
+                  <span className="badge badge-warning badge-sm">
+                    Unverified
+                  </span>
+                )}
+                <span className="text-sm">
+                  {profile.isVerified ? "Email Verified" : "Email Unverified"}
+                </span>
+              </div>
+              {profile.verifiedStatus && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Award className="w-4 h-4 text-base-content/40" />
+                  <span>Verified Status: {profile.verifiedStatus}</span>
+                </div>
+              )}
+              {profile.isBlocked && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Ban className="w-4 h-4 text-error" />
+                  <span className="text-error">
+                    Blocked: {profile.blockedReason || "No reason provided"}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Badges Section */}
+          <div className="mt-6">
+            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+              <Award className="w-4 h-4" /> Badges
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {activeBadges.map((b) => (
+                <div key={b._id || b.type} className="flex items-center gap-1">
+                  <BadgeChip badgeType={b.type} size="sm" />
+                  {!TRUST_BADGES.includes(b.type) && (
+                    <button
+                      onClick={() => handleRevokeBadge(b.type)}
+                      className="btn btn-ghost btn-xs btn-circle text-base-content/40 hover:text-error"
+                      title={`Revoke ${b.type}`}
+                      disabled={actionLoading}
+                    >
+                      <History className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Grant Badge */}
+          <div className="mt-6 flex items-end gap-3">
+            <div className="flex-1">
+              <label className="label pb-1">
+                <span className="label-text text-xs font-medium">
+                  Grant Trust Badge
+                </span>
+              </label>
+              <select
+                className="select select-bordered select-sm w-full"
+                value={selectedBadge}
+                onChange={(e) => setSelectedBadge(e.target.value)}
+              >
+                <option value="">Select a trust badge...</option>
+                {TRUST_BADGES.map((badge) => (
+                  <option key={badge} value={badge}>
+                    {badgeConfig[badge]?.label || badge}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={handleGrantBadge}
+              disabled={!selectedBadge || actionLoading}
+              className="btn btn-primary btn-sm"
+            >
+              Grant
+            </button>
+          </div>
+
+          {/* Admin Notes */}
+          <div className="mt-6">
+            <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
+              <History className="w-4 h-4" /> Admin Notes
+            </h3>
+            <textarea
+              className="textarea textarea-bordered w-full text-sm"
+              rows={3}
+              placeholder="Add notes about this user..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+            <button
+              onClick={handleAddNote}
+              disabled={actionLoading}
+              className="btn btn-ghost btn-sm mt-2"
+            >
+              Save Notes
+            </button>
+          </div>
+
+          {/* Danger Zone */}
+          <div className="mt-6 pt-4 border-t border-base-300/50">
+            <h3 className="font-semibold text-error text-sm mb-3">
+              Danger Zone
+            </h3>
+            <button
+              onClick={async () => {
+                if (
+                  window.confirm(
+                    "Are you sure you want to delete this user? This action cannot be undone.",
+                  )
+                ) {
+                  try {
+                    await API.delete(`/admin/users/${id}`);
+                    toast.success("User deleted");
+                    navigate("/admin/users");
+                  } catch (err) {
+                    toast.error(
+                      err.response?.data?.message || "Failed to delete user",
+                    );
+                  }
+                }
+              }}
+              className="btn btn-error btn-sm gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete User
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminUserDetail;

@@ -3,16 +3,17 @@ import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
+import { canApplyToJobs } from "../../utils/badgeUtils";
 
 const MatchedJobsRow = () => {
   const { user } = useAuthStore();
   const [matched, setMatched] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const isStudent = user?.role === "student";
+  const canUseMatchedJobs = canApplyToJobs(user);
 
   useEffect(() => {
-    if (!isStudent) {
+    if (!canUseMatchedJobs) {
       setLoading(false);
       return;
     }
@@ -27,7 +28,7 @@ const MatchedJobsRow = () => {
       }
     };
     fetch();
-  }, [isStudent]);
+  }, [canUseMatchedJobs]);
 
   if (loading) {
     return (

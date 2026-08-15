@@ -100,7 +100,24 @@ const StoryViewer = ({ group, onClose, onViewed }) => {
       <div className="absolute top-8 left-4 flex items-center gap-2 z-10">
         <UserAvatar user={group.author} size={32} />
         <div>
-          <p className="text-white text-sm font-medium">{group.author?.name}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-white text-sm font-medium">
+              {group.author?.name}
+            </p>
+            {currentStory.status && currentStory.status !== "approved" && (
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  currentStory.status === "pending_review"
+                    ? "bg-warning text-warning-content"
+                    : "bg-error text-error-content"
+                }`}
+              >
+                {currentStory.status === "pending_review"
+                  ? "Under Review"
+                  : "Not Approved"}
+              </span>
+            )}
+          </div>
           <p className="text-white/60 text-xs flex items-center gap-1">
             <Eye className="w-3 h-3" /> {currentStory.viewers?.length || 0}{" "}
             views

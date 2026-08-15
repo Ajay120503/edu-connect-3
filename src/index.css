@@ -6,27 +6,27 @@
   name: "educonnect";
   default: true;
   color-scheme: "light";
-  --color-primary: #1a56db;
+  --color-primary: #2563eb;
   --color-primary-content: #ffffff;
-  --color-secondary: #0891b2;
+  --color-secondary: #0f766e;
   --color-secondary-content: #ffffff;
-  --color-accent: #d97706;
+  --color-accent: #b45309;
   --color-accent-content: #ffffff;
-  --color-neutral: #1e293b;
+  --color-neutral: #111827;
   --color-neutral-content: #ffffff;
-  --color-base-100: #f8faff;
-  --color-base-200: #eff3ff;
+  --color-base-100: #f7f8fb;
+  --color-base-200: #eef2f7;
   --color-base-300: #cbd5e1;
-  --color-base-content: #1e293b;
-  --color-info: #0891b2;
+  --color-base-content: #111827;
+  --color-info: #0284c7;
   --color-info-content: #ffffff;
-  --color-success: #059669;
+  --color-success: #047857;
   --color-success-content: #ffffff;
-  --color-warning: #d97706;
+  --color-warning: #b45309;
   --color-warning-content: #ffffff;
-  --color-error: #ef4444;
+  --color-error: #dc2626;
   --color-error-content: #ffffff;
-  --radius-box: 0.75rem;
+  --radius-box: 0.625rem;
   --radius-btn: 0.5rem;
   --radius-badge: 1.9rem;
   --animation-btn: 0.25s;
@@ -39,8 +39,10 @@
 
 /* Base styles */
 body {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
   min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0;
 }
 
 h1,
@@ -49,7 +51,17 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  letter-spacing: 0;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.16);
+}
+
+:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.55);
+  outline-offset: 2px;
 }
 
 /* Custom scrollbar */
@@ -58,7 +70,7 @@ h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: #eff3ff;
+  background: #eef2f7;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -67,25 +79,25 @@ h6 {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1a56db;
+  background: #2563eb;
 }
 
 /* Mobile bottom nav spacing - handled inline via pb-[70px] */
 
 /* Consistent placeholder backgrounds for icons, avatars, and image placeholders */
 .bg-placeholder {
-  background-color: #eff3ff;
+  background-color: #eef2f7;
 }
 
 .bg-placeholder-icon {
-  background-color: #eff3ff;
+  background-color: #eef2f7;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .bg-placeholder-text {
-  background-color: #eff3ff;
+  background-color: #eef2f7;
 }
 
 /* Loading skeleton animation */
@@ -99,7 +111,7 @@ h6 {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #eff3ff 25%, #cbd5e1 50%, #eff3ff 75%);
+  background: linear-gradient(90deg, #eef2f7 25%, #cbd5e1 50%, #eef2f7 75%);
   background-size: 936px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
@@ -107,7 +119,7 @@ h6 {
 
 /* Utility classes */
 .font-heading {
-  font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
 }
 
 .font-mono {

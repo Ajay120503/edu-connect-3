@@ -18,6 +18,7 @@ import SkillGapBar from "../components/job/SkillGapBar";
 import QuickApplyBtn from "../components/job/QuickApplyBtn";
 import ReachStats from "../components/job/ReachStats";
 import JobQnA from "../components/job/JobQnA";
+import { canApplyToJobs } from "../utils/badgeUtils";
 
 const formatStipend = (stipend, currency, isPaid) => {
   if (!isPaid) return "Unpaid";
@@ -26,30 +27,52 @@ const formatStipend = (stipend, currency, isPaid) => {
   return `₹${formatted}`;
 };
 
+const hasAppliedToJob = (job, userId) =>
+  Boolean(
+    userId &&
+      job?.applicants?.some((applicant) => {
+        const applicantId =
+          typeof applicant === "string" ? applicant : applicant?._id;
+        return applicantId === userId;
+      })
+  );
+
 const JobDetail = () => {
   const { id } = useParams();
   const { user } = useAuthStore();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [applied, setApplied] = useState(false);
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
         const { data } = await API.get(`/jobs/${id}`);
         setJob(data.job);
+        setApplied(hasAppliedToJob(data.job, user?._id));
         // Increment view count silently
         API.patch(`/jobs/${id}/view`).catch(() => {});
-      } catch {
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to load job");
       } finally {
         setLoading(false);
       }
     };
     fetchJob();
-  }, [id]);
+  }, [id, user?._id]);
 
   const handleApply = async () => {
     try {
       await API.post(`/jobs/${id}/apply`, { coverLetter: "" });
+      setApplied(true);
+      setJob((prev) =>
+        prev
+          ? {
+              ...prev,
+              applicants: [...(prev.applicants || []), user?._id],
+            }
+          : prev
+      );
       toast.success("Applied successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to apply");
@@ -57,9 +80,6 @@ const JobDetail = () => {
   };
 
   const isJobPoster = job?.postedBy?._id === user?._id;
-  const isFaculty = ["teacher", "professor", "hod", "principal"].includes(
-    user?.role
-  );
 
   if (loading) {
     return (
@@ -170,7 +190,7 @@ const JobDetail = () => {
           </div>
         </div>
 
-        {/* Role Type Badge */}
+        {/* Opportunity Type Badge */}
         <div className="flex flex-wrap items-center gap-2 mb-4">
           <span className="badge badge-sm badge-primary badge-soft capitalize">
             {job.roleType}
@@ -223,8 +243,8 @@ const JobDetail = () => {
           <span>{job.contactEmail}</span>
         </div>
 
-        {/* Faculty actions */}
-        {isJobPoster && isFaculty && (
+        {/* Owner actions */}
+        {isJobPoster && (
           <div className="mt-4 space-y-3">
             <Link
               to={`/jobs/${job._id}/edit`}
@@ -243,21 +263,36 @@ const JobDetail = () => {
           </div>
         )}
 
-        {/* Skill Gap for students */}
-        {user?.role === "student" && <SkillGapBar job={job} />}
+        {/* Skill Gap for applicants */}
+        {canApplyToJobs(user) && <SkillGapBar job={job} />}
 
         {/* Reach stats for job poster */}
         <ReachStats job={job} isOwner={isJobPoster} />
 
-        {/* Student actions */}
-        {user?.role === "student" && (
+        {/* Applicant actions */}
+        {canApplyToJobs(user) && (
           <div className="flex gap-2 mt-6">
             <QuickApplyBtn
               jobId={job._id}
-              alreadyApplied={job.applicants?.includes?.(user?._id)}
+              alreadyApplied={applied}
+              onApplied={() => {
+                setApplied(true);
+                setJob((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        applicants: [...(prev.applicants || []), user?._id],
+                      }
+                    : prev
+                );
+              }}
             />
-            <button onClick={handleApply} className="btn btn-primary flex-1">
-              Apply Now
+            <button
+              onClick={handleApply}
+              className="btn btn-primary flex-1"
+              disabled={applied}
+            >
+              {applied ? "Applied" : "Apply Now"}
             </button>
           </div>
         )}
