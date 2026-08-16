@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Upload, GraduationCap } from "lucide-react";
+import { Check, Upload } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import BadgeChip from "../components/common/BadgeChip";
 import useAuthStore from "../store/authStore";
 import { SELF_BADGES, BADGE_GROUPS } from "../utils/badgeUtils";
@@ -251,7 +253,7 @@ const CompleteProfile = () => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-base-content/20">
-                <GraduationCap className="w-8 h-8" />
+                <FontAwesomeIcon icon={faUserGraduate} className="w-8 h-8" />
               </div>
             )}
           </div>
@@ -491,7 +493,10 @@ const CompleteProfile = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-xl mb-3">
-              <GraduationCap className="w-6 h-6 text-white" />
+              <FontAwesomeIcon
+                icon={faUserGraduate}
+                className="w-6 h-6 text-white"
+              />
             </div>
             <h1 className="text-2xl font-bold font-heading mb-1">
               Complete Your Profile

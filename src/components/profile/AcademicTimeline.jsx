@@ -1,13 +1,17 @@
 import {
   Plus,
-  GraduationCap,
   Building2,
   Briefcase,
   Trophy,
 } from "lucide-react";
+import FontAwesomeGraduateIcon from "../common/FontAwesomeGraduateIcon";
 
 const typeConfig = {
-  school: { icon: GraduationCap, color: "text-blue-500", bg: "bg-blue-50" },
+  school: {
+    icon: FontAwesomeGraduateIcon,
+    color: "text-blue-500",
+    bg: "bg-blue-50",
+  },
   college: {
     icon: Building2,
     color: "text-purple-500",

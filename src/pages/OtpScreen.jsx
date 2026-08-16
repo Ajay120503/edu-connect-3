@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { GraduationCap, Mail, RefreshCw } from "lucide-react";
+import { Mail, RefreshCw } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../store/authStore";
 import toast from "react-hot-toast";
 
@@ -96,7 +98,10 @@ const OtpScreen = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-2xl mb-4 shadow-lg shadow-primary/25">
-            <GraduationCap className="w-7 h-7 text-white" />
+            <FontAwesomeIcon
+              icon={faUserGraduate}
+              className="w-7 h-7 text-white"
+            />
           </div>
           <h1 className="text-2xl font-bold font-heading text-neutral mb-1">
             Verify Your Email

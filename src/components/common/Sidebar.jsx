@@ -11,9 +11,10 @@ import {
   Settings,
   Bell,
   MessageCircle,
-  GraduationCap,
   Shield,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
 import UserAvatar from "./UserAvatar";
@@ -68,7 +69,10 @@ const Sidebar = ({ collapsed, onToggle }) => {
         {!collapsed && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-              <GraduationCap className="w-4 h-4 text-white" />
+              <FontAwesomeIcon
+                icon={faUserGraduate}
+                className="w-4 h-4 text-white"
+              />
             </div>
             <span className="text-lg font-bold text-primary">EduConnect</span>
           </div>

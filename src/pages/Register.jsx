@@ -1,5 +1,4 @@
 import {
-  GraduationCap,
   Mail,
   Lock,
   User,
@@ -11,6 +10,8 @@ import {
   Briefcase,
   Star,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../store/authStore";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -51,7 +52,10 @@ const Register = () => {
 
         <div className="relative z-10 text-center max-w-md">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/15 rounded-2xl mb-8 backdrop-blur-sm">
-            <GraduationCap className="w-8 h-8 text-white" />
+            <FontAwesomeIcon
+              icon={faUserGraduate}
+              className="w-8 h-8 text-white"
+            />
           </div>
 
           <h1 className="text-4xl font-bold text-white font-heading mb-4">
@@ -97,7 +101,10 @@ const Register = () => {
           <div className="lg:hidden text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2.5 mb-4">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
-                <GraduationCap className="w-5 h-5 text-white" />
+                <FontAwesomeIcon
+                  icon={faUserGraduate}
+                  className="w-5 h-5 text-white"
+                />
               </div>
             </Link>
             <h1 className="text-2xl font-bold font-heading text-neutral mb-1">

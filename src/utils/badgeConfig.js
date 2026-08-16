@@ -7,7 +7,6 @@
  */
 
 import {
-  GraduationCap,
   BookOpen,
   School,
   Users,
@@ -27,13 +26,14 @@ import {
   Palette,
   Stethoscope,
 } from "lucide-react";
+import FontAwesomeGraduateIcon from "../components/common/FontAwesomeGraduateIcon";
 
 /**
  * Map icon name strings → Lucide React components.
  * BadgeChip and BadgeSelector use this to render the correct icon.
  */
 export const badgeIconMap = {
-  GraduationCap,
+  GraduationCap: FontAwesomeGraduateIcon,
   BookOpen,
   School,
   Users,

@@ -6,7 +6,8 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useEffect, useState, useCallback } from "react";
-import { GraduationCap } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "./store/authStore";
 import { SocketProvider } from "./context/SocketContext";
 
@@ -81,7 +82,10 @@ function App() {
       <div className="flex items-center justify-center min-h-screen bg-base-100">
         <div className="text-center">
           <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <GraduationCap className="w-8 h-8 text-white" />
+            <FontAwesomeIcon
+              icon={faUserGraduate}
+              className="w-8 h-8 text-white"
+            />
           </div>
           <h1 className="text-3xl font-bold text-primary">EduConnect</h1>
           <p className="mt-2 text-base-content/60">

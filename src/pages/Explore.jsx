@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   Search,
   Users,
-  GraduationCap,
   TrendingUp,
   Clock,
   UserPlus,
@@ -12,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import API from "../utils/axios";
+import FontAwesomeGraduateIcon from "../components/common/FontAwesomeGraduateIcon";
 import { getUserRoleLabel } from "../utils/badgeUtils";
 import useAuthStore from "../store/authStore";
 import NoticeboardBanner from "../components/post/NoticeboardBanner";
@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 
 const roleFilters = [
   { value: "", label: "All", icon: Users },
-  { value: "student", label: "Learners", icon: GraduationCap },
+  { value: "student", label: "Learners", icon: FontAwesomeGraduateIcon },
   { value: "teacher", label: "Educators", icon: Users },
   { value: "researcher", label: "Researchers", icon: Users },
   { value: "school_member", label: "Schools", icon: Users },

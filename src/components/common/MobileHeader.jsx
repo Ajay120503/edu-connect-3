@@ -11,8 +11,9 @@ import {
   MessageCircle,
   Settings,
   LogOut,
-  GraduationCap,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
 import UserAvatar from "./UserAvatar";
@@ -35,7 +36,10 @@ const MobileHeader = () => {
           {/* Logo */}
           <Link to="/feed" className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-              <GraduationCap className="w-[18px] h-[18px] text-white" />
+              <FontAwesomeIcon
+                icon={faUserGraduate}
+                className="w-[18px] h-[18px] text-white"
+              />
             </div>
             <span className="text-base font-bold text-primary">EduConnect</span>
           </Link>

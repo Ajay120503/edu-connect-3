@@ -9,7 +9,6 @@ import {
   Eye,
   UserCheck,
   Clock,
-  GraduationCap,
   Briefcase,
   FileText,
   Globe,
@@ -22,6 +21,8 @@ import {
   ChevronUp,
   BookOpen,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import API from "../utils/axios";
 import ApplicantKanban from "../components/job/ApplicantKanban";
 import UserAvatar from "../components/common/UserAvatar";
@@ -68,7 +69,10 @@ const ApplicantCard = ({ app, onStatusUpdate }) => {
               <div className="flex items-center gap-2 mt-0.5 flex-wrap text-sm text-base-content/50">
                 {a?.educationLevel && (
                   <span className="flex items-center gap-1">
-                    <GraduationCap className="w-3.5 h-3.5" />
+                    <FontAwesomeIcon
+                      icon={faUserGraduate}
+                      className="w-3.5 h-3.5"
+                    />
                     {a.educationLevel}
                   </span>
                 )}
@@ -181,7 +185,10 @@ const ApplicantCard = ({ app, onStatusUpdate }) => {
             )}
             {a?.educationLevel && (
               <div className="bg-base-200/50 rounded-lg p-3 text-center">
-                <GraduationCap className="w-4 h-4 mx-auto text-primary mb-1" />
+                <FontAwesomeIcon
+                  icon={faUserGraduate}
+                  className="w-4 h-4 mx-auto text-primary mb-1"
+                />
                 <p className="text-xs text-base-content/40">Education</p>
                 <p className="text-sm font-semibold capitalize">
                   {a.educationLevel}

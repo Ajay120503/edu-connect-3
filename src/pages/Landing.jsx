@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  GraduationCap,
   Users,
   Briefcase,
   ArrowRight,
@@ -11,6 +10,9 @@ import {
   MessageCircle,
   TrendingUp,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeGraduateIcon from "../components/common/FontAwesomeGraduateIcon";
 
 const Landing = () => {
   const features = [
@@ -31,7 +33,7 @@ const Landing = () => {
       textColor: "text-accent",
     },
     {
-      icon: GraduationCap,
+      icon: FontAwesomeGraduateIcon,
       title: "Grow Your Career",
       desc: "Share achievements, get noticed by recruiters, and advance your academic career.",
       color: "secondary",
@@ -68,7 +70,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-sm">
-              <GraduationCap className="w-5 h-5 text-white" />
+              <FontAwesomeIcon
+                icon={faUserGraduate}
+                className="w-5 h-5 text-white"
+              />
             </div>
             <span className="text-lg font-bold text-primary font-heading tracking-tight">
               EduConnect
@@ -108,7 +113,8 @@ const Landing = () => {
               to="/register?role=student"
               className="btn btn-primary btn-lg gap-2.5 shadow-sm px-8 text-base"
             >
-              <GraduationCap className="w-5 h-5" /> Join as Student
+              <FontAwesomeIcon icon={faUserGraduate} className="w-5 h-5" />{" "}
+              Join as Student
             </Link>
             <Link
               to="/register?role=teacher"
@@ -272,7 +278,10 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-white" />
+                <FontAwesomeIcon
+                  icon={faUserGraduate}
+                  className="w-4 h-4 text-white"
+                />
               </div>
               <span className="font-bold font-heading text-base-content">
                 EduConnect
