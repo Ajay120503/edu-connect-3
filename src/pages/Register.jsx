@@ -31,6 +31,7 @@ const Register = () => {
     setIsLoading(true);
     try {
       await initiateRegister({ name, email, password });
+      localStorage.setItem("pendingRegistrationEmail", email.trim().toLowerCase());
       toast.success("OTP sent to your email! Please verify to continue.");
       navigate("/otp-verify", { state: { email } });
     } catch (err) {
