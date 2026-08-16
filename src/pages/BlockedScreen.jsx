@@ -101,7 +101,7 @@ const BlockedScreen = () => {
         </div>
       </header>
 
-      <div className="flex h-screen justify-center items-center overflow-hidden">
+      <div className="flex h-screen overflow-hidden">
         <aside className="hidden md:flex flex-col bg-base-100 border-r border-base-300 sticky top-0 h-screen w-64 z-30">
           <div className="flex items-center h-16 px-4 border-b border-base-300">
             <div className="flex items-center gap-2">
