@@ -187,6 +187,7 @@ const AdminUserDetail = () => {
   }
 
   const activeBadges = getActiveBadges(profile);
+  const trustStatus = profile.verifiedStatus || "none";
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -275,24 +276,36 @@ const AdminUserDetail = () => {
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                {profile.isVerified ? (
-                  <CheckCircle className="w-5 h-5 text-success" />
-                ) : (
-                  <span className="badge badge-warning badge-sm">
-                    Unverified
-                  </span>
-                )}
-                <span className="text-sm">
-                  {profile.isVerified ? "Email Verified" : "Email Unverified"}
+              <div className="flex items-center gap-2 text-sm">
+                <Mail className="w-4 h-4 text-base-content/40" />
+                <span>Email:</span>
+                <span
+                  className={`badge badge-sm ${
+                    profile.isEmailVerified || trustStatus === "email"
+                      ? "badge-success"
+                      : "badge-warning"
+                  }`}
+                >
+                  {profile.isEmailVerified || trustStatus === "email"
+                    ? "Verified"
+                    : "Unverified"}
                 </span>
               </div>
-              {profile.verifiedStatus && (
-                <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-sm">
+                {profile.isVerified ? (
+                  <CheckCircle className="w-4 h-4 text-success" />
+                ) : (
                   <Award className="w-4 h-4 text-base-content/40" />
-                  <span>Verified Status: {profile.verifiedStatus}</span>
-                </div>
-              )}
+                )}
+                <span>Trust Status:</span>
+                <span
+                  className={`badge badge-sm ${
+                    profile.isVerified ? "badge-success" : "badge-ghost"
+                  }`}
+                >
+                  {trustStatus}
+                </span>
+              </div>
               {profile.isBlocked && (
                 <div className="flex items-center gap-2 text-sm">
                   <Ban className="w-4 h-4 text-error" />
@@ -313,16 +326,14 @@ const AdminUserDetail = () => {
               {activeBadges.map((b) => (
                 <div key={b._id || b.type} className="flex items-center gap-1">
                   <BadgeChip badgeType={b.type} size="sm" />
-                  {!TRUST_BADGES.includes(b.type) && (
-                    <button
-                      onClick={() => handleRevokeBadge(b.type)}
-                      className="btn btn-ghost btn-xs btn-circle text-base-content/40 hover:text-error"
-                      title={`Revoke ${b.type}`}
-                      disabled={actionLoading}
-                    >
-                      <History className="w-3 h-3" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleRevokeBadge(b.type)}
+                    className="btn btn-ghost btn-xs btn-circle text-base-content/40 hover:text-error"
+                    title={`Revoke ${b.type}`}
+                    disabled={actionLoading}
+                  >
+                    <History className="w-3 h-3" />
+                  </button>
                 </div>
               ))}
             </div>
