@@ -85,6 +85,7 @@ function App() {
             <FontAwesomeIcon
               icon={faUserGraduate}
               className="w-8 h-8 text-white"
+              fontSize={24}
             />
           </div>
           <h1 className="text-3xl font-bold text-primary">EduConnect</h1>
