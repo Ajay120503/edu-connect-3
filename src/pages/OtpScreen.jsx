@@ -100,7 +100,8 @@ const OtpScreen = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-2xl mb-4 shadow-lg shadow-primary/25">
             <FontAwesomeIcon
               icon={faUserGraduate}
-              className="w-7 h-7 text-white"
+              className="w-8 h-8 text-white"
+              fontSize={24}
             />
           </div>
           <h1 className="text-2xl font-bold font-heading text-neutral mb-1">

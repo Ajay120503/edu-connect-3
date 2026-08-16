@@ -414,7 +414,7 @@ const EditProfile = () => {
 
         {/* Resume Upload */}
         <div className="card bg-base-100 border border-base-300/50 p-4">
-          <h3 className="font-semibold text-sm mb-3">Resume</h3>
+          <h3 className="font-semibold text-sm mb-3">CV</h3>
           <div className="flex items-center gap-4">
             {user?.resumeUrl && (
               <a

@@ -495,7 +495,8 @@ const CompleteProfile = () => {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-xl mb-3">
               <FontAwesomeIcon
                 icon={faUserGraduate}
-                className="w-6 h-6 text-white"
+                className="w-8 h-8 text-white"
+                fontSize={24}
               />
             </div>
             <h1 className="text-2xl font-bold font-heading mb-1">

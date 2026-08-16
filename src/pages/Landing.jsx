@@ -113,8 +113,8 @@ const Landing = () => {
               to="/register?role=student"
               className="btn btn-primary btn-lg gap-2.5 shadow-sm px-8 text-base"
             >
-              <FontAwesomeIcon icon={faUserGraduate} className="w-5 h-5" />{" "}
-              Join as Student
+              <FontAwesomeIcon icon={faUserGraduate} className="w-5 h-5" /> Join
+              as Student
             </Link>
             <Link
               to="/register?role=teacher"

@@ -55,6 +55,7 @@ const Register = () => {
             <FontAwesomeIcon
               icon={faUserGraduate}
               className="w-8 h-8 text-white"
+              fontSize={24}
             />
           </div>
 
@@ -103,7 +104,8 @@ const Register = () => {
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
                 <FontAwesomeIcon
                   icon={faUserGraduate}
-                  className="w-5 h-5 text-white"
+                  className="w-8 h-8 text-white"
+                  fontSize={24}
                 />
               </div>
             </Link>

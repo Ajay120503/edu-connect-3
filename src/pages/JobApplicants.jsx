@@ -72,6 +72,7 @@ const ApplicantCard = ({ app, onStatusUpdate }) => {
                     <FontAwesomeIcon
                       icon={faUserGraduate}
                       className="w-3.5 h-3.5"
+                      fontSize={24}
                     />
                     {a.educationLevel}
                   </span>
@@ -109,8 +110,8 @@ const ApplicantCard = ({ app, onStatusUpdate }) => {
                       step === app.status
                         ? "btn-primary"
                         : isPast
-                        ? "btn-ghost text-primary/40"
-                        : "btn-ghost text-base-content/20 hover:text-primary"
+                          ? "btn-ghost text-primary/40"
+                          : "btn-ghost text-base-content/20 hover:text-primary"
                     }`}
                   >
                     {step === "selected" ? (
@@ -188,6 +189,7 @@ const ApplicantCard = ({ app, onStatusUpdate }) => {
                 <FontAwesomeIcon
                   icon={faUserGraduate}
                   className="w-4 h-4 mx-auto text-primary mb-1"
+                  fontSize={24}
                 />
                 <p className="text-xs text-base-content/40">Education</p>
                 <p className="text-sm font-semibold capitalize">

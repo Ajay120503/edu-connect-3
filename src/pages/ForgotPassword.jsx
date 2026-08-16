@@ -43,6 +43,7 @@ const ForgotPassword = () => {
             <FontAwesomeIcon
               icon={faUserGraduate}
               className="w-8 h-8 text-white"
+              fontSize={24}
             />
           </div>
 
@@ -120,6 +121,7 @@ const ForgotPassword = () => {
                 <FontAwesomeIcon
                   icon={faUserGraduate}
                   className="w-5 h-5 text-white"
+                  fontSize={24}
                 />
               </div>
             </Link>
