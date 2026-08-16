@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Shield, Save, ToggleLeft, ToggleRight, RefreshCw } from "lucide-react";
+import {
+  Bell,
+  Bot,
+  Briefcase,
+  Clock,
+  FileText,
+  MessageSquareWarning,
+  Save,
+  Shield,
+  ShieldCheck,
+  ToggleLeft,
+  ToggleRight,
+  RefreshCw,
+  TimerReset,
+  Zap,
+} from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import { isAdminUser } from "../../utils/badgeUtils";
 import API from "../../utils/axios";
@@ -14,8 +29,17 @@ const AdminSettings = () => {
     autoBlockThreshold: 3,
     emailNotifications: true,
     moderationEnabled: true,
-    requireReviewNewUsers: true,
+    autoModerationEnabled: false,
+    manualReviewWindowMinutes: 1440,
+    requireRejectReason: true,
+    notifyCreators: true,
+    requireReviewNewUsers: false,
     contentModerationRules: true,
+    moderationContentTypes: {
+      posts: true,
+      jobs: true,
+      stories: true,
+    },
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -60,6 +84,16 @@ const AdminSettings = () => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleContentTypeChange = (key, value) => {
+    setSettings((prev) => ({
+      ...prev,
+      moderationContentTypes: {
+        ...(prev.moderationContentTypes || {}),
+        [key]: value,
+      },
+    }));
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -87,6 +121,34 @@ const AdminSettings = () => {
     );
   }
 
+  const SettingToggle = ({ icon: Icon, title, description, checked, onClick }) => (
+    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-base-200/50 border border-base-300/50">
+      <div className="flex items-start gap-3 min-w-0">
+        <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4" />
+        </div>
+        <div className="min-w-0">
+          <p className="font-semibold text-sm">{title}</p>
+          <p className="text-xs text-base-content/50 leading-relaxed mt-0.5">
+            {description}
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onClick}
+        className="btn btn-ghost btn-sm btn-circle shrink-0"
+        aria-pressed={checked}
+      >
+        {checked ? (
+          <ToggleRight className="w-6 h-6 text-success" />
+        ) : (
+          <ToggleLeft className="w-6 h-6 text-base-content/40" />
+        )}
+      </button>
+    </div>
+  );
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
@@ -109,132 +171,167 @@ const AdminSettings = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 shadow-xl border border-base-300/50">
-        <div className="card-body">
-          <h2 className="text-lg font-semibold mb-4">Moderation Settings</h2>
+      <div className="space-y-5">
+        <div className="card bg-base-100 shadow-sm border border-base-300/50">
+          <div className="card-body">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-primary" />
+              Moderation Controls
+            </h2>
 
-          <div className="space-y-4">
-            {/* Auto Approve */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-base-200/50">
-              <div>
-                <p className="font-medium text-sm">Auto-Approve Content</p>
-                <p className="text-xs text-base-content/50">
-                  Automatically approve new content without manual review
-                </p>
-              </div>
-              <button
+            <div className="grid gap-3">
+              <SettingToggle
+                icon={Shield}
+                title="Manual Moderation Queue"
+                description="Send selected new content into the admin review queue before it appears publicly."
+                checked={settings.moderationEnabled}
+                onClick={() =>
+                  handleChange("moderationEnabled", !settings.moderationEnabled)
+                }
+              />
+              <SettingToggle
+                icon={Zap}
+                title="Auto-Approve New Content"
+                description="Publish new content immediately. This overrides the manual queue while enabled."
+                checked={settings.autoApprove}
                 onClick={() =>
                   handleChange("autoApprove", !settings.autoApprove)
                 }
-                className="btn btn-ghost btn-sm btn-circle"
-              >
-                {settings.autoApprove ? (
-                  <ToggleRight className="w-5 h-5 text-success" />
-                ) : (
-                  <ToggleLeft className="w-5 h-5 text-base-content/40" />
-                )}
-              </button>
-            </div>
-
-            {/* Auto-block threshold */}
-            <div className="p-3 rounded-xl bg-base-200/50">
-              <label className="label pb-1">
-                <span className="label-text text-xs font-medium">
-                  Auto-Block Threshold (reports)
-                </span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                className="input input-bordered input-sm w-20"
-                value={settings.autoBlockThreshold}
-                onChange={(e) =>
-                  handleChange("autoBlockThreshold", parseInt(e.target.value))
+              />
+              <SettingToggle
+                icon={Bot}
+                title="Auto-Review After Window"
+                description="After the manual review window expires, run rule-based moderation automatically."
+                checked={settings.autoModerationEnabled}
+                onClick={() =>
+                  handleChange(
+                    "autoModerationEnabled",
+                    !settings.autoModerationEnabled,
+                  )
                 }
               />
-              <p className="text-xs text-base-content/50 mt-1">
-                Automatically block content after this many reports
-              </p>
             </div>
 
-            {/* Email notifications */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-base-200/50">
-              <div>
-                <p className="font-medium text-sm">
-                  Email Notifications for New Reports
-                </p>
-                <p className="text-xs text-base-content/50">
-                  Send email when content is reported
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              {[
+                ["posts", "Posts", FileText],
+                ["jobs", "Jobs", Briefcase],
+                ["stories", "Stories", Clock],
+              ].map(([key, label, Icon]) => {
+                const checked = settings.moderationContentTypes?.[key] !== false;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleContentTypeChange(key, !checked)}
+                    className={`rounded-lg border p-4 text-left transition-colors ${
+                      checked
+                        ? "border-primary/40 bg-primary/10 text-primary"
+                        : "border-base-300 bg-base-100 text-base-content/55"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 mb-3" />
+                    <p className="font-semibold text-sm">{label}</p>
+                    <p className="text-xs opacity-70 mt-1">
+                      {checked ? "Manual review enabled" : "Publishes directly"}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="card bg-base-100 shadow-sm border border-base-300/50">
+          <div className="card-body">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <TimerReset className="w-5 h-5 text-primary" />
+              Review Rules
+            </h2>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="p-4 rounded-lg bg-base-200/50 border border-base-300/50">
+                <label className="label pb-1">
+                  <span className="label-text text-xs font-semibold">
+                    Manual Review Window (minutes)
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10080"
+                  className="input input-bordered input-sm w-full"
+                  value={settings.manualReviewWindowMinutes}
+                  onChange={(e) =>
+                    handleChange(
+                      "manualReviewWindowMinutes",
+                      parseInt(e.target.value) || 1,
+                    )
+                  }
+                />
+                <p className="text-xs text-base-content/50 mt-2">
+                  Auto-review only runs after this time, and only if auto-review is enabled.
                 </p>
               </div>
-              <button
+
+              <div className="p-4 rounded-lg bg-base-200/50 border border-base-300/50">
+                <label className="label pb-1">
+                  <span className="label-text text-xs font-semibold">
+                    Auto-Block Threshold
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  className="input input-bordered input-sm w-full"
+                  value={settings.autoBlockThreshold}
+                  onChange={(e) =>
+                    handleChange("autoBlockThreshold", parseInt(e.target.value) || 1)
+                  }
+                />
+                <p className="text-xs text-base-content/50 mt-2">
+                  Report threshold reserved for automated enforcement workflows.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-3">
+              <SettingToggle
+                icon={MessageSquareWarning}
+                title="Require Rejection Notes"
+                description="Admins must explain why content is rejected before the action is accepted."
+                checked={settings.requireRejectReason}
+                onClick={() =>
+                  handleChange("requireRejectReason", !settings.requireRejectReason)
+                }
+              />
+              <SettingToggle
+                icon={Bell}
+                title="Notify Creators"
+                description="Send real-time approval and rejection updates to the content creator."
+                checked={settings.notifyCreators}
+                onClick={() =>
+                  handleChange("notifyCreators", !settings.notifyCreators)
+                }
+              />
+              <SettingToggle
+                icon={Bell}
+                title="Email Notifications"
+                description="Keep email notifications enabled for future report and moderation alerts."
+                checked={settings.emailNotifications}
                 onClick={() =>
                   handleChange(
                     "emailNotifications",
                     !settings.emailNotifications,
                   )
                 }
-                className="btn btn-ghost btn-sm btn-circle"
-              >
-                {settings.emailNotifications ? (
-                  <ToggleRight className="w-5 h-5 text-success" />
-                ) : (
-                  <ToggleLeft className="w-5 h-5 text-base-content/40" />
-                )}
-              </button>
-            </div>
-
-            {/* Moderation enabled */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-base-200/50">
-              <div>
-                <p className="font-medium text-sm">Content Moderation</p>
-                <p className="text-xs text-base-content/50">
-                  Enable content moderation queue
-                </p>
-              </div>
-              <button
-                onClick={() =>
-                  handleChange("moderationEnabled", !settings.moderationEnabled)
-                }
-                className="btn btn-ghost btn-sm btn-circle"
-              >
-                {settings.moderationEnabled ? (
-                  <ToggleRight className="w-5 h-5 text-success" />
-                ) : (
-                  <ToggleLeft className="w-5 h-5 text-base-content/40" />
-                )}
-              </button>
-            </div>
-
-            {/* Require review for new users */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-base-200/50">
-              <div>
-                <p className="font-medium text-sm">Review New Users</p>
-                <p className="text-xs text-base-content/50">
-                  Require manual approval for newly registered users
-                </p>
-              </div>
-              <button
-                onClick={() =>
-                  handleChange(
-                    "requireReviewNewUsers",
-                    !settings.requireReviewNewUsers,
-                  )
-                }
-                className="btn btn-ghost btn-sm btn-circle"
-              >
-                {settings.requireReviewNewUsers ? (
-                  <ToggleRight className="w-5 h-5 text-success" />
-                ) : (
-                  <ToggleLeft className="w-5 h-5 text-base-content/40" />
-                )}
-              </button>
+              />
             </div>
           </div>
 
           {/* Save button */}
-          <div className="mt-6 pt-4 border-t border-base-300/50">
+          <div className="px-8 pb-8">
             <button
               onClick={handleSave}
               disabled={saving}

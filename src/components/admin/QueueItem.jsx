@@ -5,6 +5,9 @@ import {
   XCircle,
   AlertTriangle,
   Calendar,
+  Briefcase,
+  FileText,
+  Image,
   Users,
   Eye,
 } from "lucide-react";
@@ -54,9 +57,30 @@ const QueueItem = ({ item, type, onUpdate }) => {
     });
   };
 
-  const authorName = item.author?.name || item.postedBy?.name || "Unknown";
-  const authorEmail = item.author?.email || item.postedBy?.email || "";
-  const authorBadge = item.author?.badges?.[0]?.type || "student";
+  const author = item.author || item.postedBy || {};
+  const authorName = author.name || "Unknown";
+  const authorEmail = author.email || "";
+  const authorBadge = author.badges?.[0]?.type || "student";
+  const previewText =
+    item.preview ||
+    item.text ||
+    item.content ||
+    item.description ||
+    item.title ||
+    "No text content";
+  const title =
+    item.title ||
+    (type === "story"
+      ? "Story review"
+      : item.type
+      ? `${item.type} post`
+      : "Post review");
+  const mediaUrl =
+    item.image?.url ||
+    item.images?.[0]?.url ||
+    (typeof item.images?.[0] === "string" ? item.images[0] : "");
+  const TypeIcon =
+    type === "job" ? Briefcase : type === "story" ? Image : FileText;
 
   return (
     <div className="card bg-base-200/30 border border-base-300 rounded-xl p-5 space-y-4">
@@ -64,11 +88,9 @@ const QueueItem = ({ item, type, onUpdate }) => {
         {/* Author info */}
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-            {item.author?.profilePic?.url || item.postedBy?.profilePic?.url ? (
+            {author.profilePic?.url ? (
               <img
-                src={
-                  item.author?.profilePic?.url || item.postedBy?.profilePic?.url
-                }
+                src={author.profilePic.url}
                 alt={authorName}
                 className="w-full h-full object-cover rounded-full"
               />
@@ -93,19 +115,42 @@ const QueueItem = ({ item, type, onUpdate }) => {
       </div>
 
       {/* Content preview */}
-      <div>
-        <h3 className="font-medium text-sm">{item.title || "Untitled"}</h3>
-        <p className="text-sm text-base-content/70 mt-1 line-clamp-3">
-          {item.preview ||
-            item.content?.substring(0, 150) ||
-            item.description?.substring(0, 150) ||
-            ""}
-          {item.content?.length > 150 && "..."}
-        </p>
+      <div className="grid gap-3 sm:grid-cols-[96px_minmax(0,1fr)]">
+        <div className="w-full h-24 rounded-lg bg-base-200 border border-base-300/60 overflow-hidden flex items-center justify-center">
+          {mediaUrl ? (
+            <img
+              src={mediaUrl}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <TypeIcon className="w-8 h-8 text-base-content/25" />
+          )}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="badge badge-sm badge-primary badge-soft capitalize">
+              {type}
+            </span>
+            <span className="badge badge-sm badge-warning badge-soft">
+              {item.status || "pending_review"}
+            </span>
+          </div>
+          <h3 className="font-semibold text-sm line-clamp-1">{title}</h3>
+          <p className="text-sm text-base-content/70 mt-1 line-clamp-3">
+            {previewText.substring(0, 180)}
+            {previewText.length > 180 && "..."}
+          </p>
+          {item.moderationMeta?.adminWindowExpiredAt && (
+            <p className="text-[11px] text-base-content/40 mt-2">
+              Review window ends {formatDate(item.moderationMeta.adminWindowExpiredAt)}
+            </p>
+          )}
+        </div>
 
         {/* Detection rules (if any) */}
         {item.detectionRules?.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="sm:col-span-2 mt-1 flex flex-wrap gap-1.5">
             {item.detectionRules.map((rule, i) => (
               <span
                 key={i}
