@@ -5,17 +5,22 @@ import {
   Bookmark,
   User,
   PlusCircle,
+  Shield,
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
+import { isAdminUser } from "../../utils/badgeUtils";
 
 const BottomNav = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const isAdmin = isAdminUser(user);
 
   const navItems = [
     { to: "/feed", icon: Home, label: "Home" },
     { to: "/jobs", icon: Briefcase, label: "Jobs" },
-    { to: "/saved", icon: Bookmark, label: "Saved" },
+    isAdmin
+      ? { to: "/admin", icon: Shield, label: "Admin" }
+      : { to: "/saved", icon: Bookmark, label: "Saved" },
     { to: `/profile/${user?._id}`, icon: User, label: "Profile" },
   ];
 

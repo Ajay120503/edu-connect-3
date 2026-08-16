@@ -157,40 +157,44 @@ const AdminDashboard = () => {
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
       <div className="rounded-xl bg-base-100 border border-base-300/70 shadow-sm p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-primary" />
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold font-heading">
+                Admin Dashboard
+              </h1>
+              <p className="text-sm text-base-content/50">
+                Users, moderation queue, and platform controls
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold font-heading">
-              Admin Dashboard
-            </h1>
-            <p className="text-sm text-base-content/50">
-              Users, moderation queue, and platform controls
-            </p>
+
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+            <button
+              type="button"
+              onClick={() => {
+                fetchUsers();
+                fetchQueue(queueType);
+              }}
+              className="btn btn-ghost btn-sm gap-2"
+              title="Refresh"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span className="sm:hidden">Refresh</span>
+            </button>
+            <Link
+              to="/admin/settings"
+              className="btn btn-outline btn-primary btn-sm gap-2"
+            >
+              <Settings className="w-4 h-4" />
+              Settings
+            </Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              fetchUsers();
-              fetchQueue(queueType);
-            }}
-            className="btn btn-ghost btn-sm btn-circle"
-            title="Refresh"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
-          <Link to="/admin/settings" className="btn btn-ghost btn-sm gap-2">
-            <Settings className="w-4 h-4" />
-            Settings
-          </Link>
-        </div>
-      </div>
-
-        <div className="mt-5 flex gap-1 overflow-x-auto rounded-lg bg-base-200/70 p-1">
+        <div className="mt-5 grid grid-cols-3 gap-1 rounded-lg bg-base-200/70 p-1 sm:flex sm:overflow-x-auto">
           {tabs.map((tab) => (
             <TabButton
               key={tab.value}
@@ -226,7 +230,7 @@ const AdminDashboard = () => {
 
       {activeTab === "overview" && (
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-6">
-          <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm overflow-hidden">
+          <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm max-h-150 overflow-scroll">
             <div className="px-4 py-3 border-b border-base-300/60 flex items-center justify-between bg-base-200/40">
               <h2 className="font-semibold">Recent Users</h2>
               <Link to="/admin/users" className="btn btn-ghost btn-xs">
@@ -282,7 +286,7 @@ const AdminDashboard = () => {
             </div>
           </section>
 
-          <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm overflow-hidden">
+          <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm max-h-150 overflow-scroll">
             <div className="px-4 py-3 border-b border-base-300/60 flex items-center justify-between bg-base-200/40">
               <h2 className="font-semibold">Moderation Queue</h2>
               <Link to="/admin/queue" className="btn btn-ghost btn-xs">
@@ -361,11 +365,7 @@ const AdminDashboard = () => {
                   </tr>
                 ) : (
                   filteredUsers.map((item) => (
-                    <UserRow
-                      key={item._id}
-                      user={item}
-                      onUpdate={fetchUsers}
-                    />
+                    <UserRow key={item._id} user={item} onUpdate={fetchUsers} />
                   ))
                 )}
               </tbody>

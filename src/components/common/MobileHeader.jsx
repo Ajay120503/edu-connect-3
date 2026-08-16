@@ -11,18 +11,21 @@ import {
   MessageCircle,
   Settings,
   LogOut,
+  Shield,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../../store/authStore";
 import { useSocket } from "../../context/SocketContext";
 import UserAvatar from "./UserAvatar";
+import { isAdminUser } from "../../utils/badgeUtils";
 
 const MobileHeader = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const { notificationCount, messageCount } = useSocket();
+  const isAdmin = isAdminUser(user);
 
   const handleNavigate = (to) => {
     setMenuOpen(false);
@@ -129,6 +132,16 @@ const MobileHeader = () => {
                   </span>
                 )}
               </button>
+
+              {isAdmin && (
+                <button
+                  onClick={() => handleNavigate("/admin")}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-primary/10"
+                >
+                  <Shield className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-medium">Admin Dashboard</span>
+                </button>
+              )}
             </div>
 
             <div className="border-t border-base-200 p-2 space-y-0.5">
