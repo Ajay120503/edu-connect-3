@@ -21,6 +21,22 @@ import ConfirmModal from "../components/common/ConfirmModal";
 import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
+const getOtherParticipantFromConversation = (conversation, currentUserId) =>
+  conversation?.participants?.find((participant) => participant._id !== currentUserId) ||
+  conversation?.otherParticipant;
+
+const dedupeConversations = (items, currentUserId) => {
+  const seen = new Set();
+  return (items || []).filter((conversation) => {
+    const other = getOtherParticipantFromConversation(conversation, currentUserId);
+    const otherId = other?._id;
+    if (!otherId) return true;
+    if (seen.has(otherId)) return false;
+    seen.add(otherId);
+    return true;
+  });
+};
+
 const Chat = () => {
   const { id: selectedUserId } = useParams();
   const { user } = useAuthStore();
@@ -56,7 +72,7 @@ const Chat = () => {
     const fetchConversations = async () => {
       try {
         const { data } = await API.get("/chat/conversations");
-        setConversations(data.conversations || []);
+        setConversations(dedupeConversations(data.conversations, user?._id));
       } catch {
         /* ignore */
       } finally {
@@ -75,6 +91,9 @@ const Chat = () => {
             participantId: selectedUserId,
           });
           setActiveConversation(data.conversation);
+          setConversations((prev) =>
+            dedupeConversations([data.conversation, ...prev], user?._id)
+          );
           joinConversation(data.conversation._id);
         } catch (err) {
           toast.error("Could not start conversation");
@@ -131,7 +150,7 @@ const Chat = () => {
         });
       }
       API.get("/chat/conversations").then(({ data }) =>
-        setConversations(data.conversations || [])
+        setConversations(dedupeConversations(data.conversations, user?._id))
       );
     };
 
@@ -267,7 +286,8 @@ const Chat = () => {
       setMessages([]);
       // Refresh conversation list
       const { data } = await API.get("/chat/conversations");
-      setConversations(data.conversations || []);
+      setConversations(dedupeConversations(data.conversations, user?._id));
+      setShowClearChatModal(false);
       toast.success("Chat cleared");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to clear chat");
@@ -281,7 +301,8 @@ const Chat = () => {
       setMessages([]);
       // Refresh conversation list
       const { data } = await API.get("/chat/conversations");
-      setConversations(data.conversations || []);
+      setConversations(dedupeConversations(data.conversations, user?._id));
+      setShowDeleteChatModal(false);
       toast.success("Conversation deleted");
     } catch (err) {
       toast.error(
@@ -312,10 +333,7 @@ const Chat = () => {
   };
 
   const getOtherParticipant = (conv) => {
-    return (
-      conv.participants?.find((p) => p._id !== user?._id) ||
-      conv.otherParticipant
-    );
+    return getOtherParticipantFromConversation(conv, user?._id);
   };
 
   return (

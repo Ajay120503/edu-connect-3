@@ -22,6 +22,7 @@ import {
 } from "../../utils/badgeUtils";
 import { badgeConfig } from "../../utils/badgeConfig";
 import BadgeChip from "../../components/common/BadgeChip";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import API from "../../utils/axios";
 import toast from "react-hot-toast";
 
@@ -34,6 +35,7 @@ const AdminUserDetail = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [notes, setNotes] = useState("");
   const [selectedBadge, setSelectedBadge] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchUser = useCallback(async () => {
     if (!id) return;
@@ -103,6 +105,20 @@ const AdminUserDetail = () => {
       await fetchUser();
     } catch (err) {
       toast.error(err.response?.data?.message || "Grant badge failed");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    setActionLoading(true);
+    try {
+      await API.delete(`/admin/users/${id}`);
+      toast.success("User deleted");
+      setShowDeleteModal(false);
+      navigate("/admin/users");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete user");
     } finally {
       setActionLoading(false);
     }
@@ -369,23 +385,7 @@ const AdminUserDetail = () => {
               Danger Zone
             </h3>
             <button
-              onClick={async () => {
-                if (
-                  window.confirm(
-                    "Are you sure you want to delete this user? This action cannot be undone.",
-                  )
-                ) {
-                  try {
-                    await API.delete(`/admin/users/${id}`);
-                    toast.success("User deleted");
-                    navigate("/admin/users");
-                  } catch (err) {
-                    toast.error(
-                      err.response?.data?.message || "Failed to delete user",
-                    );
-                  }
-                }
-              }}
+              onClick={() => setShowDeleteModal(true)}
               className="btn btn-error btn-sm gap-2"
             >
               <Trash2 className="w-4 h-4" />
@@ -394,6 +394,19 @@ const AdminUserDetail = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteUser}
+        title="Delete this user?"
+        message="This will permanently delete the account and related platform activity. This action cannot be undone."
+        confirmText="Delete User"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={actionLoading}
+        requireTyping="DELETE"
+      />
     </div>
   );
 };
