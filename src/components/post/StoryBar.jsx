@@ -5,6 +5,8 @@ import useAuthStore from "../../store/authStore";
 import StoryViewer from "./StoryViewer";
 import UserAvatar from "../common/UserAvatar";
 import { canCreateStories } from "../../utils/badgeUtils";
+import UserSignalBadge from "../common/UserSignalBadge";
+import { getUserSignal } from "../../utils/userSignals";
 
 const StoryBar = ({ onAddStory }) => {
   const { user } = useAuthStore();
@@ -86,6 +88,8 @@ const StoryBar = ({ onAddStory }) => {
           const hasRejected =
             ownGroup &&
             group.stories.some((story) => story.status === "rejected");
+          const signal = getUserSignal(group.author);
+          const isAdmin = signal?.key === "admin";
 
           return (
             <button
@@ -95,7 +99,11 @@ const StoryBar = ({ onAddStory }) => {
             >
               <div
                 className={`relative w-16 h-16 rounded-full p-0.5 ${
-                  hasUnseen ? "bg-primary" : "bg-base-300"
+                  isAdmin
+                    ? "bg-neutral"
+                    : hasUnseen
+                      ? "bg-primary"
+                      : "bg-base-300"
                 }`}
               >
                 <div className="w-full h-full rounded-full bg-base-100 overflow-hidden border-2 border-base-100 flex items-center justify-center">
@@ -123,9 +131,14 @@ const StoryBar = ({ onAddStory }) => {
                   </span>
                 )}
               </div>
-              <span className="text-[10px] text-base-content/50 truncate max-w-[64px]">
+              <span
+                className={`text-[10px] truncate max-w-[64px] ${
+                  isAdmin ? "font-semibold text-neutral" : "text-base-content/50"
+                }`}
+              >
                 {group.author?.institutionName || group.author?.name}
               </span>
+              <UserSignalBadge user={group.author} className="max-w-[64px]" />
             </button>
           );
         })}

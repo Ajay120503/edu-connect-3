@@ -17,6 +17,7 @@ import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
 import LinkedJobCard from "../components/job/LinkedJobCard";
 import UserAvatar from "../components/common/UserAvatar";
+import UserSignalBadge from "../components/common/UserSignalBadge";
 import toast from "react-hot-toast";
 
 const PostDetail = () => {
@@ -165,12 +166,16 @@ const PostDetail = () => {
             <UserAvatar user={postAuthor} size={40} />
             <div>
               <p className="font-semibold text-sm">{postAuthor.name}</p>
-              <p className="text-xs text-base-content/50">
-                {getUserRoleLabel(postAuthor)}
-                {postAuthor.institutionName
-                  ? ` · ${postAuthor.institutionName}`
-                  : ""}
-              </p>
+              <div className="flex flex-wrap items-center gap-1.5 text-xs text-base-content/50">
+                <span>{getUserRoleLabel(postAuthor)}</span>
+                <UserSignalBadge user={postAuthor} />
+                {postAuthor.institutionName && (
+                  <>
+                    <span>·</span>
+                    <span>{postAuthor.institutionName}</span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 

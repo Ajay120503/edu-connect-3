@@ -6,6 +6,8 @@ import useAuthStore from "../store/authStore";
 import { canCreateJobs } from "../utils/badgeUtils";
 import MatchedJobsRow from "../components/job/MatchedJobsRow";
 import QuickApplyBtn from "../components/job/QuickApplyBtn";
+import UserSignalBadge from "../components/common/UserSignalBadge";
+import { getUserSignal } from "../utils/userSignals";
 
 const formatStipend = (stipend, currency, isPaid) => {
   if (!isPaid) return "Unpaid";
@@ -125,12 +127,20 @@ const Jobs = () => {
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((job) => (
-            <Link
-              key={job._id}
-              to={`/jobs/${job._id}`}
-              className="card bg-base-100 border border-base-300/50 shadow-sm hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 transition-all p-4 block"
-            >
+          {filtered.map((job) => {
+            const posterSignal = getUserSignal(job.postedBy);
+            const isAdminJob = posterSignal?.key === "admin";
+
+            return (
+              <Link
+                key={job._id}
+                to={`/jobs/${job._id}`}
+                className={`card border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all p-4 block ${
+                  isAdminJob
+                    ? "bg-neutral text-neutral-content border-neutral hover:border-neutral"
+                    : "bg-base-100 border-base-300/50 hover:border-primary/30"
+                }`}
+              >
               <div className="flex items-start gap-4">
                 {/* Job image or institution logo */}
                 <div className="w-14 h-14 rounded-xl bg-placeholder overflow-hidden shrink-0">
@@ -156,14 +166,17 @@ const Jobs = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-base mb-0.5">
+                      <h3 className={`font-semibold text-base mb-0.5 ${isAdminJob ? "text-neutral-content" : ""}`}>
                         {job.title}
                       </h3>
-                      <p className="text-sm text-base-content/50 mb-2.5">
-                        {job.institutionName || "Unknown Institution"}
-                      </p>
+                      <div className="mb-2.5 flex flex-wrap items-center gap-1.5">
+                        <p className={`text-sm ${isAdminJob ? "text-neutral-content/65" : "text-base-content/50"}`}>
+                          {job.institutionName || "Unknown Institution"}
+                        </p>
+                        <UserSignalBadge user={job.postedBy} />
+                      </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs">
-                        <span className="flex items-center gap-1 text-base-content/50">
+                        <span className={`flex items-center gap-1 ${isAdminJob ? "text-neutral-content/60" : "text-base-content/50"}`}>
                           <MapPin className="w-3.5 h-3.5" />
                           {job.location === "remote"
                             ? "Remote"
@@ -173,12 +186,16 @@ const Jobs = () => {
                         </span>
                         <span
                           className={`flex items-center gap-1 font-medium ${
-                            job.isPaid ? "text-success" : "text-base-content/40"
+                            job.isPaid
+                              ? "text-success"
+                              : isAdminJob
+                                ? "text-neutral-content/55"
+                                : "text-base-content/40"
                           }`}
                         >
                           {formatStipend(job.stipend, job.currency, job.isPaid)}
                         </span>
-                        <span className="flex items-center gap-1 text-base-content/40">
+                        <span className={`flex items-center gap-1 ${isAdminJob ? "text-neutral-content/55" : "text-base-content/40"}`}>
                           <Clock className="w-3.5 h-3.5" />
                           {new Date(job.deadline).toLocaleDateString("en-IN", {
                             month: "short",
@@ -226,7 +243,7 @@ const Jobs = () => {
                         }
                       />
                       {job.applicants?.length > 0 && (
-                        <span className="text-xs text-base-content/30">
+                        <span className={`text-xs ${isAdminJob ? "text-neutral-content/50" : "text-base-content/30"}`}>
                           {job.applicants.length} applicant
                           {job.applicants.length !== 1 ? "s" : ""}
                         </span>
@@ -235,8 +252,9 @@ const Jobs = () => {
                   </div>
                 </div>
               </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

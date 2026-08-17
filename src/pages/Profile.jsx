@@ -29,6 +29,8 @@ import VerifiedBadge from "../components/common/VerifiedBadge";
 import AcademicTimeline from "../components/profile/AcademicTimeline";
 import EndorsementTag from "../components/profile/EndorsementTag";
 import UserAvatar from "../components/common/UserAvatar";
+import UserSignalBadge from "../components/common/UserSignalBadge";
+import { getUserSignal } from "../utils/userSignals";
 
 const Profile = () => {
   const { id } = useParams();
@@ -246,11 +248,19 @@ const Profile = () => {
   const isFollowing = profile.followers?.includes(currentUser?._id);
   const followerCount = profile.followers?.length || 0;
   const followingCount = profile.following?.length || 0;
+  const profileSignal = getUserSignal(profile);
+  const isAdminProfile = profileSignal?.key === "admin";
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pb-20 md:pb-6">
       {/* ============ PROFILE HEADER ============ */}
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-10 mb-8">
+      <div
+        className={`flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-10 mb-8 rounded-2xl border p-4 md:p-6 ${
+          isAdminProfile
+            ? "bg-neutral text-neutral-content border-neutral shadow-lg"
+            : "bg-base-100 border-base-300/50"
+        }`}
+      >
         {/* Avatar */}
         <div className="shrink-0">
           <UserAvatar
@@ -273,6 +283,7 @@ const Profile = () => {
             <h1 className="text-xl md:text-2xl font-bold font-heading flex items-center justify-center gap-2 flex-wrap">
               {profile.name}
               <VerifiedBadge verifiedStatus={profile.verifiedStatus} />
+              <UserSignalBadge user={profile} size="sm" />
             </h1>
 
             {/* Action buttons */}
@@ -310,7 +321,7 @@ const Profile = () => {
           <div className="flex justify-center md:justify-start gap-8 mb-3">
             <div className="text-center md:text-left">
               <span className="font-bold">{userPosts.length}</span>
-              <span className="text-sm text-base-content/50 ml-1">posts</span>
+              <span className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>posts</span>
             </div>
             <button
               onClick={handleOpenFollowers}
@@ -318,7 +329,7 @@ const Profile = () => {
               title="View followers"
             >
               <span className="font-bold">{followerCount}</span>
-              <span className="text-sm text-base-content/50 ml-1">
+              <span className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
                 followers
               </span>
             </button>
@@ -328,7 +339,7 @@ const Profile = () => {
               title="View following"
             >
               <span className="font-bold">{followingCount}</span>
-              <span className="text-sm text-base-content/50 ml-1">
+              <span className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
                 following
               </span>
             </button>
@@ -349,7 +360,7 @@ const Profile = () => {
               </span>
             )}
             {profile.institutionName && (
-              <span className="badge badge-sm badge-ghost font-medium">
+              <span className={`badge badge-sm font-medium ${isAdminProfile ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content" : "badge-ghost"}`}>
                 {profile.institutionName}
               </span>
             )}
@@ -357,7 +368,7 @@ const Profile = () => {
 
           {/* Bio */}
           {profile.bio && (
-            <p className="text-sm text-base-content/70 leading-relaxed max-w-lg">
+            <p className={`text-sm leading-relaxed max-w-lg ${isAdminProfile ? "text-neutral-content/75" : "text-base-content/70"}`}>
               {profile.bio}
             </p>
           )}
@@ -366,16 +377,16 @@ const Profile = () => {
             profile.currentPosition ||
             profile.currentCompany ||
             profile.previousWork) && (
-            <div className="mt-3 max-w-lg rounded-xl bg-base-200/60 border border-base-300/50 p-3 text-left">
+            <div className={`mt-3 max-w-lg rounded-xl border p-3 text-left ${isAdminProfile ? "bg-white/10 border-white/15" : "bg-base-200/60 border-base-300/50"}`}>
               {(profile.currentPosition || profile.currentCompany) && (
                 <div className="flex items-start gap-2 text-sm">
-                  <Briefcase className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <Briefcase className={`w-4 h-4 mt-0.5 shrink-0 ${isAdminProfile ? "text-neutral-content" : "text-primary"}`} />
                   <div>
                     <p className="font-semibold">
                       {profile.currentPosition || "Currently working"}
                     </p>
                     {profile.currentCompany && (
-                      <p className="text-xs text-base-content/50 flex items-center gap-1 mt-0.5">
+                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
                         <Building2 className="w-3 h-3" />
                         {profile.currentCompany}
                       </p>
@@ -384,8 +395,8 @@ const Profile = () => {
                 </div>
               )}
               {profile.previousWork && (
-                <div className="mt-2 text-xs text-base-content/60 leading-relaxed">
-                  <span className="font-semibold text-base-content/70">
+                <div className={`mt-2 text-xs leading-relaxed ${isAdminProfile ? "text-neutral-content/65" : "text-base-content/60"}`}>
+                  <span className={`font-semibold ${isAdminProfile ? "text-neutral-content/80" : "text-base-content/70"}`}>
                     Previous work:
                   </span>{" "}
                   {profile.previousWork}
@@ -678,7 +689,11 @@ const Profile = () => {
               {userJobs.map((job) => (
                 <div
                   key={job._id}
-                  className="card bg-base-100 border border-base-300/50 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  className={`card border shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+                    isAdminProfile
+                      ? "bg-neutral text-neutral-content border-neutral"
+                      : "bg-base-100 border-base-300/50"
+                  }`}
                   onClick={() => navigate(`/jobs/${job._id}`)}
                 >
                   <div className="card-body p-4">
@@ -700,7 +715,7 @@ const Profile = () => {
                           <h4 className="font-semibold text-sm truncate">
                             {job.title}
                           </h4>
-                          <p className="text-xs text-base-content/50 truncate">
+                          <p className={`text-xs truncate ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
                             {job.institutionName}
                           </p>
                           <div className="flex flex-wrap gap-1.5 mt-1.5">

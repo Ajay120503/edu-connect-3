@@ -19,6 +19,8 @@ import QuickApplyBtn from "../components/job/QuickApplyBtn";
 import ReachStats from "../components/job/ReachStats";
 import JobQnA from "../components/job/JobQnA";
 import { canApplyToJobs } from "../utils/badgeUtils";
+import UserSignalBadge from "../components/common/UserSignalBadge";
+import { getUserSignal } from "../utils/userSignals";
 
 const formatStipend = (stipend, currency, isPaid) => {
   if (!isPaid) return "Unpaid";
@@ -115,6 +117,9 @@ const JobDetail = () => {
     );
   }
 
+  const posterSignal = getUserSignal(job.postedBy);
+  const isAdminJob = posterSignal?.key === "admin";
+
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6">
       {/* Back button */}
@@ -126,7 +131,13 @@ const JobDetail = () => {
         Back to Jobs
       </Link>
 
-      <div className="card bg-base-100 shadow-sm border border-base-300/50 p-6">
+      <div
+        className={`card shadow-sm border p-6 ${
+          isAdminJob
+            ? "bg-neutral/5 border-neutral/30"
+            : "bg-base-100 border-base-300/50"
+        }`}
+      >
         {/* Job Image */}
         {(job.image?.url || job.institutionLogo?.url) && (
           <div className="mb-5 rounded-xl overflow-hidden bg-base-200 border border-base-300/50">
@@ -147,9 +158,10 @@ const JobDetail = () => {
             <h1 className="text-2xl font-bold font-heading mb-1">
               {job.title}
             </h1>
-            <div className="flex items-center gap-2 text-sm text-base-content/50">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-base-content/50">
               <Building2 className="w-4 h-4" />
               <span>{job.institutionName || "Unknown Institution"}</span>
+              <UserSignalBadge user={job.postedBy} />
             </div>
           </div>
         </div>

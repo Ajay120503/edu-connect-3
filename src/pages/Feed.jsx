@@ -18,6 +18,7 @@ import StoryBar from "../components/post/StoryBar";
 import LinkedJobCard from "../components/job/LinkedJobCard";
 import ConfirmModal from "../components/common/ConfirmModal";
 import UserAvatar from "../components/common/UserAvatar";
+import UserSignalBadge from "../components/common/UserSignalBadge";
 import toast from "react-hot-toast";
 
 const CommentItem = ({
@@ -339,6 +340,7 @@ const Feed = () => {
                           <span className="capitalize">
                             {getUserRoleLabel(post.author)}
                           </span>
+                          <UserSignalBadge user={post.author} />
                           <span>·</span>
                           <span>
                             {new Date(post.createdAt).toLocaleDateString(

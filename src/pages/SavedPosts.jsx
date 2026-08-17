@@ -10,6 +10,7 @@ import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import { getUserRoleLabel } from "../utils/badgeUtils";
 import UserAvatar from "../components/common/UserAvatar";
+import UserSignalBadge from "../components/common/UserSignalBadge";
 import toast from "react-hot-toast";
 
 const SavedPosts = () => {
@@ -116,6 +117,7 @@ const SavedPosts = () => {
                         <span>
                           {getUserRoleLabel(post.author)}
                         </span>
+                        <UserSignalBadge user={post.author} />
                         <span>·</span>
                         <span>
                           {new Date(post.createdAt).toLocaleDateString(

@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { X, Eye } from "lucide-react";
 import API from "../../utils/axios";
 import UserAvatar from "../common/UserAvatar";
+import UserSignalBadge from "../common/UserSignalBadge";
+import { getUserSignal } from "../../utils/userSignals";
 
 const StoryViewer = ({ group, onClose, onViewed }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,9 +67,11 @@ const StoryViewer = ({ group, onClose, onViewed }) => {
   };
 
   if (!currentStory) return null;
+  const authorSignal = getUserSignal(group.author);
+  const isAdminAuthor = authorSignal?.key === "admin";
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${isAdminAuthor ? "bg-neutral" : "bg-black"}`}>
       {/* Close button */}
       <button
         onClick={onClose}
@@ -104,6 +108,7 @@ const StoryViewer = ({ group, onClose, onViewed }) => {
             <p className="text-white text-sm font-medium">
               {group.author?.name}
             </p>
+            <UserSignalBadge user={group.author} />
             {currentStory.status && currentStory.status !== "approved" && (
               <span
                 className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${

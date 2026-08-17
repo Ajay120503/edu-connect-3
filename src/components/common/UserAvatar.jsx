@@ -1,4 +1,5 @@
-import { BriefcaseBusiness } from "lucide-react";
+import { BriefcaseBusiness, Shield } from "lucide-react";
+import { isPlatformAdmin } from "../../utils/userSignals";
 
 /**
  * Reusable avatar component that shows a refined opportunity indicator
@@ -19,15 +20,18 @@ const UserAvatar = ({
   ringClass = "",
 }) => {
   const isOpen = showIndicator && user?.openToOpportunities;
+  const isAdmin = isPlatformAdmin(user);
   const name = user?.name || "U";
   const initial = name.charAt(0)?.toUpperCase() || "U";
   const profilePic = user?.profilePic;
   const imgUrl =
     typeof profilePic === "string" ? profilePic : profilePic?.url || "";
 
-  const baseRing = isOpen
-    ? "ring-2 ring-success ring-offset-2 ring-offset-base-100"
-    : "ring-2 ring-base-100";
+  const baseRing = isAdmin
+    ? "ring-2 ring-neutral ring-offset-2 ring-offset-base-100"
+    : isOpen
+      ? "ring-2 ring-success ring-offset-2 ring-offset-base-100"
+      : "ring-2 ring-base-100";
 
   return (
     <div
@@ -51,6 +55,26 @@ const UserAvatar = ({
           </div>
         )}
       </div>
+
+      {/* Admin badge */}
+      {isAdmin && (
+        <span
+          className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-neutral text-neutral-content shadow-sm ring-2 ring-base-100"
+          style={{
+            width: Math.max(size * 0.32, 14),
+            height: Math.max(size * 0.32, 14),
+          }}
+          title="Platform admin"
+        >
+          <Shield
+            strokeWidth={2.5}
+            style={{
+              width: Math.max(size * 0.16, 7),
+              height: Math.max(size * 0.16, 7),
+            }}
+          />
+        </span>
+      )}
 
       {/* Open to Opportunities badge */}
       {isOpen && (
