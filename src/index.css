@@ -1,30 +1,30 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* EduConnect Custom Theme — Flat, Professional, No Gradients */
+/* EduConnect Custom Theme — Warm Academic (Teal + Coral) */
 @plugin "daisyui/theme" {
   name: "educonnect";
   default: true;
   color-scheme: "light";
-  --color-primary: #2563eb;
+  --color-primary: #0d7377;
   --color-primary-content: #ffffff;
-  --color-secondary: #0f766e;
+  --color-secondary: #0a5c60;
   --color-secondary-content: #ffffff;
-  --color-accent: #b45309;
+  --color-accent: #e8613c;
   --color-accent-content: #ffffff;
-  --color-neutral: #111827;
+  --color-neutral: #26332f;
   --color-neutral-content: #ffffff;
-  --color-base-100: #f7f8fb;
-  --color-base-200: #eef2f7;
-  --color-base-300: #cbd5e1;
-  --color-base-content: #111827;
-  --color-info: #0284c7;
+  --color-base-100: #f7fbfa;
+  --color-base-200: #e0f5f4;
+  --color-base-300: #bfdedb;
+  --color-base-content: #26332f;
+  --color-info: #0d7377;
   --color-info-content: #ffffff;
-  --color-success: #047857;
+  --color-success: #2f9e44;
   --color-success-content: #ffffff;
-  --color-warning: #b45309;
+  --color-warning: #d97706;
   --color-warning-content: #ffffff;
-  --color-error: #dc2626;
+  --color-error: #dc3f2f;
   --color-error-content: #ffffff;
   --radius-box: 0.625rem;
   --radius-btn: 0.5rem;
@@ -56,11 +56,11 @@ h6 {
 }
 
 ::selection {
-  background: rgba(37, 99, 235, 0.16);
+  background: rgba(13, 115, 119, 0.16);
 }
 
 :focus-visible {
-  outline: 2px solid rgba(37, 99, 235, 0.55);
+  outline: 2px solid rgba(13, 115, 119, 0.55);
   outline-offset: 2px;
 }
 
@@ -70,34 +70,34 @@ h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: #eef2f7;
+  background: #e0f5f4;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #bfdedb;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #0d7377;
 }
 
 /* Mobile bottom nav spacing - handled inline via pb-[70px] */
 
 /* Consistent placeholder backgrounds for icons, avatars, and image placeholders */
 .bg-placeholder {
-  background-color: #eef2f7;
+  background-color: #e0f5f4;
 }
 
 .bg-placeholder-icon {
-  background-color: #eef2f7;
+  background-color: #e0f5f4;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .bg-placeholder-text {
-  background-color: #eef2f7;
+  background-color: #e0f5f4;
 }
 
 /* Loading skeleton animation */
@@ -111,7 +111,7 @@ h6 {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #eef2f7 25%, #cbd5e1 50%, #eef2f7 75%);
+  background: linear-gradient(90deg, #e0f5f4 25%, #bfdedb 50%, #e0f5f4 75%);
   background-size: 936px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
