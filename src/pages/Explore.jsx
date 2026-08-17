@@ -27,6 +27,9 @@ const roleFilters = [
   { value: "college_member", label: "Colleges", icon: Users },
 ];
 
+const getUserId = (value) =>
+  typeof value === "string" ? value : value?._id || value?.id;
+
 const Explore = () => {
   const { user: currentUser, setUser } = useAuthStore();
   const [users, setUsers] = useState([]);
@@ -38,7 +41,26 @@ const Explore = () => {
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [recentLoading, setRecentLoading] = useState(true);
   const [following, setFollowing] = useState(
-    new Set(currentUser?.following || [])
+    new Set((currentUser?.following || []).map(getUserId).filter(Boolean))
+  );
+
+  useEffect(() => {
+    setFollowing(
+      new Set((currentUser?.following || []).map(getUserId).filter(Boolean))
+    );
+  }, [currentUser?.following]);
+
+  const excludeCurrentAndFollowed = useCallback(
+    (list) =>
+      (list || []).filter(
+        (u) => u._id !== currentUser?._id && !following.has(u._id)
+      ),
+    [currentUser?._id, following]
+  );
+
+  const excludeCurrentUser = useCallback(
+    (list) => (list || []).filter((u) => u._id !== currentUser?._id),
+    [currentUser?._id]
   );
 
   const searchUsers = useCallback(
@@ -51,9 +73,7 @@ const Explore = () => {
         if (role) params.append("role", role);
         params.append("limit", "30");
         const { data } = await API.get(`/users/search?${params.toString()}`);
-        const filtered = (data.users || []).filter(
-          (u) => u._id !== currentUser?._id
-        );
+        const filtered = excludeCurrentUser(data.users);
         setUsers(filtered);
       } catch {
         /* ignore */
@@ -61,15 +81,14 @@ const Explore = () => {
         setLoading(false);
       }
     },
-    [currentUser?._id]
+    [excludeCurrentUser]
   );
 
   // Fetch trending users (most followers)
   const fetchTrending = useCallback(async () => {
     try {
-      const { data } = await API.get("/users/search?limit=8");
-      const filtered = (data.users || [])
-        .filter((u) => u._id !== currentUser?._id)
+      const { data } = await API.get("/users/search?limit=8&excludeFollowed=true");
+      const filtered = excludeCurrentAndFollowed(data.users)
         .sort(
           (a, b) => (b.followers?.length || 0) - (a.followers?.length || 0)
         );
@@ -79,14 +98,13 @@ const Explore = () => {
     } finally {
       setTrendingLoading(false);
     }
-  }, [currentUser?._id]);
+  }, [excludeCurrentAndFollowed]);
 
   // Fetch recently joined users
   const fetchRecent = useCallback(async () => {
     try {
-      const { data } = await API.get("/users/search?limit=10");
-      const filtered = (data.users || [])
-        .filter((u) => u._id !== currentUser?._id)
+      const { data } = await API.get("/users/search?limit=10&excludeFollowed=true");
+      const filtered = excludeCurrentAndFollowed(data.users)
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setRecentUsers(filtered.slice(0, 6));
     } catch {
@@ -94,7 +112,7 @@ const Explore = () => {
     } finally {
       setRecentLoading(false);
     }
-  }, [currentUser?._id]);
+  }, [excludeCurrentAndFollowed]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -112,6 +130,30 @@ const Explore = () => {
       searchUsers(query, roleFilter);
     }
   }, [roleFilter]);
+
+  useEffect(() => {
+    const nextQuery = query.trim();
+    if (!nextQuery) {
+      if (roleFilter) {
+        searchUsers("", roleFilter);
+        return;
+      }
+      setUsers([]);
+      const url = new URL(window.location);
+      url.searchParams.delete("q");
+      window.history.replaceState({}, "", url);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const url = new URL(window.location);
+      url.searchParams.set("q", nextQuery);
+      window.history.replaceState({}, "", url);
+      searchUsers(nextQuery, roleFilter);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query, roleFilter, searchUsers]);
 
   const handleSearch = (e) => {
     e?.preventDefault();
@@ -133,6 +175,22 @@ const Explore = () => {
         else next.delete(userId);
         return next;
       });
+      if (data.isFollowing) {
+        setTrendingUsers((prev) => prev.filter((u) => u._id !== userId));
+        setRecentUsers((prev) => prev.filter((u) => u._id !== userId));
+        setUser?.({
+          ...currentUser,
+          following: [...(currentUser?.following || []), userId],
+        });
+      }
+      if (!data.isFollowing) {
+        setUser?.({
+          ...currentUser,
+          following: (currentUser?.following || []).filter(
+            (item) => getUserId(item) !== userId
+          ),
+        });
+      }
       toast.success(data.isFollowing ? "Following!" : "Unfollowed");
     } catch {
       toast.error("Failed to update follow");
@@ -337,21 +395,35 @@ const Explore = () => {
                   </div>
                 ))}
               </div>
+            ) : trendingUsers.length === 0 ? (
+              <div className="rounded-2xl border border-base-300/50 bg-base-100 p-6 text-center">
+                <TrendingUp className="w-8 h-8 text-base-content/20 mx-auto mb-2" />
+                <p className="text-sm font-medium text-base-content/45">
+                  No new people to suggest
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {trendingUsers.map((u) => (
                   <Link
                     key={u._id}
                     to={`/profile/${u._id}`}
-                    className="card bg-base-100 border border-base-300/30 rounded-2xl p-4 text-center hover:shadow-md hover:border-primary/20 hover:-translate-y-1 transition-all group"
+                    className="card bg-base-100 border border-base-300/50 rounded-2xl p-4 text-center hover:shadow-md hover:border-primary/20 hover:-translate-y-1 transition-all group min-h-[168px]"
                   >
                     <UserAvatar user={u} size={56} className="mx-auto" />
-                    <p className="font-semibold text-sm mt-2.5 truncate group-hover:text-primary transition-colors">
+                    <p className="font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
                       {u.name}
                     </p>
-                    <span className="badge badge-xs badge-soft badge-primary text-[10px] mt-1 capitalize">
-                      {getUserRoleLabel(u)}
-                    </span>
+                    <div className="mt-1 flex justify-center">
+                      <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize max-w-full truncate">
+                        {getUserRoleLabel(u)}
+                      </span>
+                    </div>
+                    {u.institutionName && (
+                      <p className="text-[10px] text-base-content/40 mt-1 truncate">
+                        {u.institutionName}
+                      </p>
+                    )}
                     {u.followers?.length > 0 && (
                       <p className="text-[10px] text-base-content/40 mt-1.5">
                         {u.followers.length} follower
@@ -391,6 +463,13 @@ const Explore = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            ) : recentUsers.length === 0 ? (
+              <div className="rounded-2xl border border-base-300/50 bg-base-100 p-6 text-center">
+                <Clock className="w-8 h-8 text-base-content/20 mx-auto mb-2" />
+                <p className="text-sm font-medium text-base-content/45">
+                  No new people to suggest
+                </p>
               </div>
             ) : (
               <div className="space-y-2">

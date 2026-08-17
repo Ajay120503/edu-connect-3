@@ -27,6 +27,12 @@ const formatStipend = (stipend, currency, isPaid) => {
   return `₹${formatted}`;
 };
 
+const splitQualifications = (value = "") =>
+  value
+    .split(/\n|•|,|;/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
 const hasAppliedToJob = (job, userId) =>
   Boolean(
     userId &&
@@ -123,11 +129,11 @@ const JobDetail = () => {
       <div className="card bg-base-100 shadow-sm border border-base-300/50 p-6">
         {/* Job Image */}
         {(job.image?.url || job.institutionLogo?.url) && (
-          <div className="mb-5 rounded-xl overflow-hidden max-h-64">
+          <div className="mb-5 rounded-xl overflow-hidden bg-base-200 border border-base-300/50">
             <img
               src={job.image?.url || job.institutionLogo?.url}
               alt={job.title}
-              className="w-full h-full object-cover"
+              className="w-full max-h-[420px] object-contain"
             />
           </div>
         )}
@@ -231,9 +237,14 @@ const JobDetail = () => {
         {job.requiredQualifications && (
           <div className="mb-5">
             <h3 className="font-semibold text-sm mb-2">Qualifications</h3>
-            <p className="text-sm text-base-content/70">
-              {job.requiredQualifications}
-            </p>
+            <ul className="space-y-1.5 text-sm text-base-content/70">
+              {splitQualifications(job.requiredQualifications).map((item, index) => (
+                <li key={index} className="flex gap-2">
+                  <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

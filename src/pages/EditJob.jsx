@@ -239,12 +239,12 @@ const EditJob = () => {
               />
             </div>
 
-            {/* Institution Name */}
+            {/* Organization Name */}
             <div className="form-control">
               <label className="label pb-1">
                 <span className="label-text font-medium text-sm flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5" />
-                  Institution Name
+                  Organization Name
                 </span>
               </label>
               <input
@@ -498,11 +498,11 @@ const EditJob = () => {
           </h2>
 
           {imagePreview ? (
-            <div className="relative inline-block">
+            <div className="relative rounded-xl border border-base-300 bg-base-200/70 p-2">
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="w-full max-h-48 object-cover rounded-lg"
+                className="w-full max-h-72 object-contain rounded-lg"
               />
               <button
                 type="button"

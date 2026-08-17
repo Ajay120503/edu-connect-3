@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Camera, X, Upload } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
-import { userHasBadge as hasBadge } from "../utils/badgeUtils";
 import toast from "react-hot-toast";
 
 const EditProfile = () => {
@@ -24,6 +23,10 @@ const EditProfile = () => {
     skills: user?.skills?.join(", ") || "",
     qualifications: user?.qualifications?.join(", ") || "",
     profession: user?.profession || "",
+    isCurrentlyWorking: user?.isCurrentlyWorking || false,
+    currentPosition: user?.currentPosition || "",
+    currentCompany: user?.currentCompany || "",
+    previousWork: user?.previousWork || "",
     interests: user?.interests?.join(", ") || "",
     linkedinUrl: user?.linkedinUrl || "",
   });
@@ -36,8 +39,10 @@ const EditProfile = () => {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+  };
 
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
@@ -127,38 +132,33 @@ const EditProfile = () => {
           </div>
         </div>
 
-        {/* Institution Picture (for teachers) */}
-        {(hasBadge(user, "teacher") ||
-          hasBadge(user, "professor") ||
-          hasBadge(user, "hod") ||
-          hasBadge(user, "principal")) && (
-          <div className="card bg-base-100 border border-base-300/50 p-4">
-            <h3 className="font-semibold text-sm mb-3">Institution Logo</h3>
-            <div className="flex items-center gap-4">
-              <div className="w-24 h-24 rounded-xl bg-base-200 overflow-hidden ring-2 ring-base-300 flex items-center justify-center">
-                {institutionPreview ? (
-                  <img
-                    src={institutionPreview}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-base-content/20 text-xs">No logo</div>
-                )}
-              </div>
-              <label className="btn btn-outline btn-sm gap-2 cursor-pointer">
-                <Upload className="w-4 h-4" />{" "}
-                {institutionPreview ? "Change" : "Upload"}
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleInstitutionPicChange}
+        {/* Institution Picture */}
+        <div className="card bg-base-100 border border-base-300/50 p-4">
+          <h3 className="font-semibold text-sm mb-3">Institution Logo</h3>
+          <div className="flex items-center gap-4">
+            <div className="w-24 h-24 rounded-xl bg-base-200 overflow-hidden ring-2 ring-base-300 flex items-center justify-center">
+              {institutionPreview ? (
+                <img
+                  src={institutionPreview}
+                  alt=""
+                  className="w-full h-full object-cover"
                 />
-              </label>
+              ) : (
+                <div className="text-base-content/20 text-xs">No logo</div>
+              )}
             </div>
+            <label className="btn btn-outline btn-sm gap-2 cursor-pointer">
+              <Upload className="w-4 h-4" />{" "}
+              {institutionPreview ? "Change" : "Upload"}
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleInstitutionPicChange}
+              />
+            </label>
           </div>
-        )}
+        </div>
 
         {/* Basic Info */}
         <div className="card bg-base-100 border border-base-300/50 p-4">
@@ -236,6 +236,67 @@ const EditProfile = () => {
                 value={form.profession}
                 onChange={handleChange}
                 placeholder="e.g. Part-time Tutor"
+              />
+            </div>
+            <div className="form-control rounded-lg bg-base-200/50 p-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="isCurrentlyWorking"
+                  className="checkbox checkbox-primary checkbox-sm"
+                  checked={form.isCurrentlyWorking}
+                  onChange={handleChange}
+                />
+                <span className="text-sm font-medium">
+                  I am currently working somewhere
+                </span>
+              </label>
+            </div>
+            {form.isCurrentlyWorking && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="form-control">
+                  <label className="label py-0 pb-1">
+                    <span className="label-text text-xs font-medium">
+                      Current Position
+                    </span>
+                  </label>
+                  <input
+                    name="currentPosition"
+                    className="input input-bordered w-full input-sm text-sm"
+                    value={form.currentPosition}
+                    onChange={handleChange}
+                    placeholder="e.g. Math Teacher"
+                  />
+                </div>
+                <div className="form-control">
+                  <label className="label py-0 pb-1">
+                    <span className="label-text text-xs font-medium">
+                      Current Workplace
+                    </span>
+                  </label>
+                  <input
+                    name="currentCompany"
+                    className="input input-bordered w-full input-sm text-sm"
+                    value={form.currentCompany}
+                    onChange={handleChange}
+                    placeholder="e.g. DPS Pune"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="form-control">
+              <label className="label py-0 pb-1">
+                <span className="label-text text-xs font-medium">
+                  Previous Work
+                </span>
+              </label>
+              <textarea
+                name="previousWork"
+                className="textarea textarea-bordered w-full textarea-sm text-sm"
+                rows={3}
+                value={form.previousWork}
+                onChange={handleChange}
+                placeholder="Previous roles, institutions, internships, or projects..."
               />
             </div>
           </div>

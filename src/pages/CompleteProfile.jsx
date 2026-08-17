@@ -1,27 +1,23 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Upload } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGraduate } from "@fortawesome/free-solid-svg-icons";
-import BadgeChip from "../components/common/BadgeChip";
 import useAuthStore from "../store/authStore";
-import { SELF_BADGES, BADGE_GROUPS } from "../utils/badgeUtils";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
 
 const steps = [
-  { key: "badges", label: "Who are you?" },
   { key: "details", label: "Your details" },
   { key: "education", label: "Education & skills" },
   { key: "institution", label: "Your institution" },
 ];
 
 /**
- * 4-step Profile Completion Wizard.
- * Appears after OTP/email verification — user selects badges + fills profile.
+ * Profile completion wizard after OTP/email verification.
  */
 const CompleteProfile = () => {
-  const { user, updateBadges, updateProfile, setUser } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -39,40 +35,25 @@ const CompleteProfile = () => {
     subject: user?.subject || "",
     experience: user?.experience || 0,
     profession: user?.profession || "",
+    isCurrentlyWorking: user?.isCurrentlyWorking || false,
+    currentPosition: user?.currentPosition || "",
+    currentCompany: user?.currentCompany || "",
+    previousWork: user?.previousWork || "",
     linkedinUrl: user?.linkedinUrl || "",
     profilePic: null,
   });
-
-  const [selectedBadges, setSelectedBadges] = useState(
-    user?.badges
-      ?.filter((b) => b.isActive && SELF_BADGES.includes(b.type))
-      .map((b) => b.type) || [],
-  );
 
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(
     user?.profilePic?.url || "",
   );
 
-  // If user already has badges and is verified, skip wizard
+  // If user already has profile basics and is verified, skip wizard
   useEffect(() => {
-    if (
-      user?.isVerified &&
-      user?.badges?.length > 0 &&
-      selectedBadges.length > 0
-    ) {
+    if (user?.isVerified && (user?.bio || user?.profilePic?.url)) {
       navigate("/feed");
     }
-  }, [user, navigate, selectedBadges.length]);
-
-  // ── Badge selection ──
-  const onBadgeSelect = (badgeType) => {
-    setSelectedBadges((prev) =>
-      prev.includes(badgeType)
-        ? prev.filter((b) => b !== badgeType)
-        : [...prev, badgeType],
-    );
-  };
+  }, [user, navigate]);
 
   // ── Profile pic upload ──
   const handleProfilePicChange = (e) => {
@@ -94,10 +75,6 @@ const CompleteProfile = () => {
   // ── Submit ──
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedBadges.length === 0) {
-      toast.error("Please select at least one badge to continue.");
-      return;
-    }
 
     setLoading(true);
     try {
@@ -115,6 +92,10 @@ const CompleteProfile = () => {
       profileFormData.append("subject", formData.subject);
       profileFormData.append("experience", formData.experience);
       profileFormData.append("profession", formData.profession);
+      profileFormData.append("isCurrentlyWorking", formData.isCurrentlyWorking);
+      profileFormData.append("currentPosition", formData.currentPosition);
+      profileFormData.append("currentCompany", formData.currentCompany);
+      profileFormData.append("previousWork", formData.previousWork);
       profileFormData.append("linkedinUrl", formData.linkedinUrl);
 
       if (profilePicFile) {
@@ -131,9 +112,6 @@ const CompleteProfile = () => {
         setUser(profileData.user);
       }
 
-      // 2. Save self-selected badges
-      await updateBadges(selectedBadges);
-
       toast.success("Profile completed successfully!");
       navigate("/feed");
     } catch (err) {
@@ -149,8 +127,8 @@ const CompleteProfile = () => {
   const renderStepIndicator = () => (
     <div className="flex items-center justify-center mb-8">
       {steps.map((s, idx) => (
-        <>
-          <div key={s.key} className="flex flex-col items-center">
+        <Fragment key={s.key}>
+          <div className="flex flex-col items-center">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                 idx === step
@@ -175,68 +153,12 @@ const CompleteProfile = () => {
               }`}
             />
           )}
-        </>
+        </Fragment>
       ))}
     </div>
   );
 
-  // ── Step 1: Badge Selection ──
-  const renderBadgesStep = () => (
-    <div>
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold mb-2">Who are you?</h2>
-        <p className="text-sm text-base-content/60">
-          Select all badges that describe you (you can change these later)
-        </p>
-      </div>
-
-      <div className="space-y-6">
-        {BADGE_GROUPS.map((group) => (
-          <div key={group.label}>
-            <h3 className="text-xs font-semibold text-base-content/50 uppercase mb-3">
-              {group.label}
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {group.badges.map((badgeType) => (
-                <div
-                  key={badgeType}
-                  onClick={() => onBadgeSelect(badgeType)}
-                  className={`cursor-pointer rounded-xl p-3 transition-all border-2 text-center ${
-                    selectedBadges.includes(badgeType)
-                      ? "border-primary bg-primary/5"
-                      : "border-base-300 hover:border-primary/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 justify-center">
-                    {selectedBadges.includes(badgeType) && (
-                      <Check className="w-4 h-4 text-primary" />
-                    )}
-                    <BadgeChip badgeType={badgeType} size="sm" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <button
-        onClick={() => {
-          if (selectedBadges.length === 0) {
-            toast.error("Please select at least one badge.");
-            return;
-          }
-          nextStep();
-        }}
-        className="btn btn-primary w-full mt-6"
-        disabled={selectedBadges.length === 0}
-      >
-        Continue
-      </button>
-    </div>
-  );
-
-  // ── Step 2: Details ──
+  // ── Step 1: Details ──
   const renderDetailsStep = () => (
     <div className="space-y-4">
       <h2 className="text-lg font-bold mb-4">Your details</h2>
@@ -341,7 +263,7 @@ const CompleteProfile = () => {
     </div>
   );
 
-  // ── Step 3: Education & Skills ──
+  // ── Step 2: Education & Skills ──
   const renderEducationStep = () => (
     <div className="space-y-4">
       <h2 className="text-lg font-bold mb-4">Education & skills</h2>
@@ -439,10 +361,74 @@ const CompleteProfile = () => {
           onChange={(e) => updateField("profession", e.target.value)}
         />
       </div>
+
+      <div className="rounded-2xl border border-base-300/60 bg-base-200/30 p-4 space-y-4">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary checkbox-sm"
+            checked={formData.isCurrentlyWorking}
+            onChange={(e) =>
+              updateField("isCurrentlyWorking", e.target.checked)
+            }
+          />
+          <span className="text-sm font-medium">
+            I am currently working somewhere
+          </span>
+        </label>
+
+        {formData.isCurrentlyWorking && (
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="form-control">
+              <label className="label pb-1">
+                <span className="label-text font-medium text-sm">
+                  Current Position
+                </span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full input-sm"
+                placeholder="e.g. Assistant Teacher"
+                value={formData.currentPosition}
+                onChange={(e) => updateField("currentPosition", e.target.value)}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label pb-1">
+                <span className="label-text font-medium text-sm">
+                  Current Workplace
+                </span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full input-sm"
+                placeholder="e.g. Delhi Public School"
+                value={formData.currentCompany}
+                onChange={(e) => updateField("currentCompany", e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="form-control">
+          <label className="label pb-1">
+            <span className="label-text font-medium text-sm">
+              Previous Work
+            </span>
+          </label>
+          <textarea
+            rows={3}
+            className="textarea textarea-bordered w-full text-sm"
+            placeholder="Previous roles, institutions, internships, or projects..."
+            value={formData.previousWork}
+            onChange={(e) => updateField("previousWork", e.target.value)}
+          />
+        </div>
+      </div>
     </div>
   );
 
-  // ── Step 4: Institution ──
+  // ── Step 3: Institution ──
   const renderInstitutionStep = () => (
     <div className="space-y-4">
       <h2 className="text-lg font-bold mb-2">Your institution (optional)</h2>
@@ -472,7 +458,7 @@ const CompleteProfile = () => {
       <div className="form-control">
         <label className="label pb-1">
           <span className="label-text font-medium text-sm">
-            Institution Name
+            Organization Name
           </span>
         </label>
         <input
@@ -503,9 +489,7 @@ const CompleteProfile = () => {
               Complete Your Profile
             </h1>
             <p className="text-sm text-base-content/50">
-              {selectedBadges.length} badge
-              {selectedBadges.length !== 1 ? "s" : ""} selected • Step{" "}
-              {step + 1} of {steps.length}
+              Step {step + 1} of {steps.length}
             </p>
           </div>
 
@@ -514,36 +498,20 @@ const CompleteProfile = () => {
 
           {/* Step content */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {step === 0 && renderBadgesStep()}
-            {step === 1 && renderDetailsStep()}
-            {step === 2 && renderEducationStep()}
-            {step === 3 && renderInstitutionStep()}
-          </form>
+            {step === 0 && renderDetailsStep()}
+            {step === 1 && renderEducationStep()}
+            {step === 2 && renderInstitutionStep()}
 
-          {/* Selected badges preview (bottom of wizard) */}
-          {selectedBadges.length > 0 && (
-            <div className="mt-4 p-3 bg-base-200/50 rounded-xl">
-              <p className="text-xs text-base-content/50 mb-2">
-                Your selected badges:
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {selectedBadges.map((b) => (
-                  <BadgeChip key={b} badgeType={b} size="sm" />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Navigation (shown on steps 2-4, step 1 has its own button) */}
-          {step > 0 && (
             <div className="flex gap-3 mt-6">
-              <button
-                type="button"
-                onClick={prevStep}
-                className="btn btn-ghost btn-outline flex-1"
-              >
-                ← Previous
-              </button>
+              {step > 0 && (
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className="btn btn-ghost btn-outline flex-1"
+                >
+                  ← Previous
+                </button>
+              )}
               {step === steps.length - 1 ? (
                 <button
                   type="submit"
@@ -566,7 +534,7 @@ const CompleteProfile = () => {
                 </button>
               )}
             </div>
-          )}
+          </form>
         </div>
       </div>
     </div>

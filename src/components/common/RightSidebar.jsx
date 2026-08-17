@@ -15,18 +15,28 @@ import useAuthStore from "../../store/authStore";
 import UserAvatar from "./UserAvatar";
 import { getUserRoleLabel } from "../../utils/badgeUtils";
 
+const getUserId = (value) =>
+  typeof value === "string" ? value : value?._id || value?.id;
+
+const visibleSkillsLimit = 2;
+
 const RightSidebar = () => {
   const { user } = useAuthStore();
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [recentJobs, setRecentJobs] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingJobs, setLoadingJobs] = useState(true);
+  const following = new Set(
+    (user?.following || []).map(getUserId).filter(Boolean),
+  );
 
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
-        const { data } = await API.get("/users/search?limit=10");
-        const users = (data.users || []).filter((u) => u._id !== user?._id);
+        const { data } = await API.get("/users/search?limit=20&excludeFollowed=true");
+        const users = (data.users || []).filter(
+          (u) => u._id !== user?._id && !following.has(u._id),
+        );
         setSuggestedUsers(users.slice(0, 5));
       } catch {
         // Silently fail
@@ -39,7 +49,7 @@ const RightSidebar = () => {
       try {
         const { data } = await API.get("/jobs?limit=10");
         const jobs = (data.jobs || []).filter(
-          (j) => j.postedBy?._id !== user?._id
+          (j) => j.postedBy?._id !== user?._id,
         );
         setRecentJobs(jobs.slice(0, 5));
       } catch {
@@ -51,7 +61,7 @@ const RightSidebar = () => {
 
     fetchSuggestedUsers();
     fetchRecentJobs();
-  }, [user?._id]);
+  }, [user?._id, user?.following]);
 
   return (
     <aside className="hidden lg:flex flex-col w-80 bg-base-100 border-l border-base-200/80 sticky top-0 h-screen overflow-hidden">
@@ -194,38 +204,46 @@ const RightSidebar = () => {
                         <p className="text-xs text-base-content/50 truncate mt-0.5">
                           {job.institutionName || "Institution"}
                         </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="flex items-center gap-1 text-[10px] text-base-content/40">
-                            <MapPin className="w-3 h-3" />
-                            {job.location}
+                        <div className="flex items-center gap-2 mt-2 min-w-0">
+                          <span className="flex min-w-0 items-center gap-1 text-[10px] text-base-content/40">
+                            <MapPin className="w-3 h-3 shrink-0" />
+                            <span className="truncate capitalize">
+                              {job.location}
+                            </span>
                           </span>
                           <span
-                            className={`flex items-center gap-1 text-[10px] font-medium ${
+                            className={`flex min-w-0 items-center gap-1 text-[10px] font-medium ${
                               job.isPaid
                                 ? "text-success"
                                 : "text-base-content/40"
                             }`}
                           >
-                            {job.isPaid
-                              ? job.currency === "USD"
-                                ? `$${Number(job.stipend).toLocaleString()}`
-                                : `₹${Number(job.stipend).toLocaleString()}`
-                              : "Volunteer"}
+                            <span className="truncate">
+                              {job.isPaid
+                                ? job.currency === "USD"
+                                  ? `$${Number(job.stipend).toLocaleString()}`
+                                  : `₹${Number(job.stipend).toLocaleString()}`
+                                : "Volunteer"}
+                            </span>
                           </span>
                         </div>
                         {job.skillsRequired?.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-1.5">
-                            {job.skillsRequired.slice(0, 2).map((skill, i) => (
-                              <span
-                                key={i}
-                                className="badge badge-xs badge-outline text-[9px] px-1.5"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                            {job.skillsRequired.length > 2 && (
-                              <span className="text-[9px] text-base-content/30">
-                                +{job.skillsRequired.length - 2}
+                          <div className="mt-1.5 flex max-w-full items-center gap-1 overflow-hidden">
+                            {job.skillsRequired
+                              .slice(0, visibleSkillsLimit)
+                              .map((skill, i) => (
+                                <span
+                                  key={i}
+                                  title={skill}
+                                  className="badge badge-xs badge-outline max-w-[72px] shrink truncate px-1.5 text-[9px]"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            {job.skillsRequired.length > visibleSkillsLimit && (
+                              <span className="shrink-0 rounded-full bg-base-300/70 px-1.5 py-0.5 text-[9px] font-medium text-base-content/40">
+                                +
+                                {job.skillsRequired.length - visibleSkillsLimit}
                               </span>
                             )}
                           </div>
@@ -270,7 +288,7 @@ const RightSidebar = () => {
           <div className="w-5 h-5 bg-primary/10 rounded flex items-center justify-center">
             <FontAwesomeIcon
               icon={faUserGraduate}
-              className="w-8 h-8 text-primary"
+              className="w-3 h-3 text-primary"
             />
           </div>
           <span className="text-xs font-semibold text-base-content/40">

@@ -5,7 +5,6 @@ import {
   Megaphone,
   Sparkles,
 } from "lucide-react";
-import { isInstitutionMember } from "./badgeUtils";
 
 export const postTypes = [
   {
@@ -37,4 +36,4 @@ export const postTypes = [
 ];
 
 export const getAvailablePostTypes = (user) =>
-  postTypes.filter((type) => !type.requiresInstitution || isInstitutionMember(user));
+  user ? postTypes : postTypes.filter((type) => !type.requiresInstitution);

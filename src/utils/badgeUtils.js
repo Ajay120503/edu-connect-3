@@ -122,14 +122,7 @@ export const isStudent = (user) => {
 };
 
 export const canApplyToJobs = (user) => {
-  if (!user) return false;
-  const institutionOnlyBadges = [
-    "school_member",
-    "college_member",
-    "university_member",
-    "coaching_member",
-  ];
-  return !hasAnyBadge(user, institutionOnlyBadges);
+  return Boolean(user);
 };
 
 export const canCreateJobs = (user) => Boolean(user);
@@ -141,11 +134,7 @@ export const canCreateStories = (user) => Boolean(user);
  * (institution member or admin)
  */
 export const isInstitutionMember = (user) => {
-  return (
-    hasAnyBadge(user, INSTITUTION_MEMBER_BADGES) ||
-    user?.category === "school" ||
-    user?.category === "college"
-  );
+  return Boolean(user);
 };
 
 /**

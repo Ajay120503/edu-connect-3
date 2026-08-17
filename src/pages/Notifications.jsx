@@ -38,6 +38,12 @@ const iconMap = {
     bg: "bg-primary/10",
   },
   welcome: { icon: Bell, color: "text-primary", bg: "bg-primary/5" },
+  content_approved: { icon: Check, color: "text-success", bg: "bg-success/10" },
+  content_rejected: {
+    icon: Bell,
+    color: "text-error",
+    bg: "bg-error/10",
+  },
 };
 
 const Notifications = () => {

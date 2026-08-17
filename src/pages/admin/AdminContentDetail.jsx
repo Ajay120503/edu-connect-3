@@ -15,6 +15,12 @@ import BadgeChip from "../../components/common/BadgeChip";
 import API from "../../utils/axios";
 import toast from "react-hot-toast";
 
+const splitQualifications = (value = "") =>
+  value
+    .split(/\n|•|,|;/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
 const AdminContentDetail = () => {
   const { type, id } = useParams();
   const navigate = useNavigate();
@@ -179,16 +185,48 @@ const AdminContentDetail = () => {
           )}
 
           {/* Images */}
+          {content.image?.url && (
+            <div className="mb-4 rounded-xl border border-base-300 bg-base-200/60 p-2">
+              <img
+                src={content.image.url}
+                alt={content.title || "Content image"}
+                className="w-full max-h-[420px] object-contain rounded-lg"
+              />
+            </div>
+          )}
+
           {content.images?.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
               {content.images.map((img, i) => (
-                <img
+                <div
                   key={i}
-                  src={img?.url || img}
-                  alt=""
-                  className="w-full h-48 object-cover rounded-xl"
-                />
+                  className="rounded-xl border border-base-300 bg-base-200/60 p-2"
+                >
+                  <img
+                    src={img?.url || img}
+                    alt=""
+                    className="w-full max-h-72 object-contain rounded-lg"
+                  />
+                </div>
               ))}
+            </div>
+          )}
+
+          {content.requiredQualifications && (
+            <div className="mb-4">
+              <h3 className="font-semibold text-sm mb-2">
+                Qualifications
+              </h3>
+              <ul className="space-y-1.5 text-sm text-base-content/70">
+                {splitQualifications(content.requiredQualifications).map(
+                  (item, index) => (
+                    <li key={index} className="flex gap-2">
+                      <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ),
+                )}
+              </ul>
             </div>
           )}
 

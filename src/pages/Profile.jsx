@@ -16,6 +16,7 @@ import {
   Users,
   X,
   ArrowLeft,
+  Building2,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
@@ -359,6 +360,38 @@ const Profile = () => {
             <p className="text-sm text-base-content/70 leading-relaxed max-w-lg">
               {profile.bio}
             </p>
+          )}
+
+          {(profile.isCurrentlyWorking ||
+            profile.currentPosition ||
+            profile.currentCompany ||
+            profile.previousWork) && (
+            <div className="mt-3 max-w-lg rounded-xl bg-base-200/60 border border-base-300/50 p-3 text-left">
+              {(profile.currentPosition || profile.currentCompany) && (
+                <div className="flex items-start gap-2 text-sm">
+                  <Briefcase className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-semibold">
+                      {profile.currentPosition || "Currently working"}
+                    </p>
+                    {profile.currentCompany && (
+                      <p className="text-xs text-base-content/50 flex items-center gap-1 mt-0.5">
+                        <Building2 className="w-3 h-3" />
+                        {profile.currentCompany}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {profile.previousWork && (
+                <div className="mt-2 text-xs text-base-content/60 leading-relaxed">
+                  <span className="font-semibold text-base-content/70">
+                    Previous work:
+                  </span>{" "}
+                  {profile.previousWork}
+                </div>
+              )}
+            </div>
           )}
 
           {/* Skills with Endorsements */}

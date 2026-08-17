@@ -182,12 +182,12 @@ const CreateJob = () => {
               />
             </div>
 
-            {/* Institution Name */}
+            {/* Organization Name */}
             <div className="form-control">
               <label className="label pb-1">
                 <span className="label-text font-medium text-sm flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5" />
-                  Institution Name
+                  Organization Name
                 </span>
               </label>
               <input

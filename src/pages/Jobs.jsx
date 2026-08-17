@@ -168,8 +168,8 @@ const Jobs = () => {
                           {job.location === "remote"
                             ? "Remote"
                             : job.location === "hybrid"
-                            ? "Hybrid"
-                            : "On-site"}
+                              ? "Hybrid"
+                              : "On-site"}
                         </span>
                         <span
                           className={`flex items-center gap-1 font-medium ${
@@ -220,8 +220,8 @@ const Jobs = () => {
                                       user?._id,
                                     ],
                                   }
-                                : item
-                            )
+                                : item,
+                            ),
                           )
                         }
                       />
