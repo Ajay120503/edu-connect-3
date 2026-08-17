@@ -9,26 +9,58 @@ import {
   MapPin,
   Sparkles,
   ChevronRight,
+  Shield,
+  BriefcaseBusiness,
+  Flame,
+  GraduationCap,
+  BookOpen,
 } from "lucide-react";
 import API from "../utils/axios";
 import FontAwesomeGraduateIcon from "../components/common/FontAwesomeGraduateIcon";
 import { getUserRoleLabel } from "../utils/badgeUtils";
+import {
+  getUserId,
+  getUserSignal,
+  getFollowerCount,
+  isPlatformAdmin,
+  isRecentlyActive,
+  sortDiscoverableUsers,
+} from "../utils/userSignals";
 import useAuthStore from "../store/authStore";
 import NoticeboardBanner from "../components/post/NoticeboardBanner";
 import UserAvatar from "../components/common/UserAvatar";
 import toast from "react-hot-toast";
 
-const roleFilters = [
+const exploreFilters = [
   { value: "", label: "All", icon: Users },
-  { value: "student", label: "Learners", icon: FontAwesomeGraduateIcon },
-  { value: "teacher", label: "Educators", icon: Users },
-  { value: "researcher", label: "Researchers", icon: Users },
-  { value: "school_member", label: "Schools", icon: Users },
-  { value: "college_member", label: "Colleges", icon: Users },
+  { value: "popular", label: "Popular", icon: Flame, clientOnly: true },
+  { value: "active", label: "Active", icon: Sparkles, clientOnly: true },
+  {
+    value: "open_to_work",
+    label: "Open to Work",
+    icon: BriefcaseBusiness,
+    clientOnly: true,
+  },
+  { value: "admin", label: "Admins", icon: Shield, role: "admin" },
+  { value: "student", label: "Students", icon: FontAwesomeGraduateIcon, role: "student" },
+  { value: "teacher", label: "Teachers", icon: BookOpen, role: "teacher" },
+  { value: "researcher", label: "Researchers", icon: GraduationCap, role: "researcher" },
 ];
 
-const getUserId = (value) =>
-  typeof value === "string" ? value : value?._id || value?.id;
+const filterUsersByKey = (list, filterKey) => {
+  switch (filterKey) {
+    case "popular":
+      return list.filter((u) => getFollowerCount(u) >= 5);
+    case "active":
+      return list.filter(isRecentlyActive);
+    case "open_to_work":
+      return list.filter((u) => u.openToOpportunities);
+    case "admin":
+      return list.filter(isPlatformAdmin);
+    default:
+      return list;
+  }
+};
 
 const Explore = () => {
   const { user: currentUser, setUser } = useAuthStore();
@@ -37,7 +69,7 @@ const Explore = () => {
   const [recentUsers, setRecentUsers] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [roleFilter, setRoleFilter] = useState("");
+  const [exploreFilter, setExploreFilter] = useState("");
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [recentLoading, setRecentLoading] = useState(true);
   const [following, setFollowing] = useState(
@@ -64,16 +96,19 @@ const Explore = () => {
   );
 
   const searchUsers = useCallback(
-    async (q, role) => {
-      if (!q.trim() && !role) return;
+    async (q, filterKey) => {
+      if (!q.trim() && !filterKey) return;
       setLoading(true);
       try {
+        const filter = exploreFilters.find((item) => item.value === filterKey);
         const params = new URLSearchParams();
         if (q.trim()) params.append("q", q.trim());
-        if (role) params.append("role", role);
-        params.append("limit", "30");
+        if (filter?.role) params.append("role", filter.role);
+        params.append("limit", filter?.clientOnly ? "80" : "40");
         const { data } = await API.get(`/users/search?${params.toString()}`);
-        const filtered = excludeCurrentUser(data.users);
+        const filtered = sortDiscoverableUsers(
+          filterUsersByKey(excludeCurrentUser(data.users), filterKey)
+        );
         setUsers(filtered);
       } catch {
         /* ignore */
@@ -88,10 +123,7 @@ const Explore = () => {
   const fetchTrending = useCallback(async () => {
     try {
       const { data } = await API.get("/users/search?limit=8&excludeFollowed=true");
-      const filtered = excludeCurrentAndFollowed(data.users)
-        .sort(
-          (a, b) => (b.followers?.length || 0) - (a.followers?.length || 0)
-        );
+      const filtered = sortDiscoverableUsers(excludeCurrentAndFollowed(data.users));
       setTrendingUsers(filtered.slice(0, 6));
     } catch {
       /* ignore */
@@ -104,8 +136,13 @@ const Explore = () => {
   const fetchRecent = useCallback(async () => {
     try {
       const { data } = await API.get("/users/search?limit=10&excludeFollowed=true");
-      const filtered = excludeCurrentAndFollowed(data.users)
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const filtered = sortDiscoverableUsers(excludeCurrentAndFollowed(data.users))
+        .sort((a, b) => {
+          const activeSort =
+            Number(Boolean(getUserSignal(b))) - Number(Boolean(getUserSignal(a)));
+          if (activeSort) return activeSort;
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
       setRecentUsers(filtered.slice(0, 6));
     } catch {
       /* ignore */
@@ -119,23 +156,23 @@ const Explore = () => {
     const q = params.get("q");
     if (q) {
       setQuery(q);
-      searchUsers(q, roleFilter);
+      searchUsers(q, exploreFilter);
     }
     fetchTrending();
     fetchRecent();
   }, []);
 
   useEffect(() => {
-    if (query.trim() || roleFilter) {
-      searchUsers(query, roleFilter);
+    if (query.trim() || exploreFilter) {
+      searchUsers(query, exploreFilter);
     }
-  }, [roleFilter]);
+  }, [exploreFilter]);
 
   useEffect(() => {
     const nextQuery = query.trim();
     if (!nextQuery) {
-      if (roleFilter) {
-        searchUsers("", roleFilter);
+      if (exploreFilter) {
+        searchUsers("", exploreFilter);
         return;
       }
       setUsers([]);
@@ -149,21 +186,21 @@ const Explore = () => {
       const url = new URL(window.location);
       url.searchParams.set("q", nextQuery);
       window.history.replaceState({}, "", url);
-      searchUsers(nextQuery, roleFilter);
+      searchUsers(nextQuery, exploreFilter);
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [query, roleFilter, searchUsers]);
+  }, [query, exploreFilter, searchUsers]);
 
   const handleSearch = (e) => {
     e?.preventDefault();
-    if (!query.trim() && !roleFilter) return;
+    if (!query.trim() && !exploreFilter) return;
     // Update URL
     const url = new URL(window.location);
     if (query.trim()) url.searchParams.set("q", query.trim());
     else url.searchParams.delete("q");
     window.history.pushState({}, "", url);
-    searchUsers(query, roleFilter);
+    searchUsers(query, exploreFilter);
   };
 
   const handleFollow = async (userId) => {
@@ -197,7 +234,7 @@ const Explore = () => {
     }
   };
 
-  const isSearching = query.trim() || roleFilter;
+  const isSearching = query.trim() || exploreFilter;
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6 pb-20 md:pb-6">
@@ -237,16 +274,16 @@ const Explore = () => {
           </label>
         </form>
 
-        {/* Role Filter Pills */}
+        {/* Discovery Filters */}
         <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-          {roleFilters.map((f) => {
+          {exploreFilters.map((f) => {
             const Icon = f.icon;
             return (
               <button
                 key={f.value}
-                onClick={() => setRoleFilter(f.value)}
+                onClick={() => setExploreFilter(f.value)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
-                  roleFilter === f.value
+                  exploreFilter === f.value
                     ? "bg-primary text-primary-content shadow-sm"
                     : "bg-base-200 text-base-content/60 hover:bg-base-300 hover:text-base-content/80"
                 }`}
@@ -286,7 +323,11 @@ const Explore = () => {
               {users.map((u) => (
                 <div
                   key={u._id}
-                  className="flex items-center gap-4 bg-base-100 border border-base-300/50 rounded-2xl p-4 hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 transition-all group"
+                  className={`flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md group ${
+                    getUserSignal(u)?.key === "admin"
+                      ? "bg-neutral text-neutral-content border-neutral"
+                      : "bg-base-100 border-base-300/50 hover:border-primary/30"
+                  }`}
                 >
                   <Link
                     to={`/profile/${u._id}`}
@@ -294,20 +335,45 @@ const Explore = () => {
                   >
                     <UserAvatar user={u} size={56} />
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
+                      <p
+                        className={`font-semibold text-sm truncate transition-colors ${
+                          getUserSignal(u)?.key === "admin"
+                            ? "group-hover:text-white"
+                            : "group-hover:text-primary"
+                        }`}
+                      >
                         {u.name}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         <span className="badge badge-sm badge-soft badge-primary text-[10px] font-medium capitalize">
                           {getUserRoleLabel(u)}
                         </span>
+                        {getUserSignal(u) && (
+                          <span
+                            className={`badge badge-sm text-[10px] font-semibold ${getUserSignal(u).className}`}
+                          >
+                            {getUserSignal(u).label}
+                          </span>
+                        )}
                         {u.institutionName && (
-                          <span className="text-[11px] text-base-content/40 truncate">
+                          <span
+                            className={`text-[11px] truncate ${
+                              getUserSignal(u)?.key === "admin"
+                                ? "text-neutral-content/70"
+                                : "text-base-content/40"
+                            }`}
+                          >
                             {u.institutionName}
                           </span>
                         )}
                         {u.city && (
-                          <span className="flex items-center gap-0.5 text-[10px] text-base-content/30">
+                          <span
+                            className={`flex items-center gap-0.5 text-[10px] ${
+                              getUserSignal(u)?.key === "admin"
+                                ? "text-neutral-content/60"
+                                : "text-base-content/30"
+                            }`}
+                          >
                             <MapPin className="w-2.5 h-2.5" />
                             {u.city}
                           </span>
@@ -318,13 +384,23 @@ const Explore = () => {
                           {u.skills.slice(0, 3).map((skill, i) => (
                             <span
                               key={i}
-                              className="badge badge-xs badge-ghost text-[10px]"
+                              className={`badge badge-xs text-[10px] ${
+                                getUserSignal(u)?.key === "admin"
+                                  ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content"
+                                  : "badge-ghost"
+                              }`}
                             >
                               {skill}
                             </span>
                           ))}
                           {u.skills.length > 3 && (
-                            <span className="text-[10px] text-base-content/30">
+                            <span
+                              className={`text-[10px] ${
+                                getUserSignal(u)?.key === "admin"
+                                  ? "text-neutral-content/50"
+                                  : "text-base-content/30"
+                              }`}
+                            >
                               +{u.skills.length - 3}
                             </span>
                           )}
@@ -405,32 +481,47 @@ const Explore = () => {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {trendingUsers.map((u) => (
+                  (() => {
+                    const signal = getUserSignal(u);
+                    const isAdmin = signal?.key === "admin";
+                    return (
                   <Link
                     key={u._id}
                     to={`/profile/${u._id}`}
-                    className="card bg-base-100 border border-base-300/50 rounded-2xl p-4 text-center hover:shadow-md hover:border-primary/20 hover:-translate-y-1 transition-all group min-h-[168px]"
+                    className={`card rounded-2xl p-4 text-center transition-all hover:-translate-y-1 hover:shadow-md group min-h-[184px] ${
+                      isAdmin
+                        ? "bg-neutral text-neutral-content border border-neutral"
+                        : "bg-base-100 border border-base-300/50 hover:border-primary/20"
+                    }`}
                   >
                     <UserAvatar user={u} size={56} className="mx-auto" />
-                    <p className="font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    <p className={`font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] transition-colors ${isAdmin ? "group-hover:text-white" : "group-hover:text-primary"}`}>
                       {u.name}
                     </p>
-                    <div className="mt-1 flex justify-center">
+                    <div className="mt-1 flex flex-wrap justify-center gap-1">
                       <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize max-w-full truncate">
                         {getUserRoleLabel(u)}
                       </span>
+                      {signal && (
+                        <span className={`badge badge-xs text-[10px] ${signal.className}`}>
+                          {signal.label}
+                        </span>
+                      )}
                     </div>
                     {u.institutionName && (
-                      <p className="text-[10px] text-base-content/40 mt-1 truncate">
+                      <p className={`text-[10px] mt-1 truncate ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}>
                         {u.institutionName}
                       </p>
                     )}
                     {u.followers?.length > 0 && (
-                      <p className="text-[10px] text-base-content/40 mt-1.5">
+                      <p className={`text-[10px] mt-1.5 ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}>
                         {u.followers.length} follower
                         {u.followers.length !== 1 ? "s" : ""}
                       </p>
                     )}
                   </Link>
+                    );
+                  })()
                 ))}
               </div>
             )}

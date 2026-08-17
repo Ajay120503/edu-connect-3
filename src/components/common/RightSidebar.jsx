@@ -14,9 +14,11 @@ import API from "../../utils/axios";
 import useAuthStore from "../../store/authStore";
 import UserAvatar from "./UserAvatar";
 import { getUserRoleLabel } from "../../utils/badgeUtils";
-
-const getUserId = (value) =>
-  typeof value === "string" ? value : value?._id || value?.id;
+import {
+  getUserId,
+  getUserSignal,
+  sortDiscoverableUsers,
+} from "../../utils/userSignals";
 
 const visibleSkillsLimit = 2;
 
@@ -33,9 +35,13 @@ const RightSidebar = () => {
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
-        const { data } = await API.get("/users/search?limit=20&excludeFollowed=true");
-        const users = (data.users || []).filter(
-          (u) => u._id !== user?._id && !following.has(u._id),
+        const { data } = await API.get(
+          "/users/search?limit=30&excludeFollowed=true",
+        );
+        const users = sortDiscoverableUsers(
+          (data.users || []).filter(
+            (u) => u._id !== user?._id && !following.has(u._id),
+          ),
         );
         setSuggestedUsers(users.slice(0, 5));
       } catch {
@@ -110,33 +116,63 @@ const RightSidebar = () => {
               </div>
             ) : (
               <div className="space-y-1">
-                {suggestedUsers.map((u) => (
-                  <Link
-                    key={u._id}
-                    to={`/profile/${u._id}`}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-base-200/70 transition-all group"
-                  >
-                    <UserAvatar user={u} size={40} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
-                        {u.name}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize font-medium">
-                          {getUserRoleLabel(u)}
-                        </span>
-                        {u.institutionName && (
-                          <span className="text-[10px] text-base-content/40 truncate">
-                            {u.institutionName}
+                {suggestedUsers.map((u) => {
+                  const signal = getUserSignal(u);
+                  const isAdmin = signal?.key === "admin";
+
+                  return (
+                    <Link
+                      key={u._id}
+                      to={`/profile/${u._id}`}
+                      className={`flex items-center gap-3 rounded-xl p-2.5 transition-all group ${
+                        isAdmin
+                          ? "bg-neutral text-neutral-content hover:bg-neutral/90"
+                          : "hover:bg-base-200/70"
+                      }`}
+                    >
+                      <UserAvatar user={u} size={40} />
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className={`text-sm font-semibold truncate transition-colors ${
+                            isAdmin ? "group-hover:text-white" : "group-hover:text-primary"
+                          }`}
+                        >
+                          {u.name}
+                        </p>
+                        <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+                          <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize font-medium shrink-0">
+                            {getUserRoleLabel(u)}
                           </span>
-                        )}
+                          {signal && (
+                            <span
+                              className={`badge badge-xs text-[10px] font-semibold shrink-0 ${signal.className}`}
+                            >
+                              {signal.label}
+                            </span>
+                          )}
+                          {u.institutionName && (
+                            <span
+                              className={`text-[10px] truncate ${
+                                isAdmin
+                                  ? "text-neutral-content/65"
+                                  : "text-base-content/40"
+                              }`}
+                            >
+                              {u.institutionName}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                      <UserPlus className="w-3.5 h-3.5" />
-                    </div>
-                  </Link>
-                ))}
+                      <div
+                        className={`btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ${
+                          isAdmin ? "text-neutral-content hover:bg-white/10" : ""
+                        }`}
+                      >
+                        <UserPlus className="w-3.5 h-3.5" />
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
