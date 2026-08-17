@@ -33,6 +33,7 @@ export const TRUST_BADGES = [
   "top_contributor",
   "email_verified",
   "phone_verified",
+  "platform_owner"
 ];
 
 // Self-selectable badge groups for the wizard grid

@@ -24,7 +24,7 @@ export const getUserSignal = (user) => {
     return {
       key: "admin",
       label: user?.isSuperAdmin ? "Super Admin" : "Admin",
-      className: "badge-neutral text-neutral-content",
+      className: "badge-neutral text-neutral-content truncate",
     };
   }
 

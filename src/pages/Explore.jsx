@@ -414,7 +414,7 @@ const Explore = () => {
                       e.stopPropagation();
                       handleFollow(u._id);
                     }}
-                    className={`btn btn-sm gap-1.5 flex-shrink-0 ${
+                    className={`btn btn-active btn-sm gap-1.5 flex-shrink-0 ${
                       following.has(u._id)
                         ? "btn-outline"
                         : "btn-primary shadow-md shadow-primary/20"
@@ -480,49 +480,57 @@ const Explore = () => {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {trendingUsers.map((u) => (
+                {trendingUsers.map((u) =>
                   (() => {
                     const signal = getUserSignal(u);
                     const isAdmin = signal?.key === "admin";
                     return (
-                  <Link
-                    key={u._id}
-                    to={`/profile/${u._id}`}
-                    className={`card rounded-2xl p-4 text-center transition-all hover:-translate-y-1 hover:shadow-md group min-h-[184px] ${
-                      isAdmin
-                        ? "bg-neutral text-neutral-content border border-neutral"
-                        : "bg-base-100 border border-base-300/50 hover:border-primary/20"
-                    }`}
-                  >
-                    <UserAvatar user={u} size={56} className="mx-auto" />
-                    <p className={`font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] transition-colors ${isAdmin ? "group-hover:text-white" : "group-hover:text-primary"}`}>
-                      {u.name}
-                    </p>
-                    <div className="mt-1 flex flex-wrap justify-center gap-1">
-                      <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize max-w-full truncate">
-                        {getUserRoleLabel(u)}
-                      </span>
-                      {signal && (
-                        <span className={`badge badge-xs text-[10px] ${signal.className}`}>
-                          {signal.label}
-                        </span>
-                      )}
-                    </div>
-                    {u.institutionName && (
-                      <p className={`text-[10px] mt-1 truncate ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}>
-                        {u.institutionName}
-                      </p>
-                    )}
-                    {u.followers?.length > 0 && (
-                      <p className={`text-[10px] mt-1.5 ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}>
-                        {u.followers.length} follower
-                        {u.followers.length !== 1 ? "s" : ""}
-                      </p>
-                    )}
-                  </Link>
+                      <Link
+                        key={u._id}
+                        to={`/profile/${u._id}`}
+                        className={`card rounded-2xl p-4 text-center transition-all hover:-translate-y-1 hover:shadow-md group min-h-[184px] ${
+                          isAdmin
+                            ? "bg-neutral text-neutral-content border border-neutral"
+                            : "bg-base-100 border border-base-300/50 hover:border-primary/20"
+                        }`}
+                      >
+                        <UserAvatar user={u} size={56} className="mx-auto" />
+                        <p
+                          className={`font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] transition-colors ${isAdmin ? "group-hover:text-white" : "group-hover:text-primary"}`}
+                        >
+                          {u.name}
+                        </p>
+                        <div className="mt-1 flex flex-wrap justify-center gap-1">
+                          <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize max-w-full truncate">
+                            {getUserRoleLabel(u)}
+                          </span>
+                          {signal && (
+                            <span
+                              className={`badge badge-xs text-[10px] ${signal.className}`}
+                            >
+                              {signal.label}
+                            </span>
+                          )}
+                        </div>
+                        {u.institutionName && (
+                          <p
+                            className={`text-[10px] mt-1 truncate ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}
+                          >
+                            {u.institutionName}
+                          </p>
+                        )}
+                        {u.followers?.length > 0 && (
+                          <p
+                            className={`text-[10px] mt-1.5 ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}
+                          >
+                            {u.followers.length} follower
+                            {u.followers.length !== 1 ? "s" : ""}
+                          </p>
+                        )}
+                      </Link>
                     );
-                  })()
-                ))}
+                  })(),
+                )}
               </div>
             )}
           </div>

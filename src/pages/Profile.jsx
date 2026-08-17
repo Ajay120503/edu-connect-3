@@ -291,7 +291,7 @@ const Profile = () => {
               <div className="flex gap-2 justify-center md:justify-start">
                 <button
                   onClick={handleFollow}
-                  className={`btn btn-sm gap-1.5 font-medium ${
+                  className={`btn btn-active btn-sm gap-1.5 font-medium ${
                     isFollowing
                       ? "btn-outline"
                       : "btn-primary shadow-md shadow-primary/20"
@@ -302,7 +302,7 @@ const Profile = () => {
                 </button>
                 <Link
                   to={`/chat/${profile._id}`}
-                  className="btn btn-outline btn-sm gap-1.5 font-medium"
+                  className="btn btn-active btn-outline btn-sm gap-1.5 font-medium"
                 >
                   <MessageCircle className="w-4 h-4" /> Message
                 </Link>
@@ -310,7 +310,7 @@ const Profile = () => {
             ) : (
               <Link
                 to="/edit-profile"
-                className="btn btn-outline btn-sm gap-1.5 font-medium"
+                className="btn btn-active btn-outline btn-sm gap-1.5 font-medium"
               >
                 <Edit3 className="w-4 h-4" /> Edit Profile
               </Link>
@@ -321,7 +321,11 @@ const Profile = () => {
           <div className="flex justify-center md:justify-start gap-8 mb-3">
             <div className="text-center md:text-left">
               <span className="font-bold">{userPosts.length}</span>
-              <span className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>posts</span>
+              <span
+                className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+              >
+                posts
+              </span>
             </div>
             <button
               onClick={handleOpenFollowers}
@@ -329,7 +333,9 @@ const Profile = () => {
               title="View followers"
             >
               <span className="font-bold">{followerCount}</span>
-              <span className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
+              <span
+                className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+              >
                 followers
               </span>
             </button>
@@ -339,7 +345,9 @@ const Profile = () => {
               title="View following"
             >
               <span className="font-bold">{followingCount}</span>
-              <span className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
+              <span
+                className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+              >
                 following
               </span>
             </button>
@@ -347,20 +355,24 @@ const Profile = () => {
 
           {/* Badges */}
           <div className="flex flex-wrap justify-center md:justify-start gap-1.5 mb-2">
-            {getActiveBadges(profile).slice(0, 4).map((badge) => (
-              <BadgeChip
-                key={badge._id || badge.type}
-                badgeType={badge.type}
-                size="sm"
-              />
-            ))}
+            {getActiveBadges(profile)
+              .slice(0, 4)
+              .map((badge) => (
+                <BadgeChip
+                  key={badge._id || badge.type}
+                  badgeType={badge.type}
+                  size="sm"
+                />
+              ))}
             {getActiveBadges(profile).length === 0 && (
               <span className="badge badge-sm badge-soft badge-primary font-medium">
                 {getUserRoleLabel(profile)}
               </span>
             )}
             {profile.institutionName && (
-              <span className={`badge badge-sm font-medium ${isAdminProfile ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content" : "badge-ghost"}`}>
+              <span
+                className={`badge badge-sm font-medium ${isAdminProfile ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content" : "badge-ghost"}`}
+              >
                 {profile.institutionName}
               </span>
             )}
@@ -368,7 +380,9 @@ const Profile = () => {
 
           {/* Bio */}
           {profile.bio && (
-            <p className={`text-sm leading-relaxed max-w-lg ${isAdminProfile ? "text-neutral-content/75" : "text-base-content/70"}`}>
+            <p
+              className={`text-sm leading-relaxed max-w-lg ${isAdminProfile ? "text-neutral-content/75" : "text-base-content/70"}`}
+            >
               {profile.bio}
             </p>
           )}
@@ -377,16 +391,22 @@ const Profile = () => {
             profile.currentPosition ||
             profile.currentCompany ||
             profile.previousWork) && (
-            <div className={`mt-3 max-w-lg rounded-xl border p-3 text-left ${isAdminProfile ? "bg-white/10 border-white/15" : "bg-base-200/60 border-base-300/50"}`}>
+            <div
+              className={`mt-3 max-w-lg rounded-xl border p-3 text-left ${isAdminProfile ? "bg-white/10 border-white/15" : "bg-base-200/60 border-base-300/50"}`}
+            >
               {(profile.currentPosition || profile.currentCompany) && (
                 <div className="flex items-start gap-2 text-sm">
-                  <Briefcase className={`w-4 h-4 mt-0.5 shrink-0 ${isAdminProfile ? "text-neutral-content" : "text-primary"}`} />
+                  <Briefcase
+                    className={`w-4 h-4 mt-0.5 shrink-0 ${isAdminProfile ? "text-neutral-content" : "text-primary"}`}
+                  />
                   <div>
                     <p className="font-semibold">
                       {profile.currentPosition || "Currently working"}
                     </p>
                     {profile.currentCompany && (
-                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
+                      <p
+                        className={`text-xs flex items-center gap-1 mt-0.5 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                      >
                         <Building2 className="w-3 h-3" />
                         {profile.currentCompany}
                       </p>
@@ -395,8 +415,12 @@ const Profile = () => {
                 </div>
               )}
               {profile.previousWork && (
-                <div className={`mt-2 text-xs leading-relaxed ${isAdminProfile ? "text-neutral-content/65" : "text-base-content/60"}`}>
-                  <span className={`font-semibold ${isAdminProfile ? "text-neutral-content/80" : "text-base-content/70"}`}>
+                <div
+                  className={`mt-2 text-xs leading-relaxed ${isAdminProfile ? "text-neutral-content/65" : "text-base-content/60"}`}
+                >
+                  <span
+                    className={`font-semibold ${isAdminProfile ? "text-neutral-content/80" : "text-base-content/70"}`}
+                  >
                     Previous work:
                   </span>{" "}
                   {profile.previousWork}
@@ -501,12 +525,14 @@ const Profile = () => {
                 const isPostLiked =
                   post.isLiked ??
                   post.likes?.some(
-                    (l) => l === currentUser?._id || l?._id === currentUser?._id
+                    (l) =>
+                      l === currentUser?._id || l?._id === currentUser?._id,
                   );
                 const isPostSaved =
                   post.isSaved ??
                   post.saves?.some(
-                    (s) => s === currentUser?._id || s?._id === currentUser?._id
+                    (s) =>
+                      s === currentUser?._id || s?._id === currentUser?._id,
                   );
                 const likesCount =
                   post._likesCount ??
@@ -715,7 +741,9 @@ const Profile = () => {
                           <h4 className="font-semibold text-sm truncate">
                             {job.title}
                           </h4>
-                          <p className={`text-xs truncate ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}>
+                          <p
+                            className={`text-xs truncate ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                          >
                             {job.institutionName}
                           </p>
                           <div className="flex flex-wrap gap-1.5 mt-1.5">
