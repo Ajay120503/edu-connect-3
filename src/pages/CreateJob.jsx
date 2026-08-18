@@ -470,7 +470,7 @@ const CreateJob = () => {
         </button>
 
         <p className="text-xs text-base-content/40 text-center pb-6">
-          By posting a job, you agree to EduConnect's terms and conditions.
+          By posting a job, you agree to ShortJob's terms and conditions.
         </p>
       </form>
     </div>

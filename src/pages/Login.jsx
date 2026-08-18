@@ -54,7 +54,7 @@ const Login = () => {
           </div>
 
           <h1 className="text-4xl font-bold text-white font-heading mb-4">
-            EduConnect
+            ShortJob
           </h1>
           <p className="text-lg text-white/70 mb-10">
             Where Academic Careers Begin
@@ -135,7 +135,7 @@ const Login = () => {
               Welcome Back
             </h1>
             <p className="text-sm text-base-content/50">
-              Sign in to your EduConnect account
+              Sign in to your ShortJob account
             </p>
           </div>
 

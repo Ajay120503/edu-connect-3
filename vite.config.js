@@ -13,8 +13,8 @@ export default defineConfig(({ mode }) => ({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.svg', 'icons/icon-192.png', 'icons/icon-512.png'],
             manifest: {
-              name: 'EduConnect',
-              short_name: 'EduConnect',
+              name: 'ShortJob',
+              short_name: 'ShortJob',
               description: 'Academic Social Network - Where Academic Careers Begin',
               theme_color: '#0D7377',
               background_color: '#F7FBFA',

@@ -61,7 +61,7 @@ const Register = () => {
           </div>
 
           <h1 className="text-4xl font-bold text-white font-heading mb-4">
-            EduConnect
+            ShortJob
           </h1>
           <p className="text-lg text-white/70 mb-10">
             Where Academic Careers Begin
@@ -114,7 +114,7 @@ const Register = () => {
               Create Account
             </h1>
             <p className="text-sm text-base-content/50">
-              Join EduConnect to start your academic journey
+              Join ShortJob to start your academic journey
             </p>
           </div>
 
@@ -124,7 +124,7 @@ const Register = () => {
               Create Account
             </h1>
             <p className="text-sm text-base-content/50">
-              Join EduConnect to start your academic journey
+              Join ShortJob to start your academic journey
             </p>
           </div>
 

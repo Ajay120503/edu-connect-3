@@ -44,7 +44,7 @@ const MobileHeader = () => {
                 className="w-[18px] h-[18px] text-white"
               />
             </div>
-            <span className="text-base font-bold text-primary">EduConnect</span>
+            <span className="text-base font-bold text-primary">ShortJob</span>
           </Link>
 
           {/* Right side: search + menu */}

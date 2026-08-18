@@ -74,7 +74,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
                 className="w-4 h-4 text-white"
               />
             </div>
-            <span className="text-lg font-bold text-primary">EduConnect</span>
+            <span className="text-lg font-bold text-primary">ShortJob</span>
           </div>
         )}
         <button

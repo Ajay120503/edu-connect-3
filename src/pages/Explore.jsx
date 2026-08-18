@@ -542,7 +542,7 @@ const Explore = () => {
                 <div className="w-8 h-8 rounded-xl bg-success/10 flex items-center justify-center">
                   <Clock className="w-4 h-4 text-success" />
                 </div>
-                <h2 className="font-bold text-base">New to EduConnect</h2>
+                <h2 className="font-bold text-base">New to ShortJob</h2>
               </div>
               <span className="text-xs text-base-content/40">
                 Recently Joined

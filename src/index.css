@@ -1,9 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* EduConnect Custom Theme — Warm Academic (Teal + Coral) */
+/* ShortJob Custom Theme — Warm Academic (Teal + Coral) */
 @plugin "daisyui/theme" {
-  name: "educonnect";
+  name: "ShortJob";
   default: true;
   color-scheme: "light";
   --color-primary: #0d7377;

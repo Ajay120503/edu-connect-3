@@ -332,7 +332,7 @@ const RightSidebar = () => {
             />
           </div>
           <span className="text-xs font-semibold text-base-content/40">
-            EduConnect
+            ShortJob
           </span>
         </div>
         <p className="text-[10px] text-base-content/30 text-center leading-relaxed">

@@ -55,7 +55,7 @@ const ResetPassword = () => {
           </div>
 
           <h1 className="text-4xl font-bold text-white font-heading mb-4">
-            EduConnect
+            ShortJob
           </h1>
           <p className="text-lg text-white/70 mb-10">
             Where Academic Careers Begin

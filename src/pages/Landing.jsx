@@ -76,7 +76,7 @@ const Landing = () => {
               />
             </div>
             <span className="text-lg font-bold text-primary font-heading tracking-tight">
-              EduConnect
+              ShortJob
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ const Landing = () => {
             </h2>
             <p className="text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
               Join thousands of students and teachers already building their
-              academic future on EduConnect.
+              academic future on ShortJob.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
@@ -284,7 +284,7 @@ const Landing = () => {
                 />
               </div>
               <span className="font-bold font-heading text-base-content">
-                EduConnect
+                ShortJob
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-base-content/40">
@@ -302,7 +302,7 @@ const Landing = () => {
               </Link>
             </div>
             <p className="text-sm text-base-content/30">
-              © 2026 EduConnect. Where Academic Careers Begin.
+              © 2026 ShortJob. Where Academic Careers Begin.
             </p>
           </div>
         </div>

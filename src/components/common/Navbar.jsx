@@ -38,7 +38,7 @@ const Navbar = () => {
           />
         </div>
         <span className="text-lg lg:text-xl font-bold text-primary hidden lg:block">
-          EduConnect
+          ShortJob
         </span>
       </Link>
 

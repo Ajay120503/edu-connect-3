@@ -147,7 +147,7 @@ const OtpScreen = () => {
           </div>
 
           <h1 className="text-4xl font-bold text-white font-heading mb-4">
-            EduConnect
+            ShortJob
           </h1>
           <p className="text-lg text-white/70 mb-10">
             Where Academic Careers Begin
@@ -158,19 +158,25 @@ const OtpScreen = () => {
               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                 <ShieldCheck className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm">Secure email verification for every account</span>
+              <span className="text-sm">
+                Secure email verification for every account
+              </span>
             </div>
             <div className="flex items-center gap-3 text-white/80">
               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                 <Users className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm">Connect with students, teachers, and institutions</span>
+              <span className="text-sm">
+                Connect with students, teachers, and institutions
+              </span>
             </div>
             <div className="flex items-center gap-3 text-white/80">
               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                 <Briefcase className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm">Unlock posts, jobs, stories, and messages</span>
+              <span className="text-sm">
+                Unlock posts, jobs, stories, and messages
+              </span>
             </div>
           </div>
         </div>

@@ -76,7 +76,7 @@ const BlockedScreen = () => {
         <div className="flex items-center justify-between px-3 py-2">
           <div className="flex items-center gap-2 shrink-0">
             <BrandMark size="sm" />
-            <span className="text-base font-bold text-primary">EduConnect</span>
+            <span className="text-base font-bold text-primary">ShortJob</span>
           </div>
           <div className="flex items-center gap-1">
             {[Search, Bell, MessageCircle].map((Icon, index) => (
@@ -106,7 +106,7 @@ const BlockedScreen = () => {
           <div className="flex items-center h-16 px-4 border-b border-base-300">
             <div className="flex items-center gap-2">
               <BrandMark size="sm" />
-              <span className="text-lg font-bold text-primary">EduConnect</span>
+              <span className="text-lg font-bold text-primary">ShortJob</span>
             </div>
           </div>
 
@@ -185,7 +185,7 @@ const BlockedScreen = () => {
                     </h1>
 
                     <p className="text-sm text-base-content/60 leading-relaxed">
-                      Your EduConnect account is currently suspended
+                      Your ShortJob account is currently suspended
                       {user?.blockedReason ? " for the reason below" : ""}. All
                       posting, jobs, stories, messages, profile, and browsing
                       features are locked until an admin restores access.
@@ -217,7 +217,7 @@ const BlockedScreen = () => {
 
                     <div className="mt-6 flex flex-col sm:flex-row gap-3">
                       <a
-                        href="mailto:support@educonnect.in"
+                        href="mailto:support@ShortJob.in"
                         className="btn btn-primary gap-2"
                       >
                         <Mail className="w-4 h-4" />
@@ -238,7 +238,7 @@ const BlockedScreen = () => {
 
             <div className="mt-5 flex items-center justify-center gap-2 text-xs text-base-content/40">
               <LifeBuoy className="w-3.5 h-3.5" />
-              EduConnect support usually reviews account appeals manually.
+              ShortJob support usually reviews account appeals manually.
             </div>
           </div>
         </main>
