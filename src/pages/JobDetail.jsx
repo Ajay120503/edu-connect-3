@@ -15,7 +15,7 @@ import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
 import SkillGapBar from "../components/job/SkillGapBar";
-import QuickApplyBtn from "../components/job/QuickApplyBtn";
+// import QuickApplyBtn from "../components/job/QuickApplyBtn";
 import ReachStats from "../components/job/ReachStats";
 import JobQnA from "../components/job/JobQnA";
 import { canApplyToJobs } from "../utils/badgeUtils";
@@ -300,7 +300,7 @@ const JobDetail = () => {
         {/* Applicant actions */}
         {canApplyToJobs(user) && (
           <div className="flex gap-2 mt-6">
-            <QuickApplyBtn
+            {/* <QuickApplyBtn
               jobId={job._id}
               alreadyApplied={applied}
               onApplied={() => {
@@ -314,7 +314,7 @@ const JobDetail = () => {
                     : prev,
                 );
               }}
-            />
+            /> */}
             <button
               onClick={handleApply}
               className="btn btn-primary flex-1"
