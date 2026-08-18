@@ -19,7 +19,7 @@ const Landing = () => {
     {
       icon: Users,
       title: "Connect & Network",
-      desc: "Build your academic network with job seekers, job posters, and institutions worldwide.",
+      desc: "Build your academic network with job seekers, job creaters, and institutions worldwide.",
       color: "primary",
       bg: "bg-primary/10",
       textColor: "text-primary",
@@ -104,8 +104,8 @@ const Landing = () => {
             Where Academic <span className="text-primary">Careers Begin</span>
           </h1>
           <p className="text-lg md:text-xl text-base-content/60 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Connect job seekers with job posters, find teaching roles, and build
-            your academic network — all in one place.
+            Connect job seekers with job creaters, find teaching roles, and
+            build your academic network — all in one place.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
