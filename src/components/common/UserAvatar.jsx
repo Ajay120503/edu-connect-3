@@ -57,7 +57,7 @@ const UserAvatar = ({
       </div>
 
       {/* Admin badge */}
-      {isAdmin && (
+      {/* {isAdmin && (
         <span
           className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-neutral text-neutral-content shadow-sm ring-2 ring-base-100"
           style={{
@@ -74,7 +74,7 @@ const UserAvatar = ({
             }}
           />
         </span>
-      )}
+      )} */}
 
       {/* Open to Opportunities badge */}
       {isOpen && (

@@ -133,12 +133,17 @@ const StoryBar = ({ onAddStory }) => {
               </div>
               <span
                 className={`text-[10px] truncate max-w-[64px] ${
-                  isAdmin ? "font-semibold text-neutral" : "text-base-content/50"
+                  isAdmin
+                    ? "font-semibold text-neutral"
+                    : "text-base-content/50"
                 }`}
               >
                 {group.author?.institutionName || group.author?.name}
               </span>
-              <UserSignalBadge user={group.author} className="max-w-[64px]" />
+              <UserSignalBadge
+                user={group.author}
+                className="max-w-[64px] line-clamp-1"
+              />
             </button>
           );
         })}

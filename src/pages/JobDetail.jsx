@@ -174,8 +174,8 @@ const JobDetail = () => {
               {job.location === "remote"
                 ? "Remote"
                 : job.location === "hybrid"
-                ? "Hybrid"
-                : "On-site"}
+                  ? "Hybrid"
+                  : "On-site"}
             </p>
             <p className="text-[10px] text-base-content/40">Location</p>
           </div>
@@ -237,7 +237,10 @@ const JobDetail = () => {
             <h3 className="font-semibold text-sm mb-2">Skills Required</h3>
             <div className="flex gap-1.5 flex-wrap">
               {job.skillsRequired.map((s, i) => (
-                <span key={i} className="badge badge-sm badge-ghost text-xs">
+                <span
+                  key={i}
+                  className="badge badge-sm line-clamp-1 badge-ghost text-xs"
+                >
                   {s}
                 </span>
               ))}
@@ -250,12 +253,14 @@ const JobDetail = () => {
           <div className="mb-5">
             <h3 className="font-semibold text-sm mb-2">Qualifications</h3>
             <ul className="space-y-1.5 text-sm text-base-content/70">
-              {splitQualifications(job.requiredQualifications).map((item, index) => (
-                <li key={index} className="flex gap-2">
-                  <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
+              {splitQualifications(job.requiredQualifications).map(
+                (item, index) => (
+                  <li key={index} className="flex gap-2">
+                    <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ),
+              )}
             </ul>
           </div>
         )}
@@ -306,7 +311,7 @@ const JobDetail = () => {
                         ...prev,
                         applicants: [...(prev.applicants || []), user?._id],
                       }
-                    : prev
+                    : prev,
                 );
               }}
             />

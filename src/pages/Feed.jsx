@@ -9,7 +9,6 @@ import {
   Image as ImageIcon,
   Send,
   X,
-  Pencil,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import API from "../utils/axios";
@@ -345,7 +344,7 @@ const Feed = () => {
                           <span>
                             {new Date(post.createdAt).toLocaleDateString(
                               "en-US",
-                              { month: "short", day: "numeric" }
+                              { month: "short", day: "numeric" },
                             )}
                           </span>
                         </div>
@@ -373,33 +372,15 @@ const Feed = () => {
                             post.type === "noticeboard"
                               ? "badge-warning badge-soft"
                               : post.type === "achievement"
-                              ? "badge-success badge-soft"
-                              : post.type === "announcement"
-                              ? "badge-info badge-soft"
-                              : "badge-primary badge-soft"
+                                ? "badge-success badge-soft"
+                                : post.type === "announcement"
+                                  ? "badge-info badge-soft"
+                                  : "badge-primary badge-soft"
                           }`}
                         >
                           {post.type}
                         </span>
                       )}
-                      {/* {post.author?._id === user?._id && (
-                        <>
-                          <Link
-                            to={`/post/${post._id}/edit`}
-                            className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-primary hover:bg-primary/10"
-                            title="Edit post"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </Link>
-                          <button
-                            onClick={() => setPostToDelete(post)}
-                            className="btn btn-ghost btn-xs btn-circle text-base-content/30 hover:text-error hover:bg-error/10"
-                            title="Delete post"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </>
-                      )} */}
                     </div>
                   </div>
 

@@ -134,7 +134,9 @@ const RightSidebar = () => {
                       <div className="flex-1 min-w-0">
                         <p
                           className={`text-sm font-semibold truncate transition-colors ${
-                            isAdmin ? "group-hover:text-white" : "group-hover:text-primary"
+                            isAdmin
+                              ? "group-hover:text-white"
+                              : "group-hover:text-primary"
                           }`}
                         >
                           {u.name}
@@ -165,7 +167,9 @@ const RightSidebar = () => {
                       </div>
                       <div
                         className={`btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ${
-                          isAdmin ? "text-neutral-content hover:bg-white/10" : ""
+                          isAdmin
+                            ? "text-neutral-content hover:bg-white/10"
+                            : ""
                         }`}
                       >
                         <UserPlus className="w-3.5 h-3.5" />
@@ -271,7 +275,7 @@ const RightSidebar = () => {
                                 <span
                                   key={i}
                                   title={skill}
-                                  className="badge badge-xs badge-outline max-w-[72px] shrink truncate px-1.5 text-[9px]"
+                                  className="badge badge-xs badge-outline shrink line-clamp-1 px-1.5"
                                 >
                                   {skill}
                                 </span>
