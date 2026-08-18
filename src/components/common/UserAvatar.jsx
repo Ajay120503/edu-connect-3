@@ -77,7 +77,7 @@ const UserAvatar = ({
       )} */}
 
       {/* Open to Opportunities badge */}
-      {isOpen && (
+      {/* {isOpen && (
         <span
           className="absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-success text-success-content shadow-sm ring-2 ring-base-100"
           style={{
@@ -94,7 +94,7 @@ const UserAvatar = ({
             }}
           />
         </span>
-      )}
+      )} */}
     </div>
   );
 };
