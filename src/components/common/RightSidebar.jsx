@@ -124,7 +124,7 @@ const RightSidebar = () => {
                     <Link
                       key={u._id}
                       to={`/profile/${u._id}`}
-                      className={`flex items-center gap-3 rounded-xl p-2.5 transition-all group ${
+                      className={`flex items-center gap-3 overflow-hidden rounded-xl p-2.5 transition-all group ${
                         isAdmin
                           ? "bg-neutral text-neutral-content hover:bg-neutral/90"
                           : "hover:bg-base-200/70"
@@ -133,7 +133,7 @@ const RightSidebar = () => {
                       <UserAvatar user={u} size={40} />
                       <div className="flex-1 min-w-0">
                         <p
-                          className={`text-sm font-semibold truncate transition-colors ${
+                          className={`text-sm font-semibold line-clamp-1 transition-colors ${
                             isAdmin
                               ? "group-hover:text-white"
                               : "group-hover:text-primary"
@@ -142,19 +142,19 @@ const RightSidebar = () => {
                           {u.name}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
-                          <span className="badge badge-xs badge-soft badge-primary text-[10px] capitalize font-medium shrink-0">
+                          <span className="badge badge-xs badge-soft badge-primary text-[10px] max-w-23 line-clamp-1 capitalize font-medium shrink-0">
                             {getUserRoleLabel(u)}
                           </span>
                           {signal && (
                             <span
-                              className={`badge badge-xs text-[10px] font-semibold shrink-0 ${signal.className}`}
+                              className={`badge badge-xs text-[10px] line-clamp-1 font-semibold shrink-0 ${signal.className}`}
                             >
                               {signal.label}
                             </span>
                           )}
                           {u.institutionName && (
                             <span
-                              className={`text-[10px] truncate ${
+                              className={`text-[10px] truncate line-clamp-1 ${
                                 isAdmin
                                   ? "text-neutral-content/65"
                                   : "text-base-content/40"

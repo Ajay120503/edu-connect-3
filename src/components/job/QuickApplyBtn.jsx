@@ -33,7 +33,7 @@ const QuickApplyBtn = ({ jobId, alreadyApplied, onApplied }) => {
 
   return (
     <button
-      className="btn btn-success btn-sm gap-1.5"
+      className="btn btn-primary btn-sm gap-1.5"
       onClick={handleQuickApply}
       disabled={loading}
     >
