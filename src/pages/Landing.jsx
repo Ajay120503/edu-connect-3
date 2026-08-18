@@ -110,17 +110,17 @@ const Landing = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              to="/register?role=student"
+              to="/register"
               className="btn btn-primary btn-lg gap-2.5 shadow-sm px-8 text-base"
             >
               <FontAwesomeIcon icon={faUserGraduate} className="w-5 h-5" /> Join
-              as Student
+              as Job Seeker
             </Link>
             <Link
-              to="/register?role=teacher"
+              to="/register"
               className="btn btn-outline btn-lg gap-2.5 px-8 text-base"
             >
-              <Users className="w-5 h-5" /> Join as Teacher
+              <Users className="w-5 h-5" /> Join as Job Creater
             </Link>
           </div>
 
