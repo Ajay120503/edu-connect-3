@@ -19,7 +19,7 @@ const Landing = () => {
     {
       icon: Users,
       title: "Connect & Network",
-      desc: "Build your academic network with students, teachers, and institutions worldwide.",
+      desc: "Build your academic network with job seekers, job posters, and institutions worldwide.",
       color: "primary",
       bg: "bg-primary/10",
       textColor: "text-primary",
@@ -47,7 +47,7 @@ const Landing = () => {
       step: "01",
       icon: Search,
       title: "Create Profile",
-      desc: "Sign up as a student or teacher and build your academic profile in minutes.",
+      desc: "Sign up as a job seekers or job creaters and build your academic profile in minutes.",
     },
     {
       step: "02",
@@ -251,8 +251,8 @@ const Landing = () => {
               Ready to Begin?
             </h2>
             <p className="text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
-              Join thousands of students and teachers already building their
-              academic future on ShortJob.
+              Join thousands of job seekers and job creaters already building
+              their academic future on ShortJob.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
