@@ -227,71 +227,102 @@ const RightSidebar = () => {
               </div>
             ) : (
               <div className="space-y-1">
-                {recentJobs.map((job) => (
-                  <Link
-                    key={job._id}
-                    to={`/jobs/${job._id}`}
-                    className="block p-2.5 rounded-xl hover:bg-base-200/70 transition-all group"
-                  >
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Briefcase className="w-4 h-4 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
-                          {job.title}
-                        </p>
-                        <p className="text-xs text-base-content/50 truncate mt-0.5">
-                          {job.institutionName || "Institution"}
-                        </p>
-                        <div className="flex items-center gap-2 mt-2 min-w-0">
-                          <span className="flex min-w-0 items-center gap-1 text-[10px] text-base-content/40">
-                            <MapPin className="w-3 h-3 shrink-0" />
-                            <span className="truncate capitalize">
-                              {job.location}
-                            </span>
-                          </span>
-                          <span
-                            className={`flex min-w-0 items-center gap-1 text-[10px] font-medium ${
-                              job.isPaid
-                                ? "text-success"
-                                : "text-base-content/40"
+                {recentJobs.map((job) => {
+                  const signal = getUserSignal(job.postedBy);
+                  const isSpecialJob = Boolean(signal);
+                  const specialStyle = getSpecialUserStyle(job.postedBy);
+                  return (
+                    <Link
+                      key={job._id}
+                      to={`/jobs/${job._id}`}
+                      className={`block p-2.5 rounded-xl transition-all group ${
+                        isSpecialJob
+                          ? `${specialStyle.shell} ${specialStyle.shellHover}`
+                          : "hover:bg-base-200/70"
+                      }`}
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                            isSpecialJob ? specialStyle.soft : "bg-primary/10"
+                          }`}
+                        >
+                          <Briefcase
+                            className={`w-4 h-4 ${
+                              isSpecialJob ? specialStyle.icon : "text-primary"
+                            }`}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className={`text-sm font-semibold truncate transition-colors ${
+                              isSpecialJob
+                                ? specialStyle.muted
+                                : "group-hover:text-primary"
                             }`}
                           >
-                            <span className="truncate">
-                              {job.isPaid
-                                ? job.currency === "USD"
-                                  ? `$${Number(job.stipend).toLocaleString()}`
-                                  : `₹${Number(job.stipend).toLocaleString()}`
-                                : "Volunteer"}
-                            </span>
-                          </span>
-                        </div>
-                        {job.skillsRequired?.length > 0 && (
-                          <div className="mt-1.5 flex max-w-full items-center gap-1 overflow-hidden">
-                            {job.skillsRequired
-                              .slice(0, visibleSkillsLimit)
-                              .map((skill, i) => (
-                                <span
-                                  key={i}
-                                  title={skill}
-                                  className="badge badge-xs badge-outline shrink line-clamp-1 px-1.5"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
-                            {job.skillsRequired.length > visibleSkillsLimit && (
-                              <span className="shrink-0 rounded-full bg-base-300/70 px-1.5 py-0.5 text-[9px] font-medium text-base-content/40">
-                                +
-                                {job.skillsRequired.length - visibleSkillsLimit}
+                            {job.title}
+                          </p>
+                          <p
+                            className={`text-xs truncate mt-0.5 ${
+                              isSpecialJob
+                                ? "text-base-content/60"
+                                : "text-base-content/50"
+                            }`}
+                          >
+                            {job.institutionName || "Institution"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2 min-w-0">
+                            <span className="flex min-w-0 items-center gap-1 text-[10px] text-base-content/40">
+                              <MapPin className="w-3 h-3 shrink-0" />
+                              <span className="truncate capitalize">
+                                {job.location}
                               </span>
-                            )}
+                            </span>
+                            <span
+                              className={`flex min-w-0 items-center gap-1 text-[10px] font-medium ${
+                                job.isPaid
+                                  ? "text-success"
+                                  : "text-base-content/40"
+                              }`}
+                            >
+                              <span className="truncate">
+                                {job.isPaid
+                                  ? job.currency === "USD"
+                                    ? `$${Number(job.stipend).toLocaleString()}`
+                                    : `₹${Number(job.stipend).toLocaleString()}`
+                                  : "Volunteer"}
+                              </span>
+                            </span>
                           </div>
-                        )}
+                          {job.skillsRequired?.length > 0 && (
+                            <div className="mt-1.5 flex max-w-full items-center gap-1 overflow-hidden">
+                              {job.skillsRequired
+                                .slice(0, visibleSkillsLimit)
+                                .map((skill, i) => (
+                                  <span
+                                    key={i}
+                                    title={skill}
+                                    className="badge badge-xs badge-outline shrink line-clamp-1 px-1.5"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              {job.skillsRequired.length >
+                                visibleSkillsLimit && (
+                                <span className="shrink-0 rounded-full bg-base-300/70 px-1.5 py-0.5 text-[9px] font-medium text-base-content/40">
+                                  +
+                                  {job.skillsRequired.length -
+                                    visibleSkillsLimit}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
