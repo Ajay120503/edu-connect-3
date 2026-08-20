@@ -132,7 +132,7 @@ const StoryBar = ({ onAddStory }) => {
                 )}
               </div>
               <span
-                className={`text-[10px] truncate max-w-[64px] ${
+                className={`text-[10px] line-clamp-1 max-w-[64px] ${
                   isAdmin
                     ? "font-semibold text-neutral"
                     : "text-base-content/50"

@@ -70,7 +70,7 @@ const RightSidebar = () => {
   }, [user?._id, user?.following]);
 
   return (
-    <aside className="hidden lg:flex flex-col w-80 bg-base-100 border-l border-base-200/80 sticky top-0 h-screen overflow-hidden">
+    <aside className="hidden lg:flex flex-col w-90 bg-base-100 border-l border-base-200/80 sticky top-0 h-screen overflow-hidden">
       <div className="flex-1 overflow-y-auto scrollbar-thin p-5 space-y-5">
         {/* Who to Follow */}
         <div className="card bg-base-200/50 border border-base-300/30 shadow-sm">

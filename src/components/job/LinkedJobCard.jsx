@@ -77,7 +77,7 @@ const LinkedJobCard = ({ job }) => {
               </h3>
               <div className="flex items-center gap-1.5 min-w-0">
                 <p
-                  className={`text-xs truncate ${isAdminJob ? "text-neutral-content/65" : "text-base-content/50"}`}
+                  className={`text-xs line-clamp-1 ${isAdminJob ? "text-neutral-content/65" : "text-base-content/50"}`}
                 >
                   {job.institutionName || job.postedBy?.institutionName}
                 </p>

@@ -15,7 +15,6 @@ import {
   MoreHorizontal,
   Users,
   X,
-  ArrowLeft,
   Building2,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
@@ -440,7 +439,7 @@ const Profile = () => {
 
           {/* Location / Contact */}
           {(profile.city || profile.email) && (
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-xs text-base-content/40">
+            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-xs text-neutral-content/40">
               {profile.city && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> {profile.city}
@@ -738,11 +737,11 @@ const Profile = () => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <h4 className="font-semibold text-sm truncate">
+                          <h4 className="font-semibold text-sm line-clamp-1">
                             {job.title}
                           </h4>
                           <p
-                            className={`text-xs truncate ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                            className={`text-xs line-clamp-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
                           >
                             {job.institutionName}
                           </p>
