@@ -1,18 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BriefcaseBusiness, CheckCircle2, CircleOff } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, CircleOff, Palette } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import ConfirmModal from "../components/common/ConfirmModal";
 import UserAvatar from "../components/common/UserAvatar";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
 import { canApplyToJobs, getUserRoleLabel } from "../utils/badgeUtils";
+import {
+  canUseSpecialStyle,
+  getSpecialUserStyle,
+  SPECIAL_STYLE_VARIANTS,
+} from "../utils/specialUserStyles";
 
 const Settings = () => {
   const { user, logout, deleteAccount, isLoading, setUser } = useAuthStore();
   const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [opportunityLoading, setOpportunityLoading] = useState(false);
+  const [themeLoading, setThemeLoading] = useState(false);
+  const specialStyle = getSpecialUserStyle(user);
+  const canStyleProfile = canUseSpecialStyle(user);
 
   const handleOpportunityToggle = async () => {
     setOpportunityLoading(true);
@@ -43,6 +51,21 @@ const Settings = () => {
       const message =
         err.response?.data?.message || "Failed to delete account.";
       toast.error(message);
+    }
+  };
+
+  const handleThemeChange = async (profileThemeVariant) => {
+    setThemeLoading(true);
+    try {
+      const { data } = await API.put(`/users/${user._id}`, {
+        profileThemeVariant,
+      });
+      setUser(data.user);
+      toast.success("Profile color updated");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update color");
+    } finally {
+      setThemeLoading(false);
     }
   };
 
@@ -117,6 +140,50 @@ const Settings = () => {
                 disabled={opportunityLoading}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {canStyleProfile && (
+        <div className="card bg-base-100 shadow-sm border border-base-300 p-6 mb-6 overflow-hidden">
+          <div className="flex items-start gap-4 mb-4">
+            <div
+              className={`w-12 h-12 rounded-2xl border flex items-center justify-center ${specialStyle.soft}`}
+            >
+              <Palette className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg">Special Profile Color</h3>
+              <p className="text-xs text-base-content/50 mt-1 max-w-md">
+                Choose the highlight used on your profile, posts, jobs, avatar
+                ring, and stories.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {SPECIAL_STYLE_VARIANTS.map((variant) => {
+              const selected =
+                (user?.profileThemeVariant || "teal") === variant.value;
+              return (
+                <button
+                  key={variant.value}
+                  type="button"
+                  onClick={() => handleThemeChange(variant.value)}
+                  disabled={themeLoading}
+                  className={`rounded-xl border p-3 text-left transition-all ${
+                    selected
+                      ? "border-primary bg-primary/8 ring-1 ring-primary/30"
+                      : "border-base-300 hover:border-primary/25 hover:bg-base-200/50"
+                  }`}
+                >
+                  <span className={`block h-8 rounded-lg ${variant.swatch}`} />
+                  <span className="mt-2 block text-xs font-semibold">
+                    {variant.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

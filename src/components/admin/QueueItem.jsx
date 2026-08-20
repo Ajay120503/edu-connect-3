@@ -15,6 +15,12 @@ import BadgeChip from "../common/BadgeChip";
 import API from "../../utils/axios";
 import toast from "react-hot-toast";
 
+const formatFlag = (flag) => {
+  if (!flag) return "Unknown signal";
+  if (typeof flag === "string") return flag.replace(/_/g, " ");
+  return (flag.flag || flag.rule || flag.message || "moderation signal").replace(/_/g, " ");
+};
+
 /**
  * Reusable admin content moderation queue item.
  *
@@ -79,6 +85,8 @@ const QueueItem = ({ item, type, onUpdate }) => {
     item.image?.url ||
     item.images?.[0]?.url ||
     (typeof item.images?.[0] === "string" ? item.images[0] : "");
+  const autoFlags = item.moderationMeta?.autoFlags || [];
+  const autoScore = item.moderationMeta?.autoScore;
   const TypeIcon =
     type === "job" ? Briefcase : type === "story" ? Image : FileText;
 
@@ -145,6 +153,31 @@ const QueueItem = ({ item, type, onUpdate }) => {
             <p className="text-[11px] text-base-content/40 mt-2">
               Review window ends {formatDate(item.moderationMeta.adminWindowExpiredAt)}
             </p>
+          )}
+          {autoScore !== undefined && (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span
+                className={`badge badge-xs ${
+                  autoScore >= 58
+                    ? "badge-error badge-soft"
+                    : autoScore >= 34
+                      ? "badge-warning badge-soft"
+                      : "badge-success badge-soft"
+                }`}
+              >
+                Rule score {autoScore}
+              </span>
+              {autoFlags.slice(0, 3).map((flag, i) => (
+                <span key={i} className="badge badge-xs badge-warning badge-soft">
+                  {formatFlag(flag)}
+                </span>
+              ))}
+              {autoFlags.length > 3 && (
+                <span className="text-[11px] text-base-content/40">
+                  +{autoFlags.length - 3} more
+                </span>
+              )}
+            </div>
           )}
         </div>
 

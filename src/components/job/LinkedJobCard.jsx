@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import UserSignalBadge from "../common/UserSignalBadge";
 import { getUserSignal } from "../../utils/userSignals";
+import { getSpecialUserStyle } from "../../utils/specialUserStyles";
 
 const LinkedJobCard = ({ job }) => {
   if (!job) return null;
@@ -17,7 +18,8 @@ const LinkedJobCard = ({ job }) => {
   const deadlinePassed = job.deadline && new Date(job.deadline) < new Date();
   const StipendIcon = job.currency === "USD" ? DollarSign : IndianRupee;
   const posterSignal = getUserSignal(job.postedBy);
-  const isAdminJob = posterSignal?.key === "admin";
+  const isSpecialJob = Boolean(posterSignal);
+  const specialStyle = getSpecialUserStyle(job.postedBy);
 
   const formatStipend = () => {
     if (!job.isPaid || !job.stipend) return "Unpaid";
@@ -38,8 +40,8 @@ const LinkedJobCard = ({ job }) => {
     <Link to={`/jobs/${job._id}`} className="block mb-4 group">
       <div
         className={`card border transition-colors overflow-hidden ${
-          isAdminJob
-            ? "bg-neutral text-neutral-content border-neutral"
+          isSpecialJob
+            ? `${specialStyle.shell} ${specialStyle.shellHover}`
             : "bg-base-200/70 border-base-300 hover:border-primary/50"
         }`}
       >
@@ -71,13 +73,13 @@ const LinkedJobCard = ({ job }) => {
                 )}
               </div>
               <h3
-                className={`font-semibold text-sm leading-snug transition-colors line-clamp-1 ${isAdminJob ? "group-hover:text-white" : "group-hover:text-primary"}`}
+                className={`font-semibold text-sm leading-snug transition-colors line-clamp-1 ${isSpecialJob ? specialStyle.muted : "group-hover:text-primary"}`}
               >
                 {job.title}
               </h3>
               <div className="flex items-center gap-1.5 min-w-0">
                 <p
-                  className={`text-xs line-clamp-1 ${isAdminJob ? "text-neutral-content/65" : "text-base-content/50"}`}
+                  className={`text-xs line-clamp-1 ${isSpecialJob ? "text-base-content/60" : "text-base-content/50"}`}
                 >
                   {job.institutionName || job.postedBy?.institutionName}
                 </p>
@@ -88,7 +90,7 @@ const LinkedJobCard = ({ job }) => {
 
           {/* Meta Row */}
           <div
-            className={`flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-xs ${isAdminJob ? "text-neutral-content/65" : "text-base-content/60"}`}
+            className={`flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-xs ${isSpecialJob ? "text-base-content/65" : "text-base-content/60"}`}
           >
             <span className="flex items-center gap-1">
               <Briefcase className="w-3.5 h-3.5" />
@@ -120,14 +122,14 @@ const LinkedJobCard = ({ job }) => {
               {job.skillsRequired.slice(0, 4).map((skill, i) => (
                 <span
                   key={i}
-                  className={`badge badge-sm text-[11px] line-clamp-1 font-medium ${isAdminJob ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content" : "badge-ghost"}`}
+                  className={`badge badge-sm text-[11px] line-clamp-1 font-medium ${isSpecialJob ? specialStyle.soft : "badge-ghost"}`}
                 >
                   {skill}
                 </span>
               ))}
               {job.skillsRequired.length > 4 && (
                 <span
-                  className={`badge badge-sm text-[11px] line-clamp-1 font-medium ${isAdminJob ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content" : "badge-ghost"}`}
+                  className={`badge badge-sm text-[11px] line-clamp-1 font-medium ${isSpecialJob ? specialStyle.soft : "badge-ghost"}`}
                 >
                   +{job.skillsRequired.length - 4} more
                 </span>
@@ -137,10 +139,10 @@ const LinkedJobCard = ({ job }) => {
 
           {/* CTA */}
           <div
-            className={`flex items-center justify-between mt-3 pt-3 border-t ${isAdminJob ? "border-neutral-content/15" : "border-base-300/60"}`}
+            className={`flex items-center justify-between mt-3 pt-3 border-t ${isSpecialJob ? "border-base-content/10" : "border-base-300/60"}`}
           >
             <span
-              className={`text-[11px] flex items-center gap-1 ${isAdminJob ? "text-neutral-content/55" : "text-base-content/40"}`}
+              className={`text-[11px] flex items-center gap-1 ${isSpecialJob ? "text-base-content/55" : "text-base-content/40"}`}
             >
               <Users className="w-3 h-3" />
               {job.applicants?.length || 0} applicants

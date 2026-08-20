@@ -1,4 +1,5 @@
 import { getUserSignal } from "../../utils/userSignals";
+import { getSpecialUserStyle } from "../../utils/specialUserStyles";
 
 const sizeClasses = {
   xs: "badge-xs text-[10px]",
@@ -8,11 +9,12 @@ const sizeClasses = {
 const UserSignalBadge = ({ user, size = "xs", className = "" }) => {
   const signal = getUserSignal(user);
   if (!signal) return null;
+  const specialStyle = getSpecialUserStyle(user);
 
   return (
     <span
       className={`badge font-semibold ${sizeClasses[size] || sizeClasses.xs} ${
-        signal.className
+        signal.key === "admin" ? specialStyle.label : signal.className
       } ${className}`}
     >
       {signal.label}

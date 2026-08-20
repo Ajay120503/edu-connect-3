@@ -30,11 +30,12 @@ import EndorsementTag from "../components/profile/EndorsementTag";
 import UserAvatar from "../components/common/UserAvatar";
 import UserSignalBadge from "../components/common/UserSignalBadge";
 import { getUserSignal } from "../utils/userSignals";
+import { getSpecialUserStyle } from "../utils/specialUserStyles";
 
 const Profile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, setUser } = useAuthStore();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("posts");
@@ -248,15 +249,17 @@ const Profile = () => {
   const followerCount = profile.followers?.length || 0;
   const followingCount = profile.following?.length || 0;
   const profileSignal = getUserSignal(profile);
-  const isAdminProfile = profileSignal?.key === "admin";
+  const isSpecialProfile = Boolean(profileSignal);
+  const specialStyle = getSpecialUserStyle(profile);
+  const mutedTextClass = isSpecialProfile ? specialStyle.muted : "text-base-content/50";
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pb-20 md:pb-6">
       {/* ============ PROFILE HEADER ============ */}
       <div
         className={`flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-10 mb-8 rounded-2xl border p-4 md:p-6 ${
-          isAdminProfile
-            ? "bg-neutral text-neutral-content border-neutral shadow-lg"
+          isSpecialProfile
+            ? specialStyle.shell
             : "bg-base-100 border-base-300/50"
         }`}
       >
@@ -266,13 +269,13 @@ const Profile = () => {
             user={profile}
             size={96}
             className="md:hidden"
-            ringClass="ring-2 ring-base-300/50"
+            ringClass={isSpecialProfile ? specialStyle.ring : "ring-2 ring-base-300/50"}
           />
           <UserAvatar
             user={profile}
             size={144}
             className="hidden md:block"
-            ringClass="ring-2 ring-base-300/50"
+            ringClass={isSpecialProfile ? specialStyle.ring : "ring-2 ring-base-300/50"}
           />
         </div>
 
@@ -321,7 +324,7 @@ const Profile = () => {
             <div className="text-center md:text-left">
               <span className="font-bold">{userPosts.length}</span>
               <span
-                className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                className={`text-sm ml-1 ${mutedTextClass}`}
               >
                 posts
               </span>
@@ -333,7 +336,7 @@ const Profile = () => {
             >
               <span className="font-bold">{followerCount}</span>
               <span
-                className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                className={`text-sm ml-1 ${mutedTextClass}`}
               >
                 followers
               </span>
@@ -345,7 +348,7 @@ const Profile = () => {
             >
               <span className="font-bold">{followingCount}</span>
               <span
-                className={`text-sm ml-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                className={`text-sm ml-1 ${mutedTextClass}`}
               >
                 following
               </span>
@@ -370,7 +373,7 @@ const Profile = () => {
             )}
             {profile.institutionName && (
               <span
-                className={`badge badge-sm font-medium ${isAdminProfile ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content" : "badge-ghost"}`}
+                className={`badge badge-sm font-medium ${isSpecialProfile ? specialStyle.soft : "badge-ghost"}`}
               >
                 {profile.institutionName}
               </span>
@@ -380,7 +383,7 @@ const Profile = () => {
           {/* Bio */}
           {profile.bio && (
             <p
-              className={`text-sm leading-relaxed max-w-lg ${isAdminProfile ? "text-neutral-content/75" : "text-base-content/70"}`}
+              className={`text-sm leading-relaxed max-w-lg ${isSpecialProfile ? "text-base-content/75" : "text-base-content/70"}`}
             >
               {profile.bio}
             </p>
@@ -391,12 +394,12 @@ const Profile = () => {
             profile.currentCompany ||
             profile.previousWork) && (
             <div
-              className={`mt-3 max-w-lg rounded-xl border p-3 text-left ${isAdminProfile ? "bg-white/10 border-white/15" : "bg-base-200/60 border-base-300/50"}`}
+              className={`mt-3 max-w-lg rounded-xl border p-3 text-left ${isSpecialProfile ? specialStyle.soft : "bg-base-200/60 border-base-300/50"}`}
             >
               {(profile.currentPosition || profile.currentCompany) && (
                 <div className="flex items-start gap-2 text-sm">
                   <Briefcase
-                    className={`w-4 h-4 mt-0.5 shrink-0 ${isAdminProfile ? "text-neutral-content" : "text-primary"}`}
+                    className={`w-4 h-4 mt-0.5 shrink-0 ${isSpecialProfile ? specialStyle.icon : "text-primary"}`}
                   />
                   <div>
                     <p className="font-semibold">
@@ -404,7 +407,7 @@ const Profile = () => {
                     </p>
                     {profile.currentCompany && (
                       <p
-                        className={`text-xs flex items-center gap-1 mt-0.5 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                        className={`text-xs flex items-center gap-1 mt-0.5 ${mutedTextClass}`}
                       >
                         <Building2 className="w-3 h-3" />
                         {profile.currentCompany}
@@ -415,10 +418,10 @@ const Profile = () => {
               )}
               {profile.previousWork && (
                 <div
-                  className={`mt-2 text-xs leading-relaxed ${isAdminProfile ? "text-neutral-content/65" : "text-base-content/60"}`}
+                  className={`mt-2 text-xs leading-relaxed ${isSpecialProfile ? "text-base-content/65" : "text-base-content/60"}`}
                 >
                   <span
-                    className={`font-semibold ${isAdminProfile ? "text-neutral-content/80" : "text-base-content/70"}`}
+                    className={`font-semibold ${isSpecialProfile ? "text-base-content/80" : "text-base-content/70"}`}
                   >
                     Previous work:
                   </span>{" "}
@@ -439,7 +442,7 @@ const Profile = () => {
 
           {/* Location / Contact */}
           {(profile.city || profile.email) && (
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-xs text-neutral-content/40">
+            <div className={`flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-xs ${isSpecialProfile ? "text-base-content/55" : "text-base-content/40"}`}>
               {profile.city && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> {profile.city}
@@ -460,7 +463,17 @@ const Profile = () => {
       {isOwnProfile && <StrengthMeter user={profile} />}
 
       {/* Academic Timeline */}
-      <AcademicTimeline timeline={profile.timeline} isOwner={isOwnProfile} />
+      <AcademicTimeline
+        timeline={profile.timeline}
+        isOwner={isOwnProfile}
+        userId={profile._id}
+        onUpdated={(timeline, updatedUser) => {
+          setProfile((prev) => ({ ...prev, ...(updatedUser || {}), timeline }));
+          if (isOwnProfile && updatedUser) {
+            setUser({ ...currentUser, ...updatedUser });
+          }
+        }}
+      />
 
       {/* ============ TAB BAR ============ */}
       <div className="flex border-t border-base-300 mb-0">
@@ -472,7 +485,6 @@ const Profile = () => {
               : "border-transparent text-base-content/40 hover:text-base-content/60"
           }`}
         >
-          <Grid3X3 className="w-4 h-4" />
           <span className="hidden sm:inline">POSTS</span>
         </button>
         <button
@@ -715,8 +727,8 @@ const Profile = () => {
                 <div
                   key={job._id}
                   className={`card border shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
-                    isAdminProfile
-                      ? "bg-neutral text-neutral-content border-neutral"
+                    isSpecialProfile
+                      ? specialStyle.shell
                       : "bg-base-100 border-base-300/50"
                   }`}
                   onClick={() => navigate(`/jobs/${job._id}`)}
@@ -741,7 +753,7 @@ const Profile = () => {
                             {job.title}
                           </h4>
                           <p
-                            className={`text-xs line-clamp-1 ${isAdminProfile ? "text-neutral-content/60" : "text-base-content/50"}`}
+                            className={`text-xs line-clamp-1 ${mutedTextClass}`}
                           >
                             {job.institutionName}
                           </p>

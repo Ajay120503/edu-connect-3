@@ -1,5 +1,9 @@
 import { BriefcaseBusiness, Shield } from "lucide-react";
 import { isPlatformAdmin } from "../../utils/userSignals";
+import {
+  canUseSpecialStyle,
+  getSpecialUserStyle,
+} from "../../utils/specialUserStyles";
 
 /**
  * Reusable avatar component that shows a refined opportunity indicator
@@ -21,14 +25,16 @@ const UserAvatar = ({
 }) => {
   const isOpen = showIndicator && user?.openToOpportunities;
   const isAdmin = isPlatformAdmin(user);
+  const isSpecial = canUseSpecialStyle(user);
+  const specialStyle = getSpecialUserStyle(user);
   const name = user?.name || "U";
   const initial = name.charAt(0)?.toUpperCase() || "U";
   const profilePic = user?.profilePic;
   const imgUrl =
     typeof profilePic === "string" ? profilePic : profilePic?.url || "";
 
-  const baseRing = isAdmin
-    ? "ring-2 ring-neutral ring-offset-2 ring-offset-base-100"
+  const baseRing = isSpecial
+    ? specialStyle.ring
     : isOpen
       ? "ring-2 ring-success ring-offset-2 ring-offset-base-100"
       : "ring-2 ring-base-100";

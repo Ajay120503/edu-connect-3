@@ -5,10 +5,16 @@ import {
   BarChart3,
   CheckCircle,
   Clock,
+  FileText,
+  Gauge,
+  Layers,
   RefreshCw,
   Search,
   Settings,
   Shield,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
   UserCheck,
   Users,
 } from "lucide-react";
@@ -44,16 +50,17 @@ const statTones = {
   },
 };
 
-const StatTile = ({ icon: Icon, label, value, tone = "primary" }) => (
-  <div className="rounded-lg bg-base-100 border border-base-300/70 shadow-sm p-4">
+const StatTile = ({ icon: Icon, label, value, tone = "primary", note }) => (
+  <div className="rounded-xl bg-base-100 border border-base-300/70 shadow-sm p-4">
     <div className="flex items-start justify-between gap-4">
       <div>
-        <p className="text-xs font-semibold text-base-content/45 uppercase">
+        <p className="text-[11px] font-bold text-base-content/45 uppercase tracking-wide">
           {label}
         </p>
         <p className={`mt-2 text-3xl font-bold ${statTones[tone].value}`}>
           {value}
         </p>
+        {note && <p className="mt-1 text-xs text-base-content/45">{note}</p>}
       </div>
       <div
         className={`w-10 h-10 rounded-lg flex items-center justify-center ${statTones[tone].icon}`}
@@ -72,13 +79,52 @@ const TabButton = ({ tab, activeTab, onSelect }) => {
       onClick={() => onSelect(tab.value)}
       className={`inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-semibold transition-colors ${
         activeTab === tab.value
-          ? "bg-primary text-primary-content shadow-sm"
+          ? "bg-primary/10 text-primary ring-1 ring-primary/25 shadow-sm"
           : "text-base-content/60 hover:bg-base-200 hover:text-base-content"
       }`}
     >
       <Icon className="w-4 h-4" />
       {tab.label}
     </button>
+  );
+};
+
+const Panel = ({ title, action, children, icon: Icon }) => (
+  <section className="rounded-xl bg-base-100 border border-base-300/70 shadow-sm overflow-hidden">
+    <div className="px-4 py-3 border-b border-base-300/60 flex items-center justify-between bg-base-200/40">
+      <div className="flex items-center gap-2">
+        {Icon && (
+          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
+        <h2 className="font-semibold">{title}</h2>
+      </div>
+      {action}
+    </div>
+    {children}
+  </section>
+);
+
+const ProgressRow = ({ label, value, total, tone = "primary" }) => {
+  const percent = total ? Math.round((value / total) * 100) : 0;
+  const barClass = {
+    primary: "bg-primary",
+    warning: "bg-warning",
+    success: "bg-success",
+    info: "bg-info",
+  }[tone];
+
+  return (
+    <div>
+      <div className="flex items-center justify-between text-xs mb-1.5">
+        <span className="font-medium text-base-content/60">{label}</span>
+        <span className="text-base-content/45">{percent}%</span>
+      </div>
+      <div className="h-2 rounded-full bg-base-300/60 overflow-hidden">
+        <div className={`h-full ${barClass}`} style={{ width: `${percent}%` }} />
+      </div>
+    </div>
   );
 };
 
@@ -131,6 +177,8 @@ const AdminDashboard = () => {
       totalUsers: users.length,
       blockedUsers: users.filter((item) => item.isBlocked).length,
       verifiedUsers: users.filter((item) => item.isVerified).length,
+      activeUsers: users.filter((item) => item.isActive !== false && !item.isBlocked).length,
+      admins: users.filter((item) => item.isAdmin || item.isSuperAdmin).length,
       pendingQueue: queueItems.length,
     }),
     [users, queueItems],
@@ -146,7 +194,16 @@ const AdminDashboard = () => {
     );
   });
 
-  const recentUsers = users.slice(0, 5);
+  const recentUsers = [...users]
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    .slice(0, 6);
+  const queuePreview = queueItems.slice(0, 3);
+  const verifiedRate = stats.totalUsers
+    ? Math.round((stats.verifiedUsers / stats.totalUsers) * 100)
+    : 0;
+  const blockedRate = stats.totalUsers
+    ? Math.round((stats.blockedUsers / stats.totalUsers) * 100)
+    : 0;
 
   if (!isAuthenticated || !isAdminUser(user)) {
     navigate("/feed");
@@ -155,18 +212,16 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      <div className="rounded-xl bg-base-100 border border-base-300/70 shadow-sm p-5">
+      <div className="rounded-2xl bg-base-100 border border-base-300/70 shadow-sm p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-primary" />
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Shield className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold font-heading">
-                Admin Dashboard
-              </h1>
+              <h1 className="text-2xl md:text-3xl font-bold font-heading">Admin Dashboard</h1>
               <p className="text-sm text-base-content/50">
-                Users, moderation queue, and platform controls
+                Platform health, user trust, moderation, and operational controls
               </p>
             </div>
           </div>
@@ -194,7 +249,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-1 rounded-lg bg-base-200/70 p-1 sm:flex sm:overflow-x-auto">
+        <div className="mt-5 grid grid-cols-3 gap-1 rounded-xl bg-base-200/70 p-1 sm:flex sm:overflow-x-auto">
           {tabs.map((tab) => (
             <TabButton
               key={tab.value}
@@ -206,19 +261,28 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatTile icon={Users} label="Total Users" value={stats.totalUsers} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+        <StatTile icon={Users} label="Total Users" value={stats.totalUsers} note={`${stats.activeUsers} active`} />
         <StatTile
           icon={Ban}
           label="Blocked Users"
           value={stats.blockedUsers}
           tone="warning"
+          note={`${blockedRate}% of users`}
         />
         <StatTile
           icon={UserCheck}
           label="Verified Users"
           value={stats.verifiedUsers}
           tone="success"
+          note={`${verifiedRate}% verified`}
+        />
+        <StatTile
+          icon={ShieldCheck}
+          label="Admins"
+          value={stats.admins}
+          tone="primary"
+          note="Platform operators"
         />
         <StatTile
           icon={Clock}
@@ -230,14 +294,51 @@ const AdminDashboard = () => {
 
       {activeTab === "overview" && (
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-6">
-          <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm max-h-150 overflow-scroll">
-            <div className="px-4 py-3 border-b border-base-300/60 flex items-center justify-between bg-base-200/40">
-              <h2 className="font-semibold">Recent Users</h2>
-              <Link to="/admin/users" className="btn btn-ghost btn-xs">
-                View All
-              </Link>
-            </div>
-            <div className="overflow-x-auto">
+          <div className="space-y-6">
+            <Panel
+              title="Platform Health"
+              icon={Gauge}
+              action={<span className="badge badge-sm badge-success badge-soft">Live</span>}
+            >
+              <div className="grid md:grid-cols-3 gap-4 p-4">
+                <div className="rounded-xl bg-base-200/50 border border-base-300/60 p-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold mb-3">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    Trust Coverage
+                  </div>
+                  <ProgressRow label="Verified users" value={stats.verifiedUsers} total={stats.totalUsers} tone="success" />
+                  <div className="mt-3">
+                    <ProgressRow label="Blocked accounts" value={stats.blockedUsers} total={stats.totalUsers} tone="warning" />
+                  </div>
+                </div>
+                <div className="rounded-xl bg-base-200/50 border border-base-300/60 p-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold mb-2">
+                    <Layers className="w-4 h-4 text-info" />
+                    Moderation Load
+                  </div>
+                  <p className="text-3xl font-bold text-info">{stats.pendingQueue}</p>
+                  <p className="text-xs text-base-content/45 mt-1">Pending {queueType} reviews</p>
+                </div>
+                <div className="rounded-xl bg-base-200/50 border border-base-300/60 p-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold mb-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Quick Actions
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Link to="/admin/queue" className="btn btn-outline btn-primary btn-sm justify-start">Review content</Link>
+                    <Link to="/admin/users" className="btn btn-outline btn-sm justify-start">Manage users</Link>
+                    <Link to="/admin/settings" className="btn btn-ghost btn-sm justify-start">Open settings</Link>
+                  </div>
+                </div>
+              </div>
+            </Panel>
+
+            <Panel
+              title="Recent Users"
+              icon={Users}
+              action={<Link to="/admin/users" className="btn btn-ghost btn-xs">View All</Link>}
+            >
+              <div className="overflow-x-auto">
               <table className="table">
                 <thead>
                   <tr>
@@ -283,17 +384,32 @@ const AdminDashboard = () => {
                   )}
                 </tbody>
               </table>
-            </div>
-          </section>
+              </div>
+            </Panel>
+          </div>
 
-          <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm max-h-150 overflow-scroll">
-            <div className="px-4 py-3 border-b border-base-300/60 flex items-center justify-between bg-base-200/40">
-              <h2 className="font-semibold">Moderation Queue</h2>
-              <Link to="/admin/queue" className="btn btn-ghost btn-xs">
-                Open Queue
-              </Link>
-            </div>
+          <Panel
+            title="Moderation Queue"
+            icon={FileText}
+            action={<Link to="/admin/queue" className="btn btn-ghost btn-xs">Open Queue</Link>}
+          >
             <div className="p-4 space-y-3">
+              <div className="join w-full">
+                {["post", "job", "story"].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setQueueType(type)}
+                    className={`btn btn-sm join-item flex-1 capitalize ${
+                      queueType === type
+                        ? "bg-primary/10 text-primary border-primary/25"
+                        : "btn-ghost"
+                    }`}
+                  >
+                    {type}s
+                  </button>
+                ))}
+              </div>
               {loadingQueue ? (
                 <div className="h-24 skeleton rounded-lg"></div>
               ) : queueItems.length === 0 ? (
@@ -301,24 +417,22 @@ const AdminDashboard = () => {
                   No pending {queueType} items.
                 </div>
               ) : (
-                queueItems
-                  .slice(0, 2)
-                  .map((item) => (
-                    <QueueItem
-                      key={item._id}
-                      item={item}
-                      type={queueType}
-                      onUpdate={() => fetchQueue(queueType)}
-                    />
-                  ))
+                queuePreview.map((item) => (
+                  <QueueItem
+                    key={item._id}
+                    item={item}
+                    type={queueType}
+                    onUpdate={() => fetchQueue(queueType)}
+                  />
+                ))
               )}
             </div>
-          </section>
+          </Panel>
         </div>
       )}
 
       {activeTab === "users" && (
-        <section className="bg-base-100 border border-base-300/70 rounded-lg shadow-sm overflow-hidden">
+        <section className="bg-base-100 border border-base-300/70 rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-base-300/60 bg-base-200/40 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="relative md:max-w-md w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40" />
@@ -376,7 +490,7 @@ const AdminDashboard = () => {
 
       {activeTab === "moderation" && (
         <section className="space-y-4">
-          <div className="rounded-lg bg-base-100 border border-base-300/70 shadow-sm p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="rounded-xl bg-base-100 border border-base-300/70 shadow-sm p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="join">
               {["post", "job", "story"].map((type) => (
                 <button
@@ -384,7 +498,9 @@ const AdminDashboard = () => {
                   type="button"
                   onClick={() => setQueueType(type)}
                   className={`btn btn-sm join-item capitalize ${
-                    queueType === type ? "btn-primary" : "btn-ghost"
+                    queueType === type
+                      ? "bg-primary/10 text-primary border-primary/25"
+                      : "btn-ghost"
                   }`}
                 >
                   {type}s

@@ -21,6 +21,12 @@ const splitQualifications = (value = "") =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const formatFlag = (flag) => {
+  if (!flag) return "Unknown signal";
+  if (typeof flag === "string") return flag.replace(/_/g, " ");
+  return (flag.flag || flag.rule || flag.message || "moderation signal").replace(/_/g, " ");
+};
+
 const AdminContentDetail = () => {
   const { type, id } = useParams();
   const navigate = useNavigate();
@@ -70,6 +76,23 @@ const AdminContentDetail = () => {
     }
   };
 
+  const handleRunRuleCheck = async () => {
+    setActionLoading(true);
+    try {
+      const { data } = await API.put(`/admin/content/${type}/${id}/run-check`);
+      setContent(data.content || content);
+      toast.success(
+        data.moderationResult?.approved
+          ? "Rule check approved this content"
+          : "Rule check rejected this content",
+      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Rule check failed");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -110,6 +133,8 @@ const AdminContentDetail = () => {
 
   const author = content.author || content.postedBy;
   const authorBadge = author?.badges?.[0]?.type || "student";
+  const autoScore = content.moderationMeta?.autoScore;
+  const autoFlags = content.moderationMeta?.autoFlags || [];
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -158,6 +183,54 @@ const AdminContentDetail = () => {
           )}
 
           {/* Detection rules */}
+          {autoScore !== undefined && (
+            <div className="mb-4 rounded-xl border border-base-300 bg-base-200/50 p-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-warning" />
+                    Rule-Based Moderation Result
+                  </h3>
+                  <p className="text-xs text-base-content/50 mt-1">
+                    {content.moderationMeta?.reviewNotes ||
+                      "Automatic safety checks were applied to this content."}
+                  </p>
+                </div>
+                <span
+                  className={`badge badge-lg ${
+                    autoScore >= 58
+                      ? "badge-error badge-soft"
+                      : autoScore >= 34
+                        ? "badge-warning badge-soft"
+                        : "badge-success badge-soft"
+                  }`}
+                >
+                  Score {autoScore}/100
+                </span>
+              </div>
+              {autoFlags.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {autoFlags.map((flag, i) => (
+                    <span
+                      key={i}
+                      className="badge badge-sm badge-warning badge-soft"
+                      title={
+                        typeof flag === "object"
+                          ? JSON.stringify(flag)
+                          : String(flag)
+                      }
+                    >
+                      {formatFlag(flag)}
+                      {typeof flag === "object" && flag.weight
+                        ? ` +${flag.weight}`
+                        : ""}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {content.detectionRules?.length > 0 && (
             <div className="mb-4">
               <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
@@ -298,6 +371,15 @@ const AdminContentDetail = () => {
           </h3>
 
           <div className="space-y-4">
+            <button
+              onClick={handleRunRuleCheck}
+              disabled={actionLoading}
+              className="btn btn-outline btn-warning w-full gap-2"
+            >
+              <AlertTriangle className="w-5 h-5" />
+              Run Rule Check
+            </button>
+
             <button
               onClick={() => handleModerate("approve")}
               disabled={actionLoading}
