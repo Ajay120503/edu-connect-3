@@ -27,6 +27,36 @@ export const SPECIAL_STYLE_VARIANTS = [
     label: "Indigo",
     swatch: "bg-[#5667d8]",
   },
+  {
+    value: "sky",
+    label: "Sky Blue",
+    swatch: "bg-info",
+  },
+  {
+    value: "deep-teal",
+    label: "Deep Teal",
+    swatch: "bg-secondary",
+  },
+  {
+    value: "rose",
+    label: "Rose",
+    swatch: "bg-error",
+  },
+  {
+    value: "slate",
+    label: "Slate",
+    swatch: "bg-neutral",
+  },
+  {
+    value: "violet",
+    label: "Violet",
+    swatch: "bg-[#7c3aed]",
+  },
+  {
+    value: "pink",
+    label: "Pink",
+    swatch: "bg-[#ec4899]",
+  },
 ];
 
 export const canUseSpecialStyle = (user) => {
@@ -96,6 +126,70 @@ const variants = {
     ring: "ring-2 ring-[#5667d8] ring-offset-2 ring-offset-base-100",
     storyRing: "bg-[#5667d8]",
     icon: "text-[#5667d8]",
+  },
+  sky: {
+    shell: "bg-info/8 text-base-content border-info/25 shadow-sm shadow-info/10",
+    shellHover: "hover:border-info/40 hover:shadow-info/15",
+    label: "badge-info badge-soft",
+    soft: "bg-info/10 text-info border-info/20",
+    muted: "text-info/80",
+    ring: "ring-2 ring-info ring-offset-2 ring-offset-base-100",
+    storyRing: "bg-info",
+    icon: "text-info",
+  },
+  "deep-teal": {
+    shell:
+      "bg-secondary/8 text-base-content border-secondary/25 shadow-sm shadow-secondary/10",
+    shellHover: "hover:border-secondary/40 hover:shadow-secondary/15",
+    label: "bg-secondary/12 text-secondary border-secondary/25",
+    soft: "bg-secondary/10 text-secondary border-secondary/20",
+    muted: "text-secondary/80",
+    ring: "ring-2 ring-secondary ring-offset-2 ring-offset-base-100",
+    storyRing: "bg-secondary",
+    icon: "text-secondary",
+  },
+  rose: {
+    shell: "bg-error/8 text-base-content border-error/25 shadow-sm shadow-error/10",
+    shellHover: "hover:border-error/40 hover:shadow-error/15",
+    label: "badge-error badge-soft",
+    soft: "bg-error/10 text-error border-error/20",
+    muted: "text-error/80",
+    ring: "ring-2 ring-error ring-offset-2 ring-offset-base-100",
+    storyRing: "bg-error",
+    icon: "text-error",
+  },
+  slate: {
+    shell:
+      "bg-neutral/8 text-base-content border-neutral/25 shadow-sm shadow-neutral/10",
+    shellHover: "hover:border-neutral/40 hover:shadow-neutral/15",
+    label: "bg-neutral/12 text-neutral border-neutral/25",
+    soft: "bg-neutral/10 text-neutral border-neutral/20",
+    muted: "text-neutral/80",
+    ring: "ring-2 ring-neutral ring-offset-2 ring-offset-base-100",
+    storyRing: "bg-neutral",
+    icon: "text-neutral",
+  },
+  violet: {
+    shell:
+      "bg-[#f5f3ff] text-base-content border-[#ddd6fe] shadow-sm shadow-[#7c3aed]/10",
+    shellHover: "hover:border-[#c4b5fd] hover:shadow-[#7c3aed]/15",
+    label: "bg-[#ede9fe] text-[#5b21b6] border-[#c4b5fd]",
+    soft: "bg-[#ede9fe] text-[#5b21b6] border-[#c4b5fd]",
+    muted: "text-[#6d28d9]",
+    ring: "ring-2 ring-[#7c3aed] ring-offset-2 ring-offset-base-100",
+    storyRing: "bg-[#7c3aed]",
+    icon: "text-[#7c3aed]",
+  },
+  pink: {
+    shell:
+      "bg-[#fdf2f8] text-base-content border-[#fbcfe8] shadow-sm shadow-[#ec4899]/10",
+    shellHover: "hover:border-[#f9a8d4] hover:shadow-[#ec4899]/15",
+    label: "bg-[#fce7f3] text-[#9d174d] border-[#fbcfe8]",
+    soft: "bg-[#fce7f3] text-[#9d174d] border-[#fbcfe8]",
+    muted: "text-[#be185d]",
+    ring: "ring-2 ring-[#ec4899] ring-offset-2 ring-offset-base-100",
+    storyRing: "bg-[#ec4899]",
+    icon: "text-[#ec4899]",
   },
 };
 

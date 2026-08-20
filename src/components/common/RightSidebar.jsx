@@ -19,6 +19,7 @@ import {
   getUserSignal,
   sortDiscoverableUsers,
 } from "../../utils/userSignals";
+import { getSpecialUserStyle } from "../../utils/specialUserStyles";
 
 const visibleSkillsLimit = 2;
 
@@ -118,15 +119,16 @@ const RightSidebar = () => {
               <div className="space-y-1">
                 {suggestedUsers.map((u) => {
                   const signal = getUserSignal(u);
-                  const isAdmin = signal?.key === "admin";
+                  const isSpecialUser = Boolean(signal);
+                  const specialStyle = getSpecialUserStyle(u);
 
                   return (
                     <Link
                       key={u._id}
                       to={`/profile/${u._id}`}
                       className={`flex items-center gap-3 overflow-hidden rounded-xl p-2.5 transition-all group ${
-                        isAdmin
-                          ? "bg-neutral text-neutral-content hover:bg-neutral/90"
+                        isSpecialUser
+                          ? `${specialStyle.shell} ${specialStyle.shellHover}`
                           : "hover:bg-base-200/70"
                       }`}
                     >
@@ -134,8 +136,8 @@ const RightSidebar = () => {
                       <div className="flex-1 min-w-0">
                         <p
                           className={`text-sm font-semibold line-clamp-1 transition-colors ${
-                            isAdmin
-                              ? "group-hover:text-white"
+                            isSpecialUser
+                              ? specialStyle.muted
                               : "group-hover:text-primary"
                           }`}
                         >
@@ -155,8 +157,8 @@ const RightSidebar = () => {
                           {u.institutionName && (
                             <span
                               className={`text-[10px] truncate line-clamp-1 ${
-                                isAdmin
-                                  ? "text-neutral-content/65"
+                                isSpecialUser
+                                  ? "text-base-content/60"
                                   : "text-base-content/40"
                               }`}
                             >
@@ -167,9 +169,7 @@ const RightSidebar = () => {
                       </div>
                       <div
                         className={`btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ${
-                          isAdmin
-                            ? "text-neutral-content hover:bg-white/10"
-                            : ""
+                          isSpecialUser ? specialStyle.icon : ""
                         }`}
                       >
                         <UserPlus className="w-3.5 h-3.5" />

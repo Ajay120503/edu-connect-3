@@ -14,7 +14,8 @@ import {
 } from "../utils/specialUserStyles";
 
 const Settings = () => {
-  const { user, logout, deleteAccount, isLoading, setUser } = useAuthStore();
+  const { user, logout, deleteAccount, isLoading, updateProfile, setUser } =
+    useAuthStore();
   const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [opportunityLoading, setOpportunityLoading] = useState(false);
@@ -57,10 +58,9 @@ const Settings = () => {
   const handleThemeChange = async (profileThemeVariant) => {
     setThemeLoading(true);
     try {
-      const { data } = await API.put(`/users/${user._id}`, {
-        profileThemeVariant,
-      });
-      setUser(data.user);
+      // Use store's updateProfile which properly merges the updated
+      // user from the API response into the global auth store state
+      await updateProfile({ profileThemeVariant });
       toast.success("Profile color updated");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update color");

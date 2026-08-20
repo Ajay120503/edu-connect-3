@@ -29,6 +29,7 @@ import {
 import useAuthStore from "../store/authStore";
 import NoticeboardBanner from "../components/post/NoticeboardBanner";
 import UserAvatar from "../components/common/UserAvatar";
+import { getSpecialUserStyle } from "../utils/specialUserStyles";
 import toast from "react-hot-toast";
 
 const exploreFilters = [
@@ -320,113 +321,118 @@ const Explore = () => {
                 <Users className="w-3.5 h-3.5" />
                 {users.length} result{users.length !== 1 ? "s" : ""} found
               </p>
-              {users.map((u) => (
-                <div
-                  key={u._id}
-                  className={`flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md group ${
-                    getUserSignal(u)?.key === "admin"
-                      ? "bg-neutral text-neutral-content border-neutral"
-                      : "bg-base-100 border-base-300/50 hover:border-primary/30"
-                  }`}
-                >
-                  <Link
-                    to={`/profile/${u._id}`}
-                    className="flex items-center gap-4 flex-1 min-w-0"
+              {users.map((u) => {
+                const signal = getUserSignal(u);
+                const isSpecialUser = Boolean(signal);
+                const specialStyle = getSpecialUserStyle(u);
+                return (
+                  <div
+                    key={u._id}
+                    className={`flex items-center gap-4 rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md group ${
+                      isSpecialUser
+                        ? `${specialStyle.shell} ${specialStyle.shellHover}`
+                        : "bg-base-100 border-base-300/50 hover:border-primary/30"
+                    }`}
                   >
-                    <UserAvatar user={u} size={56} />
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={`font-semibold text-sm truncate transition-colors ${
-                          getUserSignal(u)?.key === "admin"
-                            ? "group-hover:text-white"
-                            : "group-hover:text-primary"
-                        }`}
-                      >
-                        {u.name}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <span className="badge badge-sm badge-soft badge-primary text-[10px] font-medium capitalize">
-                          {getUserRoleLabel(u)}
-                        </span>
-                        {getUserSignal(u) && (
-                          <span
-                            className={`badge badge-sm text-[10px] font-semibold ${getUserSignal(u).className}`}
-                          >
-                            {getUserSignal(u).label}
+                    <Link
+                      to={`/profile/${u._id}`}
+                      className="flex items-center gap-4 flex-1 min-w-0"
+                    >
+                      <UserAvatar user={u} size={56} />
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`font-semibold text-sm truncate transition-colors ${
+                            isSpecialUser
+                              ? specialStyle.muted
+                              : "group-hover:text-primary"
+                          }`}
+                        >
+                          {u.name}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                          <span className="badge badge-sm badge-soft badge-primary text-[10px] font-medium capitalize">
+                            {getUserRoleLabel(u)}
                           </span>
-                        )}
-                        {u.institutionName && (
-                          <span
-                            className={`text-[11px] truncate ${
-                              getUserSignal(u)?.key === "admin"
-                                ? "text-neutral-content/70"
-                                : "text-base-content/40"
-                            }`}
-                          >
-                            {u.institutionName}
-                          </span>
-                        )}
-                        {u.city && (
-                          <span
-                            className={`flex items-center gap-0.5 text-[10px] ${
-                              getUserSignal(u)?.key === "admin"
-                                ? "text-neutral-content/60"
-                                : "text-base-content/30"
-                            }`}
-                          >
-                            <MapPin className="w-2.5 h-2.5" />
-                            {u.city}
-                          </span>
-                        )}
-                      </div>
-                      {u.skills?.length > 0 && (
-                        <div className="flex gap-1 mt-1.5 flex-wrap">
-                          {u.skills.slice(0, 3).map((skill, i) => (
+                          {getUserSignal(u) && (
                             <span
-                              key={i}
-                              className={`badge badge-xs text-[10px] ${
-                                getUserSignal(u)?.key === "admin"
-                                  ? "border-neutral-content/20 bg-neutral-content/10 text-neutral-content"
-                                  : "badge-ghost"
+                              className={`badge badge-sm text-[10px] font-semibold ${getUserSignal(u).className}`}
+                            >
+                              {getUserSignal(u).label}
+                            </span>
+                          )}
+                          {u.institutionName && (
+                            <span
+                              className={`text-[11px] truncate ${
+                                isSpecialUser
+                                  ? "text-base-content/60"
+                                  : "text-base-content/40"
                               }`}
                             >
-                              {skill}
+                              {u.institutionName}
                             </span>
-                          ))}
-                          {u.skills.length > 3 && (
+                          )}
+                          {u.city && (
                             <span
-                              className={`text-[10px] ${
-                                getUserSignal(u)?.key === "admin"
-                                  ? "text-neutral-content/50"
+                              className={`flex items-center gap-0.5 text-[10px] ${
+                                isSpecialUser
+                                  ? "text-base-content/50"
                                   : "text-base-content/30"
                               }`}
                             >
-                              +{u.skills.length - 3}
+                              <MapPin className="w-2.5 h-2.5" />
+                              {u.city}
                             </span>
                           )}
                         </div>
-                      )}
-                    </div>
-                  </Link>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleFollow(u._id);
-                    }}
-                    className={`btn btn-active btn-sm gap-1.5 flex-shrink-0 ${
-                      following.has(u._id)
-                        ? "btn-outline"
-                        : "btn-primary shadow-md shadow-primary/20"
-                    }`}
-                  >
-                    <UserPlus className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">
-                      {following.has(u._id) ? "Following" : "Follow"}
-                    </span>
-                  </button>
-                </div>
-              ))}
+                        {u.skills?.length > 0 && (
+                          <div className="flex gap-1 mt-1.5 flex-wrap">
+                            {u.skills.slice(0, 3).map((skill, i) => (
+                              <span
+                                key={i}
+                                className={`badge badge-xs text-[10px] ${
+                                  isSpecialUser
+                                    ? specialStyle.soft
+                                    : "badge-ghost"
+                                }`}
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                            {u.skills.length > 3 && (
+                              <span
+                                className={`text-[10px] ${
+                                  isSpecialUser
+                                    ? "text-base-content/50"
+                                    : "text-base-content/30"
+                                }`}
+                              >
+                                +{u.skills.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleFollow(u._id);
+                      }}
+                      className={`btn btn-active btn-sm gap-1.5 flex-shrink-0 ${
+                        following.has(u._id)
+                          ? "btn-outline"
+                          : "btn-primary shadow-md shadow-primary/20"
+                      }`}
+                    >
+                      <UserPlus className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">
+                        {following.has(u._id) ? "Following" : "Follow"}
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-20">
@@ -483,20 +489,21 @@ const Explore = () => {
                 {trendingUsers.map((u) =>
                   (() => {
                     const signal = getUserSignal(u);
-                    const isAdmin = signal?.key === "admin";
+                    const isSpecialUser = Boolean(signal);
+                    const specialStyle = getSpecialUserStyle(u);
                     return (
                       <Link
                         key={u._id}
                         to={`/profile/${u._id}`}
                         className={`card rounded-2xl p-4 text-center transition-all hover:-translate-y-1 hover:shadow-md group min-h-[184px] ${
-                          isAdmin
-                            ? "bg-neutral text-neutral-content border border-neutral"
+                          isSpecialUser
+                            ? `${specialStyle.shell} ${specialStyle.shellHover}`
                             : "bg-base-100 border border-base-300/50 hover:border-primary/20"
                         }`}
                       >
                         <UserAvatar user={u} size={56} className="mx-auto" />
                         <p
-                          className={`font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] transition-colors ${isAdmin ? "group-hover:text-white" : "group-hover:text-primary"}`}
+                          className={`font-semibold text-sm mt-2.5 line-clamp-2 min-h-[40px] transition-colors ${isSpecialUser ? specialStyle.muted : "group-hover:text-primary"}`}
                         >
                           {u.name}
                         </p>
@@ -514,14 +521,14 @@ const Explore = () => {
                         </div>
                         {u.institutionName && (
                           <p
-                            className={`text-[10px] mt-1 truncate ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}
+                            className={`text-[10px] mt-1 truncate ${isSpecialUser ? "text-base-content/60" : "text-base-content/40"}`}
                           >
                             {u.institutionName}
                           </p>
                         )}
                         {u.followers?.length > 0 && (
                           <p
-                            className={`text-[10px] mt-1.5 ${isAdmin ? "text-neutral-content/65" : "text-base-content/40"}`}
+                            className={`text-[10px] mt-1.5 ${isSpecialUser ? "text-base-content/60" : "text-base-content/40"}`}
                           >
                             {u.followers.length} follower
                             {u.followers.length !== 1 ? "s" : ""}
@@ -572,49 +579,60 @@ const Explore = () => {
               </div>
             ) : (
               <div className="space-y-2">
-                {recentUsers.map((u) => (
-                  <div
-                    key={u._id}
-                    className="flex items-center gap-4 bg-base-100 border border-base-300/30 rounded-2xl p-4 hover:shadow-sm hover:border-primary/20 transition-all group"
-                  >
-                    <Link
-                      to={`/profile/${u._id}`}
-                      className="flex items-center gap-4 flex-1 min-w-0"
-                    >
-                      <UserAvatar user={u} size={48} />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
-                          {u.name}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                          <span className="badge badge-xs badge-soft badge-primary text-[10px] font-medium capitalize">
-                            {getUserRoleLabel(u)}
-                          </span>
-                          {u.institutionName && (
-                            <span className="text-[10px] text-base-content/40 truncate">
-                              {u.institutionName}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleFollow(u._id);
-                      }}
-                      className={`btn btn-xs gap-1 flex-shrink-0 ${
-                        following.has(u._id)
-                          ? "btn-outline"
-                          : "btn-primary shadow-sm"
+                {recentUsers.map((u) => {
+                  const signal = getUserSignal(u);
+                  const isSpecialUser = Boolean(signal);
+                  const specialStyle = getSpecialUserStyle(u);
+                  return (
+                    <div
+                      key={u._id}
+                      className={`flex items-center gap-4 rounded-2xl border p-4 transition-all hover:shadow-sm group ${
+                        isSpecialUser
+                          ? `${specialStyle.shell} ${specialStyle.shellHover}`
+                          : "bg-base-100 border-base-300/30 hover:border-primary/20"
                       }`}
                     >
-                      <UserPlus className="w-3 h-3" />
-                      {following.has(u._id) ? "Following" : "Follow"}
-                    </button>
-                  </div>
-                ))}
+                      <Link
+                        to={`/profile/${u._id}`}
+                        className="flex items-center gap-4 flex-1 min-w-0"
+                      >
+                        <UserAvatar user={u} size={48} />
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`font-semibold text-sm truncate transition-colors ${isSpecialUser ? specialStyle.muted : "group-hover:text-primary"}`}
+                          >
+                            {u.name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className="badge badge-xs badge-soft badge-primary text-[10px] font-medium capitalize">
+                              {getUserRoleLabel(u)}
+                            </span>
+                            {u.institutionName && (
+                              <span className="text-[10px] text-base-content/40 truncate">
+                                {u.institutionName}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleFollow(u._id);
+                        }}
+                        className={`btn btn-xs gap-1 flex-shrink-0 ${
+                          following.has(u._id)
+                            ? "btn-outline"
+                            : "btn-primary shadow-sm"
+                        }`}
+                      >
+                        <UserPlus className="w-3 h-3" />
+                        {following.has(u._id) ? "Following" : "Follow"}
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

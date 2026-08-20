@@ -8,6 +8,7 @@ import MatchedJobsRow from "../components/job/MatchedJobsRow";
 import QuickApplyBtn from "../components/job/QuickApplyBtn";
 import UserSignalBadge from "../components/common/UserSignalBadge";
 import { getUserSignal } from "../utils/userSignals";
+import { getSpecialUserStyle } from "../utils/specialUserStyles";
 
 const formatStipend = (stipend, currency, isPaid) => {
   if (!isPaid) return "Unpaid";
@@ -129,129 +130,147 @@ const Jobs = () => {
         <div className="space-y-3">
           {filtered.map((job) => {
             const posterSignal = getUserSignal(job.postedBy);
-            const isAdminJob = posterSignal?.key === "admin";
+            const isSpecialJob = Boolean(posterSignal);
+            const specialStyle = getSpecialUserStyle(job.postedBy);
 
             return (
               <Link
                 key={job._id}
                 to={`/jobs/${job._id}`}
                 className={`card border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all p-4 block ${
-                  isAdminJob
-                    ? "bg-neutral text-neutral-content border-neutral hover:border-neutral"
+                  isSpecialJob
+                    ? `${specialStyle.shell} ${specialStyle.shellHover}`
                     : "bg-base-100 border-base-300/50 hover:border-primary/30"
                 }`}
               >
-              <div className="flex items-start gap-4">
-                {/* Job image or institution logo */}
-                <div className="w-14 h-14 rounded-xl bg-placeholder overflow-hidden shrink-0">
-                  {job.image?.url ? (
-                    <img
-                      src={job.image.url}
-                      alt={job.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : job.institutionLogo?.url ? (
-                    <img
-                      src={job.institutionLogo.url}
-                      alt={job.institutionName}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                      <Briefcase className="w-6 h-6 text-primary/40" />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h3 className={`font-semibold text-base mb-0.5 ${isAdminJob ? "text-neutral-content" : ""}`}>
-                        {job.title}
-                      </h3>
-                      <div className="mb-2.5 flex flex-wrap items-center gap-1.5">
-                        <p className={`text-sm ${isAdminJob ? "text-neutral-content/65" : "text-base-content/50"}`}>
-                          {job.institutionName || "Unknown Institution"}
-                        </p>
-                        <UserSignalBadge user={job.postedBy} />
-                      </div>
-                      <div className="flex flex-wrap items-center gap-3 text-xs">
-                        <span className={`flex items-center gap-1 ${isAdminJob ? "text-neutral-content/60" : "text-base-content/50"}`}>
-                          <MapPin className="w-3.5 h-3.5" />
-                          {job.location === "remote"
-                            ? "Remote"
-                            : job.location === "hybrid"
-                              ? "Hybrid"
-                              : "On-site"}
-                        </span>
-                        <span
-                          className={`flex items-center gap-1 font-medium ${
-                            job.isPaid
-                              ? "text-success"
-                              : isAdminJob
-                                ? "text-neutral-content/55"
-                                : "text-base-content/40"
-                          }`}
-                        >
-                          {formatStipend(job.stipend, job.currency, job.isPaid)}
-                        </span>
-                        <span className={`flex items-center gap-1 ${isAdminJob ? "text-neutral-content/55" : "text-base-content/40"}`}>
-                          <Clock className="w-3.5 h-3.5" />
-                          {new Date(job.deadline).toLocaleDateString("en-IN", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                        <span className="badge badge-xs badge-soft badge-primary font-medium">
-                          {job.roleType}
-                        </span>
-                        {job.postedBy?._id === user?._id &&
-                          job.status &&
-                          job.status !== "approved" && (
-                            <span
-                              className={`badge badge-xs font-medium ${
-                                job.status === "pending_review"
-                                  ? "badge-warning badge-soft"
-                                  : "badge-error badge-soft"
-                              }`}
-                            >
-                              {job.status === "pending_review"
-                                ? "Under Review"
-                                : "Not Approved"}
-                            </span>
-                          )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                      <QuickApplyBtn
-                        jobId={job._id}
-                        alreadyApplied={hasAppliedToJob(job, user?._id)}
-                        onApplied={() =>
-                          setJobs((prev) =>
-                            prev.map((item) =>
-                              item._id === job._id
-                                ? {
-                                    ...item,
-                                    applicants: [
-                                      ...(item.applicants || []),
-                                      user?._id,
-                                    ],
-                                  }
-                                : item,
-                            ),
-                          )
-                        }
+                <div className="flex items-start gap-4">
+                  {/* Job image or institution logo */}
+                  <div className="w-14 h-14 rounded-xl bg-placeholder overflow-hidden shrink-0">
+                    {job.image?.url ? (
+                      <img
+                        src={job.image.url}
+                        alt={job.title}
+                        className="w-full h-full object-cover"
                       />
-                      {job.applicants?.length > 0 && (
-                        <span className={`text-xs ${isAdminJob ? "text-neutral-content/50" : "text-base-content/30"}`}>
-                          {job.applicants.length} applicant
-                          {job.applicants.length !== 1 ? "s" : ""}
-                        </span>
-                      )}
+                    ) : job.institutionLogo?.url ? (
+                      <img
+                        src={job.institutionLogo.url}
+                        alt={job.institutionName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                        <Briefcase className="w-6 h-6 text-primary/40" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className={`font-semibold text-base mb-0.5 ${isSpecialJob ? specialStyle.muted : ""}`}
+                        >
+                          {job.title}
+                        </h3>
+                        <div className="mb-2.5 flex flex-wrap items-center gap-1.5">
+                          <p
+                            className={`text-sm ${isSpecialJob ? "text-base-content/60" : "text-base-content/50"}`}
+                          >
+                            {job.institutionName || "Unknown Institution"}
+                          </p>
+                          <UserSignalBadge user={job.postedBy} />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-xs">
+                          <span
+                            className={`flex items-center gap-1 ${isSpecialJob ? "text-base-content/60" : "text-base-content/50"}`}
+                          >
+                            <MapPin className="w-3.5 h-3.5" />
+                            {job.location === "remote"
+                              ? "Remote"
+                              : job.location === "hybrid"
+                                ? "Hybrid"
+                                : "On-site"}
+                          </span>
+                          <span
+                            className={`flex items-center gap-1 font-medium ${
+                              job.isPaid
+                                ? "text-success"
+                                : isSpecialJob
+                                  ? "text-base-content/55"
+                                  : "text-base-content/40"
+                            }`}
+                          >
+                            {formatStipend(
+                              job.stipend,
+                              job.currency,
+                              job.isPaid,
+                            )}
+                          </span>
+                          <span
+                            className={`flex items-center gap-1 ${isSpecialJob ? "text-base-content/55" : "text-base-content/40"}`}
+                          >
+                            <Clock className="w-3.5 h-3.5" />
+                            {new Date(job.deadline).toLocaleDateString(
+                              "en-IN",
+                              {
+                                month: "short",
+                                day: "numeric",
+                              },
+                            )}
+                          </span>
+                          <span className="badge badge-xs badge-soft badge-primary font-medium">
+                            {job.roleType}
+                          </span>
+                          {job.postedBy?._id === user?._id &&
+                            job.status &&
+                            job.status !== "approved" && (
+                              <span
+                                className={`badge badge-xs font-medium ${
+                                  job.status === "pending_review"
+                                    ? "badge-warning badge-soft"
+                                    : "badge-error badge-soft"
+                                }`}
+                              >
+                                {job.status === "pending_review"
+                                  ? "Under Review"
+                                  : "Not Approved"}
+                              </span>
+                            )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                        <QuickApplyBtn
+                          jobId={job._id}
+                          alreadyApplied={hasAppliedToJob(job, user?._id)}
+                          onApplied={() =>
+                            setJobs((prev) =>
+                              prev.map((item) =>
+                                item._id === job._id
+                                  ? {
+                                      ...item,
+                                      applicants: [
+                                        ...(item.applicants || []),
+                                        user?._id,
+                                      ],
+                                    }
+                                  : item,
+                              ),
+                            )
+                          }
+                        />
+                        {job.applicants?.length > 0 && (
+                          <span
+                            className={`text-xs ${isSpecialJob ? "text-base-content/50" : "text-base-content/30"}`}
+                          >
+                            {job.applicants.length} applicant
+                            {job.applicants.length !== 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
               </Link>
             );
           })}
